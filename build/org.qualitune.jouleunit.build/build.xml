@@ -1,0 +1,145 @@
+<project name="JouleUnit Dist" basedir="." default="jar">
+
+	<property name="version.number" value="_v0.1"/>
+
+	<property name="build.dir" value="classes"/>
+
+    <property name="project.dir" value="${build.dir}/project"/>
+
+    <property name="src.dir.jouleunit" value="../org.qualitune.jouleunit/src"/>
+	<property name="project.dir.jouleunit" value="${project.dir}/jouleunit"/>
+	<property name="project.dir.jouleunit.src" value="${project.dir.jouleunit}/src"/>
+	
+    <property name="src.dir.jouleunit.android" value="../org.qualitune.jouleunit.android/src"/>
+	<property name="project.dir.jouleunit.android" value="${project.dir}/android"/>
+	<property name="project.dir.jouleunit.android.src" value="${project.dir.jouleunit.android}/src"/>
+
+    <property name="src.dir.jouleunit.kiwigrid" value="../org.qualitune.jouleunit.kiwigrid/src"/>
+	<property name="project.dir.jouleunit.kiwigrid" value="${project.dir}/kiwigrid"/>
+	<property name="project.dir.jouleunit.kiwigrid.src" value="${project.dir.jouleunit.kiwigrid}/src"/>
+
+    <property name="src.dir.jouleunit.linux" value="../org.qualitune.jouleunit.linux/src"/>
+	<property name="project.dir.jouleunit.linux" value="${project.dir}/linux"/>
+	<property name="project.dir.jouleunit.linux.src" value="${project.dir.jouleunit.linux}/src"/>
+
+    <property name="src.dir.jouleunit.nao" value="../org.qualitune.jouleunit.nao/src"/>
+	<property name="project.dir.jouleunit.nao" value="${project.dir}/nao"/>
+	<property name="project.dir.jouleunit.nao.src" value="${project.dir.jouleunit.nao}/src"/>
+
+    <property name="src.dir.jouleunit.windows" value="../org.qualitune.jouleunit.windows/src"/>
+	<property name="project.dir.jouleunit.windows" value="${project.dir}/windows"/>
+	<property name="project.dir.jouleunit.windows.src" value="${project.dir.jouleunit.windows}/src"/>
+	
+	<property name="jar.dir" value="jars"/>
+	
+	<target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="${jar.dir}"/>
+    </target>
+
+    <target name="compile" depends="clean,compile.jouleunit,compile.android,compile.kiwigrid,compile.linux,compile.nao,compile.windows">
+    </target>
+	
+    <target name="compile.jouleunit" depends="clean">
+
+    	<mkdir dir="${build.dir}"/>
+        
+    	<mkdir dir="${project.dir.jouleunit}"/>
+        <mkdir dir="${project.dir.jouleunit.src}"/>
+    	<copy todir="${project.dir.jouleunit.src}">
+    	  <fileset dir="${src.dir.jouleunit}"/>
+    	</copy>
+    	<copy file="${src.dir.jouleunit}/../LICENSE.txt" todir="${project.dir.jouleunit}"/>
+    	<copy file="${src.dir.jouleunit}/../README.txt" todir="${project.dir.jouleunit}"/>
+        <javac srcdir="${src.dir.jouleunit}" destdir="${project.dir.jouleunit}"/>
+    </target>
+
+    <target name="compile.android" depends="compile.jouleunit">
+    	<mkdir dir="${project.dir.jouleunit.android}"/>
+        <mkdir dir="${project.dir.jouleunit.android.src}"/>
+    	<copy todir="${project.dir.jouleunit.android.src}">
+    	  <fileset dir="${src.dir.jouleunit.android}"/>
+    	</copy>
+    	<copy file="${src.dir.jouleunit.android}/../README.txt" todir="${project.dir.jouleunit.android}"/>
+        <javac srcdir="${src.dir.jouleunit.android}" destdir="${project.dir.jouleunit.android}">
+            <classpath>
+                <dirset dir="${project.dir.jouleunit}"/>
+            </classpath>
+	    </javac>
+    </target>
+	
+    <target name="compile.kiwigrid" depends="clean,compile.jouleunit">
+    	<mkdir dir="${project.dir.jouleunit.kiwigrid}"/>
+        <mkdir dir="${project.dir.jouleunit.kiwigrid.src}"/>
+    	<copy todir="${project.dir.jouleunit.kiwigrid.src}">
+    	  <fileset dir="${src.dir.jouleunit.kiwigrid}"/>
+    	</copy>
+    	<copy file="${src.dir.jouleunit.kiwigrid}/../README.txt" todir="${project.dir.jouleunit.kiwigrid}"/>
+        <javac srcdir="${src.dir.jouleunit.kiwigrid}" destdir="${project.dir.jouleunit.kiwigrid}">
+            <classpath>
+                <fileset dir="${src.dir.jouleunit.kiwigrid}/../lib">
+                  <include name="**/*.jar"/>
+                </fileset>
+                <dirset dir="${project.dir.jouleunit}"/>
+            </classpath>
+	    </javac>
+    </target>
+
+    <target name="compile.linux" depends="clean,compile.jouleunit">
+    	<mkdir dir="${project.dir.jouleunit.linux}"/>
+        <mkdir dir="${project.dir.jouleunit.linux.src}"/>
+    	<copy todir="${project.dir.jouleunit.linux.src}">
+    	  <fileset dir="${src.dir.jouleunit.linux}"/>
+    	</copy>
+    	<copy file="${src.dir.jouleunit.linux}/../README.txt" todir="${project.dir.jouleunit.linux}"/>
+        <javac srcdir="${src.dir.jouleunit.linux}" destdir="${project.dir.jouleunit.linux}">
+            <classpath>
+                <dirset dir="${project.dir.jouleunit}"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="compile.nao" depends="clean,compile.jouleunit">
+      	<mkdir dir="${project.dir.jouleunit.nao}"/>
+        <mkdir dir="${project.dir.jouleunit.nao.src}"/>
+    	<copy todir="${project.dir.jouleunit.nao.src}">
+    	  <fileset dir="${src.dir.jouleunit.nao}"/>
+    	</copy>
+    	<copy file="${src.dir.jouleunit.nao}/../README.txt" todir="${project.dir.jouleunit.nao}"/>
+        <javac srcdir="${src.dir.jouleunit.nao}" destdir="${project.dir.jouleunit.nao}">
+            <classpath>
+                <dirset dir="./../org.qualitune.naoservice.client/bin"/>
+                <dirset dir="${project.dir.jouleunit}"/>
+            </classpath>
+        </javac>
+    </target>
+
+	<target name="compile.windows" depends="clean,compile.jouleunit,compile.android,compile.kiwigrid,compile.linux,compile.nao">
+	    <mkdir dir="${project.dir.jouleunit.windows}"/>
+	    <mkdir dir="${project.dir.jouleunit.windows.src}"/>
+	    <copy todir="${project.dir.jouleunit.windows.src}">
+	    	<fileset dir="${src.dir.jouleunit.windows}"/>
+	    </copy>
+	    <copy file="${src.dir.jouleunit.windows}/../README.txt" todir="${project.dir.jouleunit.windows}"/>
+	    <javac srcdir="${src.dir.jouleunit.windows}" destdir="${project.dir.jouleunit.windows}">
+        <classpath>
+            <fileset dir="${src.dir.jouleunit.windows}/../lib">
+              <include name="**/*.jar"/>
+            </fileset>
+            <dirset dir="${project.dir.jouleunit}"/>
+        </classpath>
+    </javac>
+	</target>
+
+	<target name="jar" depends="compile">
+        <mkdir dir="${jar.dir}"/>
+        <jar destfile="${jar.dir}/org.qualitune.jouleunit${version.number}.jar" basedir="${project.dir.jouleunit}" />
+        <jar destfile="${jar.dir}/org.qualitune.jouleunit.android${version.number}.jar" basedir="${project.dir.jouleunit.android}" />
+        <jar destfile="${jar.dir}/org.qualitune.jouleunit.kiwigrid${version.number}.jar" basedir="${project.dir.jouleunit.kiwigrid}" />
+        <jar destfile="${jar.dir}/org.qualitune.jouleunit.linux${version.number}.jar" basedir="${project.dir.jouleunit.linux}" />
+        <jar destfile="${jar.dir}/org.qualitune.jouleunit.nao${version.number}.jar" basedir="${project.dir.jouleunit.nao}" />
+        <jar destfile="${jar.dir}/org.qualitune.jouleunit.windows${version.number}.jar" basedir="${project.dir.jouleunit.windows}" />
+        <delete dir="${build.dir}"/>
+    </target>
+
+</project>
