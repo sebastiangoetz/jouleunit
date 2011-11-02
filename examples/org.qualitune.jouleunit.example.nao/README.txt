@@ -5,8 +5,6 @@ The example requires the Nao Service Utility classes to connect to
 the Nao. The Nao Service can be obtained from
 http://code.google.com/p/naoservice/downloads/list
 
-TODO Put the jars into this project before deploying it.
-
 JouleUnit is an extension of the popular JUnit framework that allows 
 testing Java applications w.r.t. their energy consumption.
 
