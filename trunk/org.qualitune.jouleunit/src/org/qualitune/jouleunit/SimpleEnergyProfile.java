@@ -44,6 +44,137 @@ public class SimpleEnergyProfile extends AbstractEnergyProfile {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.qualitune.jouleunit.EnergyProfile#getConsumedEnergy(long, long)
+	 */
+	public double getConsumedEnergy(long start, long end) {
+
+		if (end <= start)
+			throw new IllegalArgumentException(
+					"Argument 'end' cannot be smaller or equal to argument 'start'.");
+		else if (measuredValues.size() == 0)
+			throw new IllegalStateException(
+					"Cannot compute average energy consumption for an empty profile.");
+		else {
+			double result = 0d;
+
+			Collections.sort(measuredValues);
+
+			PowerRate firstValue = null;
+			PowerRate lastValue = null;
+
+			/* Find bounds. */
+			for (PowerRate value : measuredValues) {
+
+				if (value.getTimeStamp() <= start)
+					firstValue = value;
+				// no else.
+
+				if (value.getTimeStamp() >= end) {
+					lastValue = value;
+					break;
+				}
+				// no else.
+			}
+			// end for.
+
+			/* Check bounds. */
+			if (firstValue == null)
+				throw new IllegalArgumentException(
+						"Argument 'start' is out of bounds. Must have a value lower than "
+								+ measuredValues.get(measuredValues.size() - 1)
+										.getTimeStamp() + ".");
+			else if (lastValue == null)
+				throw new IllegalArgumentException(
+						"Argument 'end' is out of bounds. Must have a value bigger than "
+								+ measuredValues.get(0).getTimeStamp() + ".");
+			// no else.
+
+			/* Compute average for each interval. */
+			for (int index = measuredValues.indexOf(firstValue); index < measuredValues
+					.indexOf(lastValue); index++) {
+				PowerRate val1 = measuredValues.get(index);
+				PowerRate val2 = measuredValues.get(index + 1);
+
+				result += (val1.getPowerRate() + val2.getPowerRate())
+						* (val2.getTimeStamp() - val1.getTimeStamp())
+						/ 2000000000;
+			}
+			// end for.
+
+			/*
+			 * Subtract overlapping ends (these are the ends caused if the first
+			 * value's time stamp is not equal to the start time stamp or the
+			 * last value's time stamp is not equal to the end time stamp).
+			 */
+			if (firstValue.getTimeStamp() != start) {
+				/*
+				 * Compute power rate for first time stamp based on co-tangens
+				 * of time an power rate of next two values.
+				 */
+				PowerRate val1 = firstValue;
+				PowerRate val2 = measuredValues.get(measuredValues
+						.indexOf(firstValue) + 1);
+
+				long p1_2 = val1.getPowerRate() - val2.getPowerRate();
+				long t1_2 = val2.getTimeStamp() - val1.getTimeStamp();
+
+				long tS_2 = val2.getTimeStamp() - start;
+				long pS_2;
+
+				/* p1_2 / t1_2 = pS_2 / tS_2 */
+				/* -> pS_2 = p1_2 / t1_2 * tS_2 */
+				if (p1_2 != 0)
+					pS_2 = p1_2 * tS_2 / t1_2;
+				else
+					pS_2 = 0l;
+
+				long startPowerRate = val2.getPowerRate() + pS_2;
+
+				/* Compute part to be subtracted. */
+				result -= (val1.getPowerRate() + startPowerRate)
+						* (start - val1.getTimeStamp()) / 2000000000d;
+			}
+			// no else.
+
+			if (lastValue.getTimeStamp() != end) {
+				/*
+				 * Compute power rate for first time stamp based on co-tangens
+				 * of time an power rate of next two values.
+				 */
+				PowerRate val1 = measuredValues.get(measuredValues
+						.indexOf(lastValue) - 1);
+				PowerRate val2 = lastValue;
+
+				long p1_2 = val1.getPowerRate() - val2.getPowerRate();
+				long t1_2 = val2.getTimeStamp() - val1.getTimeStamp();
+
+				long tE_2 = val2.getTimeStamp() - end;
+				/* b' */
+				long pE_2;
+
+				/* p1_2 / t1_2 = pE_2 / tE_2 */
+				/* -> pE_2 = p1_2 / t1_2 * tE_2 */
+				if (p1_2 != 0)
+					pE_2 = p1_2 * tE_2 / t1_2;
+				else
+					pE_2 = 0l;
+
+				long endPowerRate = val2.getPowerRate() + pE_2;
+
+				/* Compute part to be subtracted. */
+				result -= (endPowerRate + val2.getPowerRate())
+						* (val2.getTimeStamp() - end) / 2000000000d;
+			}
+			// no else.
+
+			/* Invert discharging rate to consumption. */
+			return -result;
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * org.qualitune.jouleunit.EnergyProfile#getConsumedEnergy(java.lang.String,
 	 * java.lang.String)

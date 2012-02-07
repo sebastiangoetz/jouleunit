@@ -6,8 +6,8 @@ import java.util.Map;
 
 import org.qualitune.jouleunit.AbstractPowerRate;
 import org.qualitune.jouleunit.PowerRate;
-import org.qualitune.naoservice.client.Nao;
 import org.qualitune.naoservice.client.NaoConstants;
+import org.qualitune.naoservice.client.NaoData;
 import org.qualitune.naoservice.client.NaoUtil;
 import org.qualitune.naoservice.client.NaoUtilException;
 
@@ -73,7 +73,7 @@ public class NaoPowerRate extends AbstractPowerRate {
 					"Argument 'port' cannot be 0 or negative.");
 		// no else.
 
-		Nao nao = new Nao(ipAddress, port);
+		NaoData nao = new NaoData(ipAddress, port);
 
 		Map<String, String> values;
 		try {

@@ -30,8 +30,19 @@
 	<property name="project.dir.jouleunit.windows" value="${project.dir}/windows"/>
 	<property name="project.dir.jouleunit.windows.src" value="${project.dir.jouleunit.windows}/src"/>
 	
+    <property name="src.dir.jouleunit.test" value="../org.qualitune.jouleunit.test/src"/>
+	<property name="project.dir.jouleunit.test" value="${project.dir}/jouleunit.test"/>
+	<property name="project.dir.jouleunit.test.src" value="${project.dir.jouleunit.test}/src"/>
+
 	<property name="jar.dir" value="jars"/>
 	
+    <property name="ECLIPSE_HOME" value="../../../../../../Eclipses/Eclipse 3.7"/>
+
+	<path id="junit4.classpath">
+        <pathelement location="${ECLIPSE_HOME}/plugins/org.junit_4.8.2.v4_8_2_v20110321-1705/junit.jar"/>
+        <pathelement location="${ECLIPSE_HOME}/plugins/org.hamcrest.core_1.1.0.v20090501071000.jar"/>
+    </path>
+
 	<target name="clean">
         <delete dir="${build.dir}"/>
         <delete dir="${jar.dir}"/>
@@ -114,7 +125,7 @@
         </javac>
     </target>
 
-	<target name="compile.windows" depends="clean,compile.jouleunit,compile.android,compile.kiwigrid,compile.linux,compile.nao">
+	<target name="compile.windows" depends="clean,compile.jouleunit">
 	    <mkdir dir="${project.dir.jouleunit.windows}"/>
 	    <mkdir dir="${project.dir.jouleunit.windows.src}"/>
 	    <copy todir="${project.dir.jouleunit.windows.src}">
@@ -131,7 +142,17 @@
     </javac>
 	</target>
 
-	<target name="jar" depends="compile">
+	<target name="compile.test" depends="clean,compile.jouleunit">
+	    <mkdir dir="${project.dir.jouleunit.test}"/>
+	    <javac srcdir="${src.dir.jouleunit.test}" destdir="${project.dir.jouleunit.test}">
+            <classpath>
+                <dirset dir="${project.dir.jouleunit}"/>
+            </classpath>
+            <classpath refid="junit4.classpath"/>
+        </javac>
+	</target>
+
+   	<target name="jar" depends="compile">
         <mkdir dir="${jar.dir}"/>
         <jar destfile="${jar.dir}/org.qualitune.jouleunit${version.number}.jar" basedir="${project.dir.jouleunit}" />
         <jar destfile="${jar.dir}/org.qualitune.jouleunit.android${version.number}.jar" basedir="${project.dir.jouleunit.android}" />
@@ -139,7 +160,17 @@
         <jar destfile="${jar.dir}/org.qualitune.jouleunit.linux${version.number}.jar" basedir="${project.dir.jouleunit.linux}" />
         <jar destfile="${jar.dir}/org.qualitune.jouleunit.nao${version.number}.jar" basedir="${project.dir.jouleunit.nao}" />
         <jar destfile="${jar.dir}/org.qualitune.jouleunit.windows${version.number}.jar" basedir="${project.dir.jouleunit.windows}" />
-        <delete dir="${build.dir}"/>
     </target>
+	
+<!--    <target name="junit" depends="compile.jouleunit,compile.test">
+        <junit printsummary="yes">
+            <classpath>
+                <dirset dir="${project.dir.jouleunit}"/>
+            </classpath>
+            <classpath refid="junit4.classpath"/>
+            
+            <test name="${project.dir.jouleunit.test}.AllJouleUnitTests"/>
+        </junit>
+    </target>    -->
 
 </project>

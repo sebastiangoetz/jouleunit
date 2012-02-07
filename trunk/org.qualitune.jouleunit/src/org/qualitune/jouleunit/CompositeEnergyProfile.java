@@ -63,6 +63,18 @@ public class CompositeEnergyProfile extends AbstractEnergyProfile {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.qualitune.jouleunit.EnergyProfile#getConsumedEnergy(long, long)
+	 * 
+	 * TODO implement and test me
+	 */
+	public double getConsumedEnergy(long start, long end) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * org.qualitune.jouleunit.EnergyProfile#getConsumedEnergy(java.lang.String,
 	 * java.lang.String)

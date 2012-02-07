@@ -76,6 +76,58 @@ public class SimpleEnergyProfileTest {
 		profile.getConsumedEnergy(SimpleEnergyProfile.START_EVENT_ID, "test");
 	}
 
+	@Test(expected = IllegalStateException.class)
+	public void testGetConsumedEnergyNegative06() {
+		SimpleEnergyProfile profile = new SimpleEnergyProfile();
+	
+		profile.getConsumedEnergy(0l, 1l);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testGetConsumedEnergyNegative07() {
+		SimpleEnergyProfile profile = new SimpleEnergyProfile();
+		profile.addPowerRateValue(new PowerRateMock(-10, true, 0l));
+		profile.addPowerRateValue(new PowerRateMock(-10, true, 10l));
+	
+		profile.getConsumedEnergy(1l, 0l);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testGetConsumedEnergyNegative08() {
+		SimpleEnergyProfile profile = new SimpleEnergyProfile();
+		profile.addPowerRateValue(new PowerRateMock(-10, true, 0l));
+		profile.addPowerRateValue(new PowerRateMock(-10, true, 10l));
+	
+		profile.getConsumedEnergy(-5l, 5l);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testGetConsumedEnergyNegative09() {
+		SimpleEnergyProfile profile = new SimpleEnergyProfile();
+		profile.addPowerRateValue(new PowerRateMock(-10, true, 0l));
+		profile.addPowerRateValue(new PowerRateMock(-10, true, 10l));
+	
+		profile.getConsumedEnergy(5l, 15l);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testGetConsumedEnergyNegative10() {
+		SimpleEnergyProfile profile = new SimpleEnergyProfile();
+		profile.addPowerRateValue(new PowerRateMock(-10, true, 0l));
+		profile.addPowerRateValue(new PowerRateMock(-10, true, 10l));
+	
+		profile.getConsumedEnergy(-10l, -5l);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testGetConsumedEnergyNegative11() {
+		SimpleEnergyProfile profile = new SimpleEnergyProfile();
+		profile.addPowerRateValue(new PowerRateMock(-10, true, 0l));
+		profile.addPowerRateValue(new PowerRateMock(-10, true, 10l));
+	
+		profile.getConsumedEnergy(15l, 20l);
+	}
+
 	@Test
 	public void testGetConsumedEnergyPositive01() {
 		SimpleEnergyProfile profile = new SimpleEnergyProfile();
@@ -117,6 +169,28 @@ public class SimpleEnergyProfileTest {
 		assertEquals(1000d, profile.getConsumedEnergy("ev01", "ev02"), 0d);
 		assertEquals(750d, profile.getConsumedEnergy("ev02",
 				SimpleEnergyProfile.END_EVENT_ID), 0d);
+	}
+
+	@Test
+	public void testGetConsumedEnergyPositive05() {
+		SimpleEnergyProfile profile = new SimpleEnergyProfile();
+		profile.addPowerRateValue(new PowerRateMock(-10l, true, 0l));
+		profile.addPowerRateValue(new PowerRateMock(-10l, true, 1000000000l));
+	
+		assertEquals(10d, profile.getConsumedEnergy(0l, 1000000000l), 0d);
+		assertEquals(5d, profile.getConsumedEnergy(0l, 500000000l), 0d);
+		assertEquals(5d, profile.getConsumedEnergy(500000000l, 1000000000l), 0d);
+	}
+
+	@Test
+	public void testGetConsumedEnergyPositive06() {
+		SimpleEnergyProfile profile = new SimpleEnergyProfile();
+		profile.addPowerRateValue(new PowerRateMock(-10l, true, 0l));
+		profile.addPowerRateValue(new PowerRateMock(-20l, true, 1000000000l));
+	
+		assertEquals(15d, profile.getConsumedEnergy(0l, 1000000000l), 0.001d);
+		assertEquals(6.25d, profile.getConsumedEnergy(0l, 500000000l), 0.001d);
+		assertEquals(8.75d, profile.getConsumedEnergy(500000000l, 1000000000l), 0.001d);
 	}
 
 	@Test(expected = IllegalArgumentException.class)

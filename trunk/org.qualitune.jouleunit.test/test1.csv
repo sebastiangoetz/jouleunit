@@ -1,4 +1,4 @@
-Profiling result from test run testRun exported at Fri Sep 23 11:01:15 CEST 2011;
+Profiling result from test run testRun exported at Wed Nov 02 14:48:04 CET 2011;
 
 time stamp [nano secs];event;power rate [mW];avg power rate [mW];avg power rate in interval [mW];
 50000000000;Start;10;11.416666666666666;11.0;

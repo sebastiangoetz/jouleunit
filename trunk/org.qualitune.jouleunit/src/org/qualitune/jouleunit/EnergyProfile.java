@@ -47,6 +47,24 @@ public interface EnergyProfile extends Serializable {
 	public double getConsumedEnergy(String firstID, String secondID);
 
 	/**
+	 * Returns the consumed energy in <code>mJ</code> between two given time
+	 * stamps.
+	 * 
+	 * @param start
+	 *            The start time stamp of the interval whose energy consumption
+	 *            shall be returned. <strong>Must lay within the interval of
+	 *            this EnergyProfile and must be smaller than the end time
+	 *            stamp!</strong>
+	 * @param end
+	 *            The end time stamp of the interval whose energy consumption
+	 *            shall be returned. <strong>Must lay within the interval of
+	 *            this EnergyProfile and must be bigger than the start time
+	 *            stamp!</strong>
+	 * @return The consumed energy in <code>mJ</code>.
+	 */
+	public double getConsumedEnergy(long start, long end);
+
+	/**
 	 * Returns the duration of this {@link EnergyProfile}
 	 * <code>nano (10 ^ -9) seconds</code>.
 	 * 

@@ -12,6 +12,7 @@ import org.qualitune.jouleunit.SimpleEnergyProfile;
 import org.qualitune.jouleunit.persist.RestoredPowerRate;
 import org.qualitune.naoservice.client.Nao;
 import org.qualitune.naoservice.client.NaoConstants;
+import org.qualitune.naoservice.client.NaoData;
 import org.qualitune.naoservice.client.NaoUtil;
 
 /**
@@ -31,7 +32,7 @@ public class NaoProfiler extends AbstractJouleProfiler {
 	protected int port;
 
 	/** The {@link Nao} proxy of this {@link NaoProfiler}. */
-	protected Nao nao;
+	protected NaoData nao;
 
 	/**
 	 * The ID of the profiling process on the {@link Nao} for this
@@ -63,12 +64,12 @@ public class NaoProfiler extends AbstractJouleProfiler {
 	}
 
 	/**
-	 * Creates a new {@link NaoProfiler} for a given {@link Nao}.
+	 * Creates a new {@link NaoProfiler} for a given {@link NaoData}.
 	 * 
 	 * @param nao
-	 *            The {@link Nao} to be profiled.
+	 *            The {@link NaoData} to be profiled.
 	 */
-	public NaoProfiler(Nao nao) {
+	public NaoProfiler(NaoData nao) {
 		this.ip = nao.getIP();
 		this.port = nao.getPort();
 		this.nao = nao;
