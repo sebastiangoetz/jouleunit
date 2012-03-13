@@ -10,7 +10,7 @@ import org.qualitune.jouleunit.AbstractJouleProfiler;
 import org.qualitune.jouleunit.JouleProfiler;
 import org.qualitune.jouleunit.SimpleEnergyProfile;
 import org.qualitune.jouleunit.nao.NaoProfiler;
-import org.qualitune.naoservice.client.Nao;
+import org.qualitune.naoservice.client.NaoData;
 
 /**
  * Contains test cases for the {@link AbstractJouleProfiler}.
@@ -19,12 +19,12 @@ import org.qualitune.naoservice.client.Nao;
  */
 public class NaoProfilerTest {
 
-	protected static Nao nao;
+	protected static NaoData nao;
 	protected static JouleProfiler profiler;
 
 	@BeforeClass
 	public static void setUp() {
-		nao = new Nao("192.168.0.139", 8070);
+		nao = new NaoData("192.168.0.139", 8070);
 
 		profiler = new NaoProfiler(nao);
 	}
