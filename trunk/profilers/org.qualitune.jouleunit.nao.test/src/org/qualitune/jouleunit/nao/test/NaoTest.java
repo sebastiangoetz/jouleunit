@@ -16,7 +16,7 @@ import org.qualitune.jouleunit.ProfilingException;
 import org.qualitune.jouleunit.nao.NaoProfiler;
 import org.qualitune.naoservice.client.Nao;
 import org.qualitune.naoservice.client.Nao.ALMotion;
-import org.qualitune.naoservice.client.Nao.ALTextToSpeech;
+import org.qualitune.naoservice.client.NaoData;
 import org.qualitune.naoservice.client.NaoUtil;
 
 /**
@@ -26,12 +26,12 @@ import org.qualitune.naoservice.client.NaoUtil;
  */
 public class NaoTest {
 
-	protected static Nao nao;
+	protected static NaoData nao;
 	protected static JouleProfiler profiler;
 
 	@BeforeClass
 	public static void setUp() {
-		nao = new Nao("192.168.0.139", 8070);
+		nao = new NaoData("192.168.0.139", 8070);
 
 		profiler = new NaoProfiler(nao);
 		profiler.setEstimationInterval(0);
@@ -51,10 +51,10 @@ public class NaoTest {
 
 	@Test
 	public void profileConsumptionWithEvents() throws InterruptedException {
-	
+
 		NaoUtil.sitDown(nao);
 		NaoUtil.setStiffness(nao, 0f);
-		
+
 		profiler.startProfiling();
 		NaoUtil.say(nao, "I talk while I am sitting.");
 		NaoUtil.say(nao, "I talk while I am sitting.");
@@ -64,8 +64,9 @@ public class NaoTest {
 		NaoUtil.say(nao, "I talk while I am standing.");
 		NaoUtil.say(nao, "I talk while I am standing.");
 		EnergyProfile profile = profiler.endProfiling();
-	
-		JouleUtil.exportProfile(profile, new File("profileWithEvents.csv"), "Nao JouleUnit Profiling Test");
+
+		JouleUtil.exportProfile(profile, new File("profileWithEventsNew.csv"),
+				"Nao JouleUnit Profiling Test");
 	}
 
 	/**
@@ -79,10 +80,8 @@ public class NaoTest {
 			ProfilingException {
 		int iterations = 50;
 
-		ALTextToSpeech alTTS = nao.createALTextToSpeech();
-
 		assertTrue(NaoUtil.standUp(nao));
-		alTTS.say("Start profiling the probe effect.");
+		NaoUtil.say(nao, "Start profiling the probe effect.");
 
 		/* Profiling with configured frequency. */
 		profiler.setProfilingInterval(Math.round(1000 / 12.5f));
@@ -122,11 +121,10 @@ public class NaoTest {
 
 	@Test
 	public void testProfileStanding01() throws InterruptedException {
-		ALTextToSpeech alTTS = nao.createALTextToSpeech();
 
 		assertTrue(NaoUtil.standUp(nao));
 
-		alTTS.say("Start profiling while standing.");
+		NaoUtil.say(nao, "Start profiling while standing.");
 
 		profiler.startProfiling();
 
@@ -135,8 +133,9 @@ public class NaoTest {
 
 		EnergyProfile profile = profiler.endProfiling();
 
-		alTTS.say("Consumed " + Math.round(profile.getConsumedEnergy() / 1000)
-				+ " Joules of Energy for standing 10 seconds.");
+		NaoUtil.say(nao,
+				"Consumed " + Math.round(profile.getConsumedEnergy() / 1000)
+						+ " Joules of Energy for standing 10 seconds.");
 		System.out.println(profile.getConsumedEnergy());
 
 		JouleAssert.assertMaxJoules(profile, 30000);
@@ -153,22 +152,27 @@ public class NaoTest {
 	public void testProfileStanding02() throws InterruptedException,
 			ProfilingException {
 
-		ALTextToSpeech alTTS = nao.createALTextToSpeech();
 		assertTrue(NaoUtil.standUp(nao));
-		alTTS.say("Start profiling while standing for 5 times.");
+		NaoUtil.say(nao, "Start profiling while standing for 5 times.");
 
 		List<EnergyProfile> result = profiler.profileNTimes(this,
 				"testProfileStanding02MethodToProfile", new Object[0], 5);
 
-		alTTS.say("Consumed "
-				+ Math.round(JouleUtil.getJouleMax(result) / 1000)
-				+ " Joules of Energy at maximum for standing 5 seconds for 5 times.");
-		alTTS.say("Consumed "
-				+ Math.round(JouleUtil.getJouleMin(result) / 1000)
-				+ " Joules of Energy at minimum for standing 5 seconds for 5 times.");
-		alTTS.say("Consumed an average "
-				+ Math.round(JouleUtil.getJouleAvg(result) / 1000)
-				+ " Joules of Energy for standing 5 seconds for 5 times.");
+		NaoUtil.say(
+				nao,
+				"Consumed "
+						+ Math.round(JouleUtil.getJouleMax(result) / 1000)
+						+ " Joules of Energy at maximum for standing 5 seconds for 5 times.");
+		NaoUtil.say(
+				nao,
+				"Consumed "
+						+ Math.round(JouleUtil.getJouleMin(result) / 1000)
+						+ " Joules of Energy at minimum for standing 5 seconds for 5 times.");
+		NaoUtil.say(
+				nao,
+				"Consumed an average "
+						+ Math.round(JouleUtil.getJouleAvg(result) / 1000)
+						+ " Joules of Energy for standing 5 seconds for 5 times.");
 
 		System.out.println(JouleUtil.getJouleMax(result));
 		System.out.println(JouleUtil.getJouleMin(result));
@@ -186,41 +190,41 @@ public class NaoTest {
 
 	@Test
 	public void testProfileWalking01() throws InterruptedException {
-		ALTextToSpeech alTTS = nao.createALTextToSpeech();
 
 		assertTrue(NaoUtil.standUp(nao));
 
-		alTTS.say("Start profiling while walking.");
+		NaoUtil.say(nao, "Start profiling while walking.");
 
 		profiler.startProfiling();
 
-		ALMotion alMotion = nao.createALMotion();
+		ALMotion alMotion = Nao.createALMotion(nao.getIP(), nao.getPort());
 		alMotion.walkTo(1.0f, 0f, 0f);
 
 		EnergyProfile profile = profiler.endProfiling();
 
-		alTTS.say("Consumed " + Math.round(profile.getConsumedEnergy() / 1000)
-				+ " Joules of Energy for walking 1 meter to the front.");
+		NaoUtil.say(nao,
+				"Consumed " + Math.round(profile.getConsumedEnergy() / 1000)
+						+ " Joules of Energy for walking 1 meter to the front.");
 		System.out.println(profile.getConsumedEnergy());
 	}
 
 	@Test
 	public void testProfileWalking02() throws InterruptedException {
-		ALTextToSpeech alTTS = nao.createALTextToSpeech();
 
 		assertTrue(NaoUtil.standUp(nao));
 
-		alTTS.say("Start profiling while walking.");
+		NaoUtil.say(nao, "Start profiling while walking.");
 
 		profiler.startProfiling();
 
-		ALMotion alMotion = nao.createALMotion();
+		ALMotion alMotion = Nao.createALMotion(nao.getIP(), nao.getPort());
 		alMotion.walkTo(-1.0f, 0f, 0f);
 
 		EnergyProfile profile = profiler.endProfiling();
 
-		alTTS.say("Consumed " + Math.round(profile.getConsumedEnergy() / 1000)
-				+ " Joules of Energy for walking 1 meter to the back.");
+		NaoUtil.say(nao,
+				"Consumed " + Math.round(profile.getConsumedEnergy() / 1000)
+						+ " Joules of Energy for walking 1 meter to the back.");
 		System.out.println(profile.getConsumedEnergy());
 	}
 
@@ -231,7 +235,7 @@ public class NaoTest {
 		int n = 5;
 
 		assertTrue(NaoUtil.standUp(nao));
-		ALMotion alMotion = nao.createALMotion();
+		ALMotion alMotion = Nao.createALMotion(nao.getIP(), nao.getPort());
 
 		System.out.println("Profiled different walking distances, " + n
 				+ " times each.");
