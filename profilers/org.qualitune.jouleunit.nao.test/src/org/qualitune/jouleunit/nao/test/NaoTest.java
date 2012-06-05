@@ -16,6 +16,7 @@ import org.qualitune.jouleunit.ProfilingException;
 import org.qualitune.jouleunit.nao.NaoProfiler;
 import org.qualitune.naoservice.client.Nao;
 import org.qualitune.naoservice.client.Nao.ALMotion;
+import org.qualitune.naoservice.client.Nao.ALTextToSpeech;
 import org.qualitune.naoservice.client.NaoData;
 import org.qualitune.naoservice.client.NaoUtil;
 
@@ -52,17 +53,23 @@ public class NaoTest {
 	@Test
 	public void profileConsumptionWithEvents() throws InterruptedException {
 
+		ALTextToSpeech altts = Nao.createALTextToSpeech(nao.getIP(), nao.getPort());
+		
 		NaoUtil.sitDown(nao);
 		NaoUtil.setStiffness(nao, 0f);
 
 		profiler.startProfiling();
-		NaoUtil.say(nao, "I talk while I am sitting.");
-		NaoUtil.say(nao, "I talk while I am sitting.");
+		altts.say("\'I talk while I am sitting.\'");
+		altts.say("\'I talk while I am sitting.\'");
 		profiler.logEvent("talked sitting");
 		NaoUtil.standUp(nao);
 		profiler.logEvent("stood up");
-		NaoUtil.say(nao, "I talk while I am standing.");
-		NaoUtil.say(nao, "I talk while I am standing.");
+		altts.say("\'I talk while I am standing.\'");
+		altts.say("\'I talk while I am standing.\'");
+		profiler.logEvent("talked standing");
+		NaoUtil.sitDown(nao);
+		NaoUtil.setStiffness(nao, 0f);
+		profiler.logEvent("sat down");
 		EnergyProfile profile = profiler.endProfiling();
 
 		JouleUtil.exportProfile(profile, new File("profileWithEventsNew.csv"),
