@@ -62,7 +62,7 @@ public class AndroidPowerRate extends AbstractPowerRate {
 	 * @see
 	 * org.qualitune.eunit.profiler.EMeasuredValue#getChargingRateInMilliWatt()
 	 */
-	public long getPowerRate() {
+	public double getPowerRate() {
 		return (voltage * current) / 1000l;
 	}
 

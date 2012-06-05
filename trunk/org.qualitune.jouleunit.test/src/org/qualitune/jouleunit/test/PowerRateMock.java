@@ -55,7 +55,7 @@ public class PowerRateMock extends AbstractPowerRate {
 	 * @see
 	 * org.qualitune.eunit.profiler.EMeasuringValue#getChargingRateInMilliWatt()
 	 */
-	public long getPowerRate() {
+	public double getPowerRate() {
 		return powerRate;
 	}
 
