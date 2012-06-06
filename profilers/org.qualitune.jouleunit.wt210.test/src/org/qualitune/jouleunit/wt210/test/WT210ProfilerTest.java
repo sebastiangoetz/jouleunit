@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.junit.runners.model.InitializationError;
 import org.qualitune.jouleunit.CompositeJouleProfiler;
 import org.qualitune.jouleunit.EnergyProfile;
-import org.qualitune.jouleunit.JouleProfiler;
 import org.qualitune.jouleunit.wt210.WT210Profiler;
 
 /**
@@ -26,7 +25,7 @@ public class WT210ProfilerTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testInitializationNegative01() throws InitializationError {
 		/* Should fail. */
-		new WT210Profiler(-1);
+		new WT210Profiler(-1, true);
 	}
 
 	/**
@@ -41,7 +40,7 @@ public class WT210ProfilerTest {
 	@Ignore
 	public void testCalibrationPositive01() throws InitializationError {
 		WT210Profiler profiler = new WT210Profiler(
-				WT210PowerRateTest.GPIB_ADDRESS_WT210_DEVICE_1);
+				WT210PowerRateTest.GPIB_ADDRESS_WT210_DEVICE_1, true);
 		profiler.calibrate();
 
 		/*
@@ -64,7 +63,7 @@ public class WT210ProfilerTest {
 	public void testProfilingPositive01() throws InitializationError,
 			InterruptedException {
 		WT210Profiler profiler = new WT210Profiler(
-				WT210PowerRateTest.GPIB_ADDRESS_WT210_DEVICE_1);
+				WT210PowerRateTest.GPIB_ADDRESS_WT210_DEVICE_1, true);
 		profiler.setProfilingInterval(50);
 		profiler.startProfiling();
 		Thread.sleep(1000);
@@ -93,11 +92,11 @@ public class WT210ProfilerTest {
 			InterruptedException {
 
 		WT210Profiler profiler1 = new WT210Profiler(
-				WT210PowerRateTest.GPIB_ADDRESS_WT210_DEVICE_1);
+				WT210PowerRateTest.GPIB_ADDRESS_WT210_DEVICE_1, true);
 		profiler1.setProfilingInterval(50);
 
 		WT210Profiler profiler2 = new WT210Profiler(
-				WT210PowerRateTest.GPIB_ADDRESS_WT210_DEVICE_2);
+				WT210PowerRateTest.GPIB_ADDRESS_WT210_DEVICE_2, true);
 		profiler2.setProfilingInterval(50);
 
 		CompositeJouleProfiler profiler = new CompositeJouleProfiler();
