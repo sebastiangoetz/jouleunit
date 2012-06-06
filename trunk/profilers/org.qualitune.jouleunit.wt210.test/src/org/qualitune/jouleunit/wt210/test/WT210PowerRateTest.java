@@ -29,7 +29,7 @@ public class WT210PowerRateTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testInitializationNegative01() throws InitializationError {
 		/* Should fail. */
-		new WT210PowerRate(-1);
+		new WT210PowerRate(-1, true);
 	}
 
 	/**
@@ -40,7 +40,7 @@ public class WT210PowerRateTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testInitializationNegative02() throws InitializationError {
 		/* Should fail. */
-		new WT210PowerRate(32);
+		new WT210PowerRate(32, true);
 	}
 
 	/**
@@ -55,7 +55,7 @@ public class WT210PowerRateTest {
 	@Test
 	public void testInitializationPositive01() throws InitializationError {
 		/* Should not fail. */
-		new WT210PowerRate(GPIB_ADDRESS_WT210_DEVICE_1);
+		new WT210PowerRate(GPIB_ADDRESS_WT210_DEVICE_1, true);
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class WT210PowerRateTest {
 	@Test
 	public void testChargingRatePositive01() throws InitializationError {
 		/* Should not fail. */
-		PowerRate value = new WT210PowerRate(GPIB_ADDRESS_WT210_DEVICE_1);
+		PowerRate value = new WT210PowerRate(GPIB_ADDRESS_WT210_DEVICE_1, true);
 		assertNotNull(value.getPowerRate());
 		assertTrue("Expected negative value. But was " + value.getPowerRate(),
 				value.getPowerRate() < 0);
