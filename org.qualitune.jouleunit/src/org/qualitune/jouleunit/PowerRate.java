@@ -17,7 +17,7 @@ public interface PowerRate extends Comparable<PowerRate>, Serializable {
 	 * 
 	 * @return The power rate of the battery device in <code>mW</code>.
 	 */
-	public long getPowerRate();
+	public double getPowerRate();
 
 	/**
 	 * Returns the time stamp at which this {@link PowerRate} has been created

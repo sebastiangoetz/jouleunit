@@ -15,7 +15,7 @@ public class RestoredPowerRate extends AbstractPowerRate {
 	private static final long serialVersionUID = -8333248448352888849L;
 
 	/** The power rate in <code>mW</code>. */
-	protected long powerRate;
+	protected double powerRate;
 
 	/** If <code>true</code> power adapter is online. */
 	protected boolean isPowerAdapterOnline;
@@ -26,7 +26,7 @@ public class RestoredPowerRate extends AbstractPowerRate {
 	 * @see
 	 * org.qualitune.eunit.profiler.EMeasuringValue#getChargingRateInMilliWatt()
 	 */
-	public long getPowerRate() {
+	public double getPowerRate() {
 		return powerRate;
 	}
 
@@ -45,7 +45,7 @@ public class RestoredPowerRate extends AbstractPowerRate {
 	 * @param powerRate
 	 *            The power rate in <code>mW</code>.
 	 */
-	public void setPowerRate(long powerRate) {
+	public void setPowerRate(double powerRate) {
 		this.powerRate = powerRate;
 	}
 

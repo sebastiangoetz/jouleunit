@@ -447,7 +447,7 @@ public abstract class AbstractJouleProfiler extends AbstractProfilerNTimes {
 	protected PowerRate getPowerRateValueProbablyWithNoiseEstimation() {
 
 		PowerRate rateValue = getPowerRateValue();
-		long powerRate = rateValue.getPowerRate();
+		double powerRate = rateValue.getPowerRate();
 
 		if (isProbeEffectCosiderationEnabled || isBaseNoiseCosiderationEnabled) {
 

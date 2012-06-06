@@ -115,11 +115,11 @@ public class SimpleEnergyProfile extends AbstractEnergyProfile {
 				PowerRate val2 = measuredValues.get(measuredValues
 						.indexOf(firstValue) + 1);
 
-				long p1_2 = val1.getPowerRate() - val2.getPowerRate();
+				double p1_2 = val1.getPowerRate() - val2.getPowerRate();
 				long t1_2 = val2.getTimeStamp() - val1.getTimeStamp();
 
 				long tS_2 = val2.getTimeStamp() - start;
-				long pS_2;
+				double pS_2;
 
 				/* p1_2 / t1_2 = pS_2 / tS_2 */
 				/* -> pS_2 = p1_2 / t1_2 * tS_2 */
@@ -128,7 +128,7 @@ public class SimpleEnergyProfile extends AbstractEnergyProfile {
 				else
 					pS_2 = 0l;
 
-				long startPowerRate = val2.getPowerRate() + pS_2;
+				double startPowerRate = val2.getPowerRate() + pS_2;
 
 				/* Compute part to be subtracted. */
 				result -= (val1.getPowerRate() + startPowerRate)
@@ -145,12 +145,12 @@ public class SimpleEnergyProfile extends AbstractEnergyProfile {
 						.indexOf(lastValue) - 1);
 				PowerRate val2 = lastValue;
 
-				long p1_2 = val1.getPowerRate() - val2.getPowerRate();
+				double p1_2 = val1.getPowerRate() - val2.getPowerRate();
 				long t1_2 = val2.getTimeStamp() - val1.getTimeStamp();
 
 				long tE_2 = val2.getTimeStamp() - end;
 				/* b' */
-				long pE_2;
+				double pE_2;
 
 				/* p1_2 / t1_2 = pE_2 / tE_2 */
 				/* -> pE_2 = p1_2 / t1_2 * tE_2 */
@@ -159,7 +159,7 @@ public class SimpleEnergyProfile extends AbstractEnergyProfile {
 				else
 					pE_2 = 0l;
 
-				long endPowerRate = val2.getPowerRate() + pE_2;
+				double endPowerRate = val2.getPowerRate() + pE_2;
 
 				/* Compute part to be subtracted. */
 				result -= (endPowerRate + val2.getPowerRate())
@@ -231,13 +231,13 @@ public class SimpleEnergyProfile extends AbstractEnergyProfile {
 	 * org.qualitune.jouleunit.EnergyProfile#getPeakPowerRate(java.lang.String,
 	 * java.lang.String)
 	 */
-	public long getPeakPowerRate(String firstID, String secondID) {
+	public double getPeakPowerRate(String firstID, String secondID) {
 
 		/* Includes parameter preconditions. */
 		List<PowerRate> significantValues = getSignificantValues(firstID,
 				secondID);
 
-		long result = Long.MAX_VALUE;
+		double result = Double.MAX_VALUE;
 
 		if (measuredValues.size() == 0)
 			result = 0l;
