@@ -88,7 +88,7 @@ public abstract class AbstractEnergyProfile implements EnergyProfile {
 	 * 
 	 * @see org.qualitune.jouleunit.EnergyProfile#getPeakPowerRate()
 	 */
-	public long getPeakPowerRate() {
+	public double getPeakPowerRate() {
 
 		return getPeakPowerRate(START_EVENT_ID, END_EVENT_ID);
 	}

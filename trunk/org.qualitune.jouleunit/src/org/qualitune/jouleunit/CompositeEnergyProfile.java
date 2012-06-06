@@ -65,11 +65,17 @@ public class CompositeEnergyProfile extends AbstractEnergyProfile {
 	 * 
 	 * @see org.qualitune.jouleunit.EnergyProfile#getConsumedEnergy(long, long)
 	 * 
-	 * TODO implement and test me
+	 * TODO test me
 	 */
 	public double getConsumedEnergy(long start, long end) {
-		// TODO Auto-generated method stub
-		return 0;
+
+		double result = 0;
+
+		for (EnergyProfile profile : profiles)
+			result += profile.getConsumedEnergy(start, end);
+		// end for.
+
+		return result;
 	}
 
 	/*
@@ -119,13 +125,13 @@ public class CompositeEnergyProfile extends AbstractEnergyProfile {
 	}
 
 	@Override
-	public long getPeakPowerRate(String firstID, String secondID) {
+	public double getPeakPowerRate(String firstID, String secondID) {
 
 		/* Includes parameter preconditions. */
 		List<PowerRate> significantValues = getSignificantValues(firstID,
 				secondID);
 
-		long result = Long.MAX_VALUE;
+		double result = Double.MAX_VALUE;
 
 		if (profiles.size() == 0)
 			result = 0l;
@@ -440,7 +446,7 @@ public class CompositeEnergyProfile extends AbstractEnergyProfile {
 	 *            if lastValue is not <code>null</code>.
 	 * @return Their averaged power rate as a long.
 	 */
-	private long getAvgPowerRate(PowerRate lastValue, PowerRate nextValue) {
+	private double getAvgPowerRate(PowerRate lastValue, PowerRate nextValue) {
 
 		if (lastValue == null && nextValue == null)
 			throw new IllegalArgumentException(

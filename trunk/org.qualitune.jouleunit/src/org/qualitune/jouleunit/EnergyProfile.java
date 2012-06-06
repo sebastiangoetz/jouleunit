@@ -107,7 +107,7 @@ public interface EnergyProfile extends Serializable {
 	 *         <code>mW</code>. Please note that this might be a negative value
 	 *         as negative values indicate discharging.
 	 */
-	public long getPeakPowerRate();
+	public double getPeakPowerRate();
 
 	/**
 	 * Returns the peak value of all {@link PowerRate}s within two given events
@@ -126,7 +126,7 @@ public interface EnergyProfile extends Serializable {
 	 *         given interval in <code>mW</code>. Please note that this might be
 	 *         a negative value as negative values indicate discharging.
 	 */
-	public long getPeakPowerRate(String firstID, String secondID);
+	public double getPeakPowerRate(String firstID, String secondID);
 
 	/**
 	 * Returns all {@link PowerRate} values of this {@link SimpleEnergyProfile}

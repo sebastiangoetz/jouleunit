@@ -105,6 +105,8 @@ public class CompositeJouleProfiler extends AbstractProfilerNTimes {
 		for (JouleProfiler profiler : profilers)
 			currentProfile.addProfile(profiler.endProfiling());
 		// end for.
+		
+		isProfiling = false;
 
 		return currentProfile;
 	}
