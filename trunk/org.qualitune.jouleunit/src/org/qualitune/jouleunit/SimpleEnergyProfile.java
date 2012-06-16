@@ -80,13 +80,20 @@ public class SimpleEnergyProfile extends AbstractEnergyProfile {
 			/* Check bounds. */
 			if (firstValue == null)
 				throw new IllegalArgumentException(
-						"Argument 'start' is out of bounds. Must have a value lower than "
+						"Argument 'start' is out of bounds. Must have a value within the interval ["
+								+ measuredValues.get(0).getTimeStamp()
+								+ ", "
 								+ measuredValues.get(measuredValues.size() - 1)
-										.getTimeStamp() + ".");
+										.getTimeStamp() + "] but was " + start
+								+ ".");
 			else if (lastValue == null)
 				throw new IllegalArgumentException(
-						"Argument 'end' is out of bounds. Must have a value bigger than "
-								+ measuredValues.get(0).getTimeStamp() + ".");
+						"Argument 'end' is out of bounds. Must have a value within the interval ["
+								+ measuredValues.get(0).getTimeStamp()
+								+ ", "
+								+ measuredValues.get(measuredValues.size() - 1)
+										.getTimeStamp() + "] but was " + start
+								+ ".");
 			// no else.
 
 			/* Compute average for each interval. */
