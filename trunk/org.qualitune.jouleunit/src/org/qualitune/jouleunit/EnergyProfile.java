@@ -175,6 +175,23 @@ public interface EnergyProfile extends Serializable {
 	public void logEvent(String identifier, PowerRate powerRate);
 
 	/**
+	 * Logs a given event for this {@link EnergyProfile}. An event consists of
+	 * an identifier and a time stamp. Events can be used to separate the
+	 * {@link EnergyProfile} into multiple parts, for which individual energy
+	 * consumptions can be computed. E.g., this can be used to log the begin or
+	 * end of the specific method's invocation during testing. <strong>Note that
+	 * the time stamp must lay between the time stamps of the first and last
+	 * logged power rate value in this {@link EnergyProfile}!</strong>
+	 * 
+	 * @param identifier
+	 *            The identifier of the event (<strong>Must be unique within
+	 *            this {@link EnergyProfile}!</strong>).
+	 * @param timeStamp
+	 *            The event's time stamp.
+	 */
+	public void logEvent(String identifier, long timeStamp);
+
+	/**
 	 * Sets the nano time stamp when profiling started.
 	 * 
 	 * @param startedNanoTime

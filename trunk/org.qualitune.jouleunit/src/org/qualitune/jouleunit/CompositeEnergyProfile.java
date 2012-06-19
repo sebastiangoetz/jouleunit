@@ -281,9 +281,46 @@ public class CompositeEnergyProfile extends AbstractEnergyProfile {
 			return 0l;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.qualitune.jouleunit.EnergyProfile#logEvent(java.lang.String,
+	 * long)
+	 * 
+	 * TODO test me (the same as other logEvent method)!
+	 */
+	public void logEvent(String identifier, long timeStamp) {
+	
+		if (identifier == null || identifier.length() == 0)
+			throw new IllegalArgumentException(
+					"The parameter 'identifier' cannot be null or empty.");
+		else if (loggedEvents.keySet().contains(identifier))
+			throw new IllegalArgumentException("The identifier '" + identifier
+					+ "' was already logged as an event before. "
+					+ "Identifiers must be unique within a profile.");
+		else if (identifier.equals(START_EVENT_ID)
+				|| identifier.equals(END_EVENT_ID))
+			throw new IllegalArgumentException("'" + START_EVENT_ID + "' and '"
+					+ END_EVENT_ID
+					+ "' are reserved words and cannot be used as identifiers.");
+		// no else.
+	
+		boolean allContainID = true;
+		for (EnergyProfile profile : profiles)
+			allContainID &= profile.getLoggedEvents().containsKey(identifier);
+		// end for.
+	
+		if (!allContainID)
+			throw new IllegalArgumentException(
+					"All sub profiles should contain the logged ID before it can be added to the CompositeEnergyProfile.");
+		// no else.
+	
+		loggedEvents.put(identifier, null);
+	}
+
 	/**
-	 * This method should only be called by {@link CompositeJouleProfiler}s
-	 * that logged the event for all the {@link EnergyProfile}s of this
+	 * This method should only be called by {@link CompositeJouleProfiler}s that
+	 * logged the event for all the {@link EnergyProfile}s of this
 	 * {@link CompositeEnergyProfile} before calling this method. Otherwise the
 	 * call will fail with an {@link IllegalArgumentException}.
 	 * 
@@ -298,31 +335,7 @@ public class CompositeEnergyProfile extends AbstractEnergyProfile {
 	@Override
 	public void logEvent(String identifier, PowerRate powerRate) {
 
-		if (identifier == null || identifier.length() == 0)
-			throw new IllegalArgumentException(
-					"The parameter 'identifier' cannot be null or empty.");
-		else if (loggedEvents.keySet().contains(identifier))
-			throw new IllegalArgumentException("The identifier '" + identifier
-					+ "' was already logged as an event before. "
-					+ "Identifiers must be unique within a profile.");
-		else if (identifier.equals(START_EVENT_ID)
-				|| identifier.equals(END_EVENT_ID))
-			throw new IllegalArgumentException("'" + START_EVENT_ID + "' and '"
-					+ END_EVENT_ID
-					+ "' are reserved words and cannot be used as identifiers.");
-		// no else.
-
-		boolean allContainID = true;
-		for (EnergyProfile profile : profiles)
-			allContainID &= profile.getLoggedEvents().containsKey(identifier);
-		// end for.
-
-		if (!allContainID)
-			throw new IllegalArgumentException(
-					"All sub profiles should contain the logged ID before it can be added to the CompositeEnergyProfile.");
-		// no else.
-
-		loggedEvents.put(identifier, null);
+		logEvent(identifier, powerRate.getTimeStamp());
 	}
 
 	/*
