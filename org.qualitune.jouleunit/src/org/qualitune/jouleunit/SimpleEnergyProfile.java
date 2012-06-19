@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.qualitune.jouleunit.persist.RestoredPowerRate;
+
 /**
  * An {@link SimpleEnergyProfile} contains the result of profiling issued by an
  * {@link JouleProfiler}.
@@ -369,6 +371,88 @@ public class SimpleEnergyProfile extends AbstractEnergyProfile {
 
 			return latest;
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.qualitune.jouleunit.EnergyProfile#logEvent(java.lang.String,
+	 * long)
+	 * 
+	 * TODO test me!
+	 */
+	public void logEvent(String identifier, long timeStamp) {
+
+		RestoredPowerRate powerRate = new RestoredPowerRate();
+		powerRate.setTimeStamp(timeStamp);
+
+		/* Compute rate. */
+		double rate = 0d;
+
+		Collections.sort(measuredValues);
+
+		PowerRate firstValue = null;
+		PowerRate lastValue = null;
+
+		/* Find bounds. */
+		for (PowerRate value : measuredValues) {
+
+			if (value.getTimeStamp() <= timeStamp)
+				firstValue = value;
+			// no else.
+
+			if (value.getTimeStamp() >= timeStamp) {
+				lastValue = value;
+				break;
+			}
+			// no else.
+		}
+		// end for.
+
+		/* Check bounds. */
+		if (firstValue == null || lastValue == null)
+			throw new IllegalArgumentException(
+					"Argument 'timeStamp' is out of bounds. Must have a value within the interval ["
+							+ measuredValues.get(0).getTimeStamp()
+							+ ", "
+							+ measuredValues.get(measuredValues.size() - 1)
+									.getTimeStamp()
+							+ "] but was "
+							+ timeStamp
+							+ ".");
+		// no else.
+
+		if (firstValue.getTimeStamp() != timeStamp) {
+			/*
+			 * Compute power rate based on co-tangens of time an power rate of
+			 * next two values.
+			 */
+			PowerRate val1 = firstValue;
+			PowerRate val2 = measuredValues.get(measuredValues
+					.indexOf(firstValue) + 1);
+
+			double p1_2 = val1.getPowerRate() - val2.getPowerRate();
+			long t1_2 = val2.getTimeStamp() - val1.getTimeStamp();
+
+			long tS_2 = val2.getTimeStamp() - timeStamp;
+			double pS_2;
+
+			/* p1_2 / t1_2 = pS_2 / tS_2 */
+			/* -> pS_2 = p1_2 / t1_2 * tS_2 */
+			if (p1_2 != 0)
+				pS_2 = p1_2 * tS_2 / t1_2;
+			else
+				pS_2 = 0l;
+
+			rate = val2.getPowerRate() + pS_2;
+		}
+
+		else {
+			rate = firstValue.getPowerRate();
+		}
+
+		powerRate.setPowerRate(rate);
+		logEvent(identifier, powerRate);
 	}
 
 	/*
