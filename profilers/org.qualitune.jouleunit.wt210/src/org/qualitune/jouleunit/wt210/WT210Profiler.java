@@ -47,4 +47,21 @@ public class WT210Profiler extends AbstractJouleProfiler {
 	public PowerRate getPowerRateValue() throws IllegalStateException {
 		return new WT210PowerRate(gpibAddress, positiveRatesAreConsumption);
 	}
+
+	/**
+	 * Checks whether or not the GPIB device at the set GPIB address of this
+	 * {@link WT210Profiler} can be found.
+	 * 
+	 * @return <code>true</code> if the device can be found.
+	 */
+	public boolean isWT210Online() {
+		try {
+			WT210Util.getDeviceAtAddress(gpibAddress);
+			return true;
+		}
+
+		catch (IllegalStateException e) {
+			return false;
+		}
+	}
 }
