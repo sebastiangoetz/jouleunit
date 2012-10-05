@@ -7,11 +7,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.qualitune.jouleunit.ProfilingException;
-
 import be.ac.ulb.gpib.GPIBDevice;
 import be.ac.ulb.gpib.GPIBDeviceIdentifier;
-import be.ac.ulb.gpib.GPIBDriver;
 import be.ac.ulb.tools.OSUtils;
 
 /**
@@ -160,93 +157,5 @@ public class WT210Util {
 			initialized = true;
 		}
 		// no else.
-	}
-
-	/**
-	 * Sample Program (Output of Normal Measurement Data).
-	 * 
-	 * @return Execution status.
-	 * @throws IOException
-	 * @throws InterruptedException
-	 */
-	public static void main(String args[]) throws ProfilingException,
-			IOException, InterruptedException {
-
-		/* String for queries. */
-		String response;
-
-		int gpbiAddress = 1;
-		GPIBDevice device = getDeviceAtAddress(gpbiAddress);
-
-		if (device == null)
-			throw new ProfilingException("Cannot find device at GPIB address "
-					+ gpbiAddress + ".");
-		// no else.
-
-		initializeDevice(device, true);
-
-		Thread.sleep(1000);
-
-		/*
-		 * Read and display the measurement data (It is repeated 10 times in
-		 * this program).
-		 */
-		for (int index = 0; index < 10; index++) {
-
-			/*
-			 * Clear the extended event register (Read and trash the response).
-			 */
-			response = device.sendCommand("STATUS:EESR?");
-
-			/* Wait for the completion of the data updating. */
-			device.writeCommand("COMMUNICATE:WAIT 1");
-
-			/* Read out the measurement data. */
-			response = device.sendCommand("MEASURE:NORMAL:VALUE?");
-
-			// TODO No SYSO.
-			System.out.println(response + "," + System.currentTimeMillis());
-		}
-		// end for.
-	}
-
-	private static void listAvailableDevices() {
-		GPIBDeviceIdentifier deviceIdentifier;
-		// Get list of all found devices
-		Enumeration<?> gpibDevicesList;
-		gpibDevicesList = GPIBDeviceIdentifier.getDevices();
-		while (gpibDevicesList.hasMoreElements()) {
-			deviceIdentifier = (GPIBDeviceIdentifier) gpibDevicesList
-					.nextElement();
-			int addr = deviceIdentifier.getAddress();
-			if (addr > 0) {
-				GPIBDriver gpibDriver = deviceIdentifier.getDriver();
-				System.out.println("Found GPIB device with address '" + addr);
-
-				// GET IDN
-				GPIBDevice myDevice = new GPIBDevice(addr, gpibDriver);
-				try {
-					myDevice.open(1.0f);
-
-					try {
-						System.out.println(myDevice.sendCommand("ID"));
-					} catch (IOException e) {
-						System.out.println("No answer for the command 'ID'");
-						// e.printStackTrace();
-					}
-					try {
-						System.out.println(myDevice.sendCommand("*IDN?"));
-					} catch (IOException e) {
-						System.out.println("No answer for the command '*IDN?'");
-						// e.printStackTrace();
-					}
-					System.out.println("");
-
-				} catch (IOException e) {
-					System.out.println("Error on setting GPIB");
-					// e.printStackTrace();
-				}
-			}
-		}
 	}
 }
