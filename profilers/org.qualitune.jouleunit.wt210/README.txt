@@ -9,7 +9,7 @@ Requires the JNI library for Java that is public available under
 http://download.oracle.com/javase/6/docs/technotes/guides/jni/
 
 Besides, the GPIB Java interface provided by Jean-Michel DRICOT is required
-Available under http://cs.ulb.ac.be/projects/jpib/
+http://jpib.sourceforge.net/
 
 To execute the GPIB-based profiler, make sure that the dlls in the lib
 directory of this project are registered at your systems PATH configuration.
