@@ -1,6 +1,6 @@
 <project name="JouleUnit Dist" basedir="." default="jar">
 
-	<property name="version.number" value="_v0.11"/>
+	<property name="version.number" value="_v0.2"/>
 
 	<property name="build.dir" value="classes"/>
 
@@ -42,7 +42,11 @@
 	
     <property name="ECLIPSE_HOME" value="../../../../../../Eclipses/Eclipse 3.7"/>
 
-	<path id="junit4.classpath">
+	<path id="ntp.classpath">
+        <pathelement location="../org.qualitune.jouleunit/lib/commons-net-3.0.1.jar"/>
+    </path>
+    
+		<path id="junit4.classpath">
         <pathelement location="${ECLIPSE_HOME}/plugins/org.junit_4.8.2.v4_8_2_v20110321-1705/junit.jar"/>
         <pathelement location="${ECLIPSE_HOME}/plugins/org.hamcrest.core_1.1.0.v20090501071000.jar"/>
     </path>
@@ -66,10 +70,12 @@
     	</copy>
     	<copy file="${src.dir.jouleunit}/../LICENSE.txt" todir="${project.dir.jouleunit}"/>
     	<copy file="${src.dir.jouleunit}/../README.txt" todir="${project.dir.jouleunit}"/>
-        <javac srcdir="${src.dir.jouleunit}" destdir="${project.dir.jouleunit}"/>
+        <javac srcdir="${src.dir.jouleunit}" destdir="${project.dir.jouleunit}">
+          <classpath refid="ntp.classpath"/>
+        </javac>
     </target>
 
-    <target name="compile.android" depends="compile.jouleunit">
+    <target name="compile.android" depends="compile.jouleunit,compile.wt210">
     	<mkdir dir="${project.dir.jouleunit.android}"/>
         <mkdir dir="${project.dir.jouleunit.android.src}"/>
     	<copy todir="${project.dir.jouleunit.android.src}">
@@ -79,7 +85,8 @@
         <javac srcdir="${src.dir.jouleunit.android}" destdir="${project.dir.jouleunit.android}">
             <classpath>
                 <dirset dir="${project.dir.jouleunit}"/>
-            </classpath>
+                <dirset dir="${project.dir.jouleunit.wt210}"/>
+                </classpath>
 	    </javac>
     </target>
 	
@@ -169,7 +176,7 @@
             <classpath>
                 <dirset dir="${project.dir.jouleunit}"/>
             </classpath>
-            <classpath refid="junit4.classpath"/>
+            <classpath refid="ntp.classpath"/>
         </javac>
 	</target>
 
