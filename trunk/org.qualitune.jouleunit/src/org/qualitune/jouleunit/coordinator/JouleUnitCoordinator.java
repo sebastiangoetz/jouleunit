@@ -55,12 +55,12 @@ public abstract class JouleUnitCoordinator {
 
 			for (int run = 1; run <= runs; run++) {
 
-				if (idleTime > 0)
-					profileIdleConsumption(idleTime);
-				// no else.
-
-				reportProgress("Run #" + run + " of " + runs + " ...");
 				try {
+					if (idleTime > 0)
+						profileIdleConsumption(idleTime);
+					// no else.
+
+					reportProgress("Run #" + run + " of " + runs + " ...");
 					runTestCases();
 				}
 
@@ -134,11 +134,8 @@ public abstract class JouleUnitCoordinator {
 	 * @param isHwProfilingEnabled
 	 *            Indicates whether or not to profile further hardware
 	 *            information such as CPU utilization or display brightness.
-	 * @param exportDir
-	 *            Absolute location of directory to export test results.
 	 */
-	public void runTestRun(int runs, int idleTime,
-			boolean isHwProfilingEnabled, String exportDir) {
+	public void runTestRun(int runs, int idleTime, boolean isHwProfilingEnabled) {
 
 		if (runs <= 0)
 			runs = 1;
@@ -189,7 +186,7 @@ public abstract class JouleUnitCoordinator {
 
 			undeployTestCases();
 
-			propagateResults(exportDir);
+			propagateResults();
 		}
 
 		catch (ProfilingException e) {
@@ -199,11 +196,15 @@ public abstract class JouleUnitCoordinator {
 
 	/**
 	 * Helper method to compute the device under test's timestamp offset to UTC
-	 * based on the network time protocoll. The timestamp offset of the test
+	 * based on the network time protocol. The timestamp offset of the test
 	 * runner will be computed automatically and is not part of this method's
 	 * invocation.
+	 * 
+	 * @throws ProfilingException
+	 *             Thrown, if the timestamp computation fails.
 	 */
-	protected abstract void computeDutTimestampOffset();
+	protected abstract void computeDutTimestampOffset()
+			throws ProfilingException;
 
 	/**
 	 * Helper method to deploy the test cases or workload application on the
@@ -219,8 +220,10 @@ public abstract class JouleUnitCoordinator {
 	 * 
 	 * @param time
 	 *            The number of seconds to profile the idle consumption.
+	 * @throws ProfilingException
+	 *             Thrown, if idle profiling fails.
 	 */
-	protected void profileIdleConsumption(int time) {
+	protected void profileIdleConsumption(int time) throws ProfilingException {
 		reportProgress("Profile idle energy consumption ...");
 
 		try {
@@ -239,18 +242,18 @@ public abstract class JouleUnitCoordinator {
 			testSuiteProfile.addTestCase(profile);
 		}
 
-		catch (InterruptedException e1) {
-			reportError("Exception during idle profiling: " + e1.getMessage());
+		catch (InterruptedException e) {
+			/* Not important. */
 		}
 	}
 
 	/**
 	 * Helper method to evaluate and propagate the profiling results.
 	 * 
-	 * @param exportDir
-	 *            Absolute location of directory to export to results to.
+	 * @throws ProfilingException
+	 *             Thrown, if test result propagation fails.
 	 */
-	protected abstract void propagateResults(String exportDir);
+	protected abstract void propagateResults() throws ProfilingException;
 
 	/**
 	 * Helper method to report {@link Exception}s during profiling
@@ -289,8 +292,11 @@ public abstract class JouleUnitCoordinator {
 	 * 
 	 * @param profiler
 	 *            The {@link JouleProfiler} which profiling shall be terminated.
+	 * @throws ProfilingException
+	 *             Thrown, if stopping the energy profiling fails.
 	 */
-	protected void stopEnergyProfiling(JouleProfiler profiler) {
+	protected void stopEnergyProfiling(JouleProfiler profiler)
+			throws ProfilingException {
 		/*
 		 * Wait a second to avoid exceptions due to too sharp profiling time
 		 * stamps.
@@ -310,14 +316,20 @@ public abstract class JouleUnitCoordinator {
 	/**
 	 * Helper method to create, initialize and start the extra hardware
 	 * profiling (e.g., CPU utilization).
+	 * 
+	 * @throws ProfilingException
+	 *             Thrown, if starting the hardware profiling fails.
 	 */
-	protected abstract void startHardwareProfiling();
+	protected abstract void startHardwareProfiling() throws ProfilingException;
 
 	/**
 	 * Helper method to stop the extra hardware profiling (e.g., CPU
 	 * utilization).
+	 * 
+	 * @throws ProfilingException
+	 *             Thrown, if stopping the HW service fails.
 	 */
-	protected abstract void stopHardwareProfiling();
+	protected abstract void stopHardwareProfiling() throws ProfilingException;
 
 	/**
 	 * Helper method to undeploy the test cases or workload application from the
