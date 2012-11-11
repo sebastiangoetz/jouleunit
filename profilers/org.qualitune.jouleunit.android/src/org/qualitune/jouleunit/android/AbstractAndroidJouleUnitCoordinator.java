@@ -1,5 +1,10 @@
 package org.qualitune.jouleunit.android;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
+
 import org.qualitune.jouleunit.CompositeJouleProfiler;
 import org.qualitune.jouleunit.JouleProfiler;
 import org.qualitune.jouleunit.ProfilingException;
@@ -14,6 +19,9 @@ import org.qualitune.jouleunit.wt210.WT210Profiler;
  */
 public abstract class AbstractAndroidJouleUnitCoordinator extends
 		JouleUnitCoordinator {
+
+	/** Thread used to run the logcat process. */
+	private Thread logCatThread;
 
 	/** Responsible to receive logged events from the device under test. */
 	private LogOutputReceiver logOutputReceiver;
@@ -40,7 +48,7 @@ public abstract class AbstractAndroidJouleUnitCoordinator extends
 	 * @see org.qualitune.jouleunit.coordinator.JouleUnitCoordinator#
 	 * computeDutTimestampOffset()
 	 */
-	protected void computeDutTimestampOffset() {
+	protected void computeDutTimestampOffset() throws ProfilingException {
 		/* Clear the log and start listening to logged events. */
 		clearLog();
 		startLogReading();
@@ -48,81 +56,59 @@ public abstract class AbstractAndroidJouleUnitCoordinator extends
 		reportProgress("Compute time synchronization offset ...");
 
 		/* If necessary, the HW Service should be shipped to the device. */
-		/* TODO This is still eclipse-specific code. */
-		// Bundle fragmentBundle = Platform
-		// .getBundle("org.qualitune.jouleunit.adtfragment");
-		// if (fragmentBundle != null) {
-		// reportProgress("Install hardware profiling service ...");
-		//
-		// try {
-		// URL apkURL = fragmentBundle
-		// .getEntry("/resources/org.qualitune.jouleunit.android.hwservice.apk");
-		// if (apkURL != null) {
-		// File apkFile = new File(FileLocator.toFileURL(apkURL)
-		// .getFile());
-		//
-		// /* Copy APK file to temporary directory. */
-		// String tempdir = System.getProperty("java.io.tmpdir")
-		// + "JouleUnit";
-		// File tempDir = new File(tempdir);
-		// boolean success = true;
-		//
-		// if (!tempDir.isDirectory())
-		// success = tempDir.mkdir();
-		// // no else.
-		//
-		// if (success) {
-		// File tmpFile = File.createTempFile(
-		// "org.qualitune.jouleunit.android.hwservice",
-		// ".apk", tempDir);
-		//
-		// /* Copy file. */
-		// FileChannel source = null;
-		// FileChannel destination = null;
-		//
-		// try {
-		// source = new FileInputStream(apkFile).getChannel();
-		// destination = new FileOutputStream(tmpFile)
-		// .getChannel();
-		// destination.transferFrom(source, 0, source.size());
-		// } finally {
-		// if (source != null)
-		// source.close();
-		// // no else.
-		// if (destination != null)
-		// destination.close();
-		// // no else.
-		// }
-		//
-		// /* Install apk on device under test. */
-		// if (tmpFile.exists()) {
-		// String command = "adb install '"
-		// + tmpFile.getAbsolutePath() + "'";
-		// executeAdbCommand(command);
-		// }
-		//
-		// else
-		// reportError("The Hardware Service application could not be found. Thus, it cannot be installed.");
-		//
-		// tmpFile.deleteOnExit();
-		// } else
-		// reportError("The Hardware Service application could not be found. Thus, it cannot be installed.");
-		// }
-		//
-		// else
-		// reportError("Could not copy Hardware profiling service to tmp directory.");
-		// }
-		//
-		// catch (Exception e) {
-		// reportError("Error during installation of HW service: "
-		// + e.getMessage());
-		// }
-		// }
-		//
-		// else
-		// reportError("The Hardware Service application could not be found. Thus, it cannot be installed.");
+		File apkFile = getHardwareServiceFile();
 
-		final String command = "am startservice -a 'org.qualitune.jouleunit.android.TimeSyncService'";
+		/* Install apk on device under test. */
+		if (null != apkFile && apkFile.exists()) {
+			/* Copy APK file to temporary directory. */
+			String tempdir = System.getProperty("java.io.tmpdir") + "JouleUnit";
+			File tempDir = new File(tempdir);
+			boolean success = true;
+
+			if (!tempDir.isDirectory())
+				success = tempDir.mkdir();
+			// no else.
+
+			if (success) {
+				try {
+					File tmpFile = File.createTempFile(
+							"org.qualitune.jouleunit.android.hwservice",
+							".apk", tempDir);
+
+					/* Copy file. */
+					FileChannel source = null;
+					FileChannel destination = null;
+
+					try {
+						source = new FileInputStream(apkFile).getChannel();
+						destination = new FileOutputStream(tmpFile)
+								.getChannel();
+						destination.transferFrom(source, 0, source.size());
+					} finally {
+						if (source != null)
+							source.close();
+						// no else.
+						if (destination != null)
+							destination.close();
+						// no else.
+					}
+
+					installApk(tmpFile.getAbsolutePath());
+					tmpFile.deleteOnExit();
+				}
+
+				catch (Exception e) {
+					reportError("Error during installation of HW service: "
+							+ e.getMessage());
+				}
+			} else
+				reportError("The Hardware Service application could not be found. Thus, it cannot be installed.");
+		}
+
+		else
+			reportError("The Hardware Service application could not be found. Thus, it cannot be installed.");
+
+		final String command = "shell am startservice -a 'org.qualitune.jouleunit.android.TimeSyncService'";
 
 		if (null != logOutputReceiver)
 			logOutputReceiver.setLastRequestForTimeStamp(System
@@ -152,102 +138,6 @@ public abstract class AbstractAndroidJouleUnitCoordinator extends
 		return new LogOutputReceiver(testSuiteProfile, this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.android.ide.eclipse.adt.internal.launch.junit.runtime.
-	 * JouleUnitCoordinator#deployTestCases()
-	 */
-	protected void deployTestCases() throws ProfilingException {
-
-		/* TODO APK deployment. */
-		// AdtPlugin.printToConsole(mLaunchInfo.getProject(),
-		// "Try to resign APK under test...");
-		//
-		// File apkFile = new File(apkLocation);
-		// File resignedApkFile = null;
-		//
-		// /* Resign. */
-		// boolean success = false;
-		// if (apkFile.exists()) {
-		//
-		// resignedApkFile = new File(apkLocation.substring(0,
-		// apkLocation.length() - 4)
-		// + "_resigned.apk");
-		// ResignerLogic.checkEnvironment();
-		//
-		// try {
-		// ResignerLogic.resign(apkFile.getAbsolutePath(),
-		// resignedApkFile.getAbsolutePath());
-		// success = true;
-		// }
-		//
-		// catch (Exception e) {
-		// AdtPlugin.log(e, "Exception during resign of APK '"
-		// + apkLocation + "' : " + e.getMessage());
-		// reportErrorMessage("Error during resign of APK: "
-		// + e.getMessage());
-		// }
-		// }
-		//
-		// else
-		// reportErrorMessage("The APK file '" + apkLocation
-		// + "' cannot be found.");
-		//
-		// /* Install apk on device under test. */
-		// if (success && null != resignedApkFile) {
-		// AdtPlugin.printToConsole(mLaunchInfo.getProject(),
-		// "Install APK under test...");
-		//
-		// try {
-		// IDevice device = mLaunchInfo.getDevice();
-		// String command = "adb install \""
-		// + resignedApkFile.getAbsolutePath() + "\"";
-		//
-		// device.executeShellCommand(command,
-		// new DefaultShellOutputReceiver());
-		// }
-		//
-		// catch (TimeoutException e) {
-		// reportErrorMessage("Error during installation of APK under test: "
-		// + e.getMessage());
-		// AdtPlugin.log(
-		// e,
-		// "Error during installation of APK under test: "
-		// + e.getMessage());
-		// } catch (AdbCommandRejectedException e) {
-		// reportErrorMessage("Error during installation of APK under test: "
-		// + e.getMessage());
-		// AdtPlugin.log(
-		// e,
-		// "Error during installation of APK under test: "
-		// + e.getMessage());
-		// } catch (ShellCommandUnresponsiveException e) {
-		// reportErrorMessage("Error during installation of APK under test: "
-		// + e.getMessage());
-		// AdtPlugin.log(
-		// e,
-		// "Error during installation of APK under test: "
-		// + e.getMessage());
-		// } catch (IOException e) {
-		// reportErrorMessage("Error during installation of APK under test: "
-		// + e.getMessage());
-		// AdtPlugin.log(
-		// e,
-		// "Error during installation of APK under test: "
-		// + e.getMessage());
-		// } catch (Exception e) {
-		// reportErrorMessage("Error during installation of APK under test: "
-		// + e.getMessage());
-		// AdtPlugin.log(
-		// e,
-		// "Error during installation of APK under test: "
-		// + e.getMessage());
-		// }
-		// }
-		// // no else.
-	}
-
 	/**
 	 * Helper method to execute a given ADB command.
 	 * 
@@ -273,6 +163,36 @@ public abstract class AbstractAndroidJouleUnitCoordinator extends
 	 */
 	protected abstract void executeAdbCommand(String cmd,
 			LogOutputReceiver logOutputReceiver) throws ProfilingException;
+
+	/**
+	 * Helper method that returns a {@link File} object that leads to the APK
+	 * file of the hardware profiling service.
+	 * 
+	 * @return The {@link File} object that leads to the APK file of the
+	 *         hardware profiling service.
+	 */
+	protected abstract File getHardwareServiceFile();
+
+	/**
+	 * Helper method to install an APK on the device under test.
+	 * 
+	 * @param path
+	 *            The path to the APK file in the file system.
+	 * @throws ProfilingException
+	 *             Thrown, if installation fails.
+	 */
+	protected void installApk(String path) throws ProfilingException {
+		File apkFile = new File(path);
+
+		if (null != apkFile && !apkFile.exists())
+			throw new ProfilingException("Error: APK file "
+					+ apkFile.getAbsolutePath() + " not found.");
+		// no else.
+
+		String cmd = "install -r \"" + apkFile.getAbsolutePath() + "\"";
+		reportProgress("Install APK ...");
+		executeAdbCommand(cmd);
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -350,7 +270,7 @@ public abstract class AbstractAndroidJouleUnitCoordinator extends
 	 */
 	protected void startHardwareProfiling() {
 		reportProgress("Start Hardware probe service...");
-		String command = "am startservice -a 'org.qualitune.jouleunit.android.HWService'";
+		String command = "shell am startservice -a 'org.qualitune.jouleunit.android.HWService'";
 
 		try {
 			executeAdbCommand(command);
@@ -367,7 +287,8 @@ public abstract class AbstractAndroidJouleUnitCoordinator extends
 	 * #stopEnergyProfiling(org.qualitune.jouleunit.JouleProfiler)
 	 */
 	@Override
-	protected void stopEnergyProfiling(JouleProfiler profiler) {
+	protected void stopEnergyProfiling(JouleProfiler profiler)
+			throws ProfilingException {
 		stopLogReading();
 
 		super.stopEnergyProfiling(profiler);
@@ -376,11 +297,11 @@ public abstract class AbstractAndroidJouleUnitCoordinator extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.android.ide.eclipse.adt.internal.launch.junit.runtime.
-	 * JouleUnitCoordinator#stopHardwareProfiling()
+	 * @see org.qualitune.jouleunit.coordinator.JouleUnitCoordinator#
+	 * stopHardwareProfiling()
 	 */
-	protected void stopHardwareProfiling() {
-		String command = "am startservice -a 'org.qualitune.jouleunit.android.HWServiceStopService'";
+	protected void stopHardwareProfiling() throws ProfilingException {
+		String command = "shell am startservice -a 'org.qualitune.jouleunit.android.HWServiceStopService'";
 
 		try {
 			executeAdbCommand(command);
@@ -389,79 +310,22 @@ public abstract class AbstractAndroidJouleUnitCoordinator extends
 		}
 
 		reportProgress("Hardware probe service stopped.");
+
+		uninstallApk("org.qualitune.jouleunit.android.hwservice");
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Helper method to install an APK on the device under test.
 	 * 
-	 * @see com.android.ide.eclipse.adt.internal.launch.junit.runtime.
-	 * JouleUnitCoordinator#undeployTestCases()
+	 * @param packageID
+	 *            The package ID of the APK to be uninstalled.
+	 * @throws ProfilingException
+	 *             Thrown, if installation fails.
 	 */
-	protected void undeployTestCases() throws ProfilingException {
-		// /* Try to uninstall apks from the device under test. */
-		// List<String> packageNames = new ArrayList<String>();
-		// packageNames.add(mLaunchInfo.getAppPackage());
-
-		/* TODO Uninstall APKs on device under test. */
-		// for (String packageName : packageNames) {
-		// AdtPlugin.printToConsole(mLaunchInfo.getProject(),
-		// "Uninstall APK "
-		// + packageName + " ...");
-		//
-		// try {
-		// mLaunchInfo.getDevice().executeShellCommand(
-		// "adb uninstall " + packageName,
-		// new AbstractShellOutputReceiver() {
-		//
-		// @Override
-		// public void addOutput(byte[] arg0, int arg1,
-		// int arg2) {
-		// System.out.println(new String(arg0));
-		// }
-		// });
-		// AdtPlugin.printToConsole(mLaunchInfo.getProject(),
-		// "... success");
-		// }
-		//
-		// catch (TimeoutException e) {
-		// reportError("Error during deinstallation of APK: "
-		// + e.getMessage());
-		// AdtPlugin
-		// .log(e,
-		// "Error during deinstallation of APK: "
-		// + e.getMessage());
-		// } catch (AdbCommandRejectedException e) {
-		// reportError("Error during deinstallation of APK: "
-		// + e.getMessage());
-		// AdtPlugin
-		// .log(e,
-		// "Error during deinstallation of APK: "
-		// + e.getMessage());
-		// } catch (ShellCommandUnresponsiveException e) {
-		// reportError("Error during deinstallation of APK: "
-		// + e.getMessage());
-		// AdtPlugin
-		// .log(e,
-		// "Error during deinstallation of APK: "
-		// + e.getMessage());
-		// } catch (IOException e) {
-		// reportError("Error during deinstallation of APK: "
-		// + e.getMessage());
-		// AdtPlugin
-		// .log(e,
-		// "Error during deinstallation of APK: "
-		// + e.getMessage());
-		// } catch (Exception e) {
-		// reportError("Error during deinstallation of APK: "
-		// + e.getMessage());
-		// AdtPlugin
-		// .log(e,
-		// "Error during deinstallation of APK: "
-		// + e.getMessage());
-		// }
-		// }
-		// // end for.
-
+	protected void uninstallApk(String packageID) throws ProfilingException {
+		String cmd = "uninstall  \"" + packageID + "\"";
+		reportProgress("Uninstall APK " + packageID + " ...");
+		executeAdbCommand(cmd);
 	}
 
 	/**
@@ -478,9 +342,6 @@ public abstract class AbstractAndroidJouleUnitCoordinator extends
 			/* Not important. Can be ignored. */
 		}
 	}
-
-	/** TODO */
-	private Thread logCatThread;
 
 	/**
 	 * Starts reading from the log due to a manually implemented receiver, as
