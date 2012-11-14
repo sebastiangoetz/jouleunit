@@ -31,6 +31,9 @@ public class TestSuiteProfile {
 	/** The {@link EnergyProfile} belonging to this {@link TestSuiteProfile}. */
 	private EnergyProfile energyProfile;
 
+	/** Whether or not to use timestamp correction between test runner and PUT. */
+	private boolean isTimestampCorrectionEnabled = true;
+
 	/**
 	 * Events logged during profiling. They consist of a unique ID (a
 	 * {@link String}) and a time stamp (test runner time).
@@ -76,7 +79,10 @@ public class TestSuiteProfile {
 	 * @return The adapted time stamp in milliseconds.
 	 */
 	public long adaptPutTimeStamp(long timeStamp) {
-		return timeStamp + putTimeStampOffset;
+		if (isTimestampCorrectionEnabled)
+			return timeStamp + putTimeStampOffset;
+		else
+			return timeStamp;
 	}
 
 	/**
@@ -88,7 +94,10 @@ public class TestSuiteProfile {
 	 * @return The adapted time stamp in milliseconds.
 	 */
 	public double adaptTrTimeStamp(long timeStamp) {
-		return timeStamp / 1000000d + getTrTimeStampOffsetFromNanos();
+		if (isTimestampCorrectionEnabled)
+			return timeStamp / 1000000d + getTrTimeStampOffsetFromNanos();
+		else
+			return timeStamp / 1000000d;
 	}
 
 	/**
@@ -270,6 +279,16 @@ public class TestSuiteProfile {
 	}
 
 	/**
+	 * Indicates whether or not to use timestamp correction between test runner
+	 * and PUT.
+	 * 
+	 * @return If <code>true</code> timestamp correction is enabled.
+	 */
+	public boolean isTimestampCorrectionEnabled() {
+		return isTimestampCorrectionEnabled;
+	}
+
+	/**
 	 * Logs an events during profiling. Events consist of a unique ID (a
 	 * {@link String}) and a time stamp (test runner time).
 	 * 
@@ -303,6 +322,18 @@ public class TestSuiteProfile {
 	 */
 	public void setPutTimeStampOffset(long timeStampOffset) {
 		this.putTimeStampOffset = timeStampOffset;
+	}
+
+	/**
+	 * Sets whether or not to use timestamp correction between test runner and
+	 * PUT.
+	 * 
+	 * @param isTimestampCorrectionEnabled
+	 *            If <code>true</code> timestamp correction is enabled.
+	 */
+	public void setTimestampCorrectionEnabled(
+			boolean isTimestampCorrectionEnabled) {
+		this.isTimestampCorrectionEnabled = isTimestampCorrectionEnabled;
 	}
 
 	/**
@@ -455,24 +486,35 @@ public class TestSuiteProfile {
 	 * @return The profiled energy consumption during the test cases execution.
 	 */
 	protected double getConsumedEnergy(TestCaseProfile profile) {
-		if (trTimeStampOffset == 0)
-			computeTrTimeStampOffset();
-		// no else.
 
-		/* Convert PUT time int test runner nano seconds. */
 		long startTime = profile.getStartTime();
-		startTime += putTimeStampOffset;
-		/* Start time in millis. */
-		startTime -= trTimeStampOffset;
-		/* Start time in nanos. */
-		startTime = (startTime - trNanoTimeOffset) * 1000000;
-
 		long endTime = profile.getEndTime();
-		endTime += putTimeStampOffset;
-		/* End time in millis. */
-		endTime -= trTimeStampOffset;
-		/* End time in nanos. */
-		endTime = (endTime - trNanoTimeOffset) * 1000000;
+
+		if (isTimestampCorrectionEnabled) {
+			if (trTimeStampOffset == 0)
+				computeTrTimeStampOffset();
+			// no else.
+
+			/* Convert PUT time int test runner nano seconds. */
+			startTime = profile.getStartTime();
+			startTime += putTimeStampOffset;
+			/* Start time in millis. */
+			startTime -= trTimeStampOffset;
+			/* Start time in nanos. */
+			startTime = (startTime - trNanoTimeOffset) * 1000000;
+
+			endTime = profile.getEndTime();
+			endTime += putTimeStampOffset;
+			/* End time in millis. */
+			endTime -= trTimeStampOffset;
+			/* End time in nanos. */
+			endTime = (endTime - trNanoTimeOffset) * 1000000;
+		}
+
+		else {
+			startTime = startTime * 1000000;
+			endTime = endTime * 1000000;
+		}
 
 		return energyProfile.getConsumedEnergy(startTime, endTime);
 	}
