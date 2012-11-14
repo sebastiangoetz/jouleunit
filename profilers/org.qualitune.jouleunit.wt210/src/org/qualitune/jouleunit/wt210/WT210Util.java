@@ -110,7 +110,7 @@ public class WT210Util {
 			device.writeCommand("VOLTAGE:RANGE 7.5V");
 
 			/* Current range = 0.5A. */
-			device.writeCommand("CURRENT:RANGE 0.5A");
+			device.writeCommand("CURRENT:RANGE 1A");
 
 			/* Update rate = 0.1s. */
 			device.writeCommand("SAMPLE:RATE 0.1S");
