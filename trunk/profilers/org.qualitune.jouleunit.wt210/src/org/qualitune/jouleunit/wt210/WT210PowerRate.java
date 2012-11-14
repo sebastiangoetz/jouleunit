@@ -94,6 +94,7 @@ public class WT210PowerRate extends AbstractPowerRate {
 			if (values.length > 2) {
 				try {
 					double powerRate = Double.parseDouble(values[2].trim()) * 1000;
+
 					if (positiveRatesAreConsumption)
 						return -powerRate;
 					else
