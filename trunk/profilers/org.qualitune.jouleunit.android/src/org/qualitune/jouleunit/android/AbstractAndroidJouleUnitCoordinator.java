@@ -8,7 +8,9 @@ import java.nio.channels.FileChannel;
 import org.qualitune.jouleunit.CompositeJouleProfiler;
 import org.qualitune.jouleunit.JouleProfiler;
 import org.qualitune.jouleunit.ProfilingException;
+import org.qualitune.jouleunit.android.logcat.ILogLineProcessor;
 import org.qualitune.jouleunit.android.logcat.LogOutputReceiver;
+import org.qualitune.jouleunit.android.logcat.TestCaseLogLineProcessor;
 import org.qualitune.jouleunit.coordinator.JouleUnitCoordinator;
 import org.qualitune.jouleunit.wt210.WT210Profiler;
 
@@ -24,7 +26,7 @@ public abstract class AbstractAndroidJouleUnitCoordinator extends
 	private Thread logCatThread;
 
 	/** Responsible to receive logged events from the device under test. */
-	private LogOutputReceiver logOutputReceiver;
+	protected LogOutputReceiver logOutputReceiver;
 
 	/** The GPIB addresses of all {@link WT210Profiler} used for profiling. */
 	private int[] profilerAdresses;
@@ -108,7 +110,7 @@ public abstract class AbstractAndroidJouleUnitCoordinator extends
 		else
 			reportError("The Hardware Service application could not be found. Thus, it cannot be installed.");
 
-		final String command = "shell am startservice -a 'org.qualitune.jouleunit.android.TimeSyncService'";
+		final String command = "am startservice -a 'org.qualitune.jouleunit.android.TimeSyncService'";
 
 		if (null != logOutputReceiver)
 			logOutputReceiver.setLastRequestForTimeStamp(System
@@ -208,8 +210,8 @@ public abstract class AbstractAndroidJouleUnitCoordinator extends
 			JouleProfiler profiler = null;
 
 			if (profilerAdresses.length == 0) {
-				profiler = new ProfilerDummy();
-				reportError("WARNING: No profiler address set. Use a dummy profiler instead.");
+				profiler = new AndroidProcJouleProfiler(this);
+				reportError("WARNING: No WT210 profiler address set. Use a software-based profiler instead.");
 			}
 
 			else {
@@ -246,8 +248,8 @@ public abstract class AbstractAndroidJouleUnitCoordinator extends
 
 				if (foundProfilers == 0) {
 					/* TODO Integrate proc profiler into run configuration. */
-					profiler = new ProfilerDummy();
-					reportError("WARNING: No profilers could be found. Use a dummy profiler instead.");
+					profiler = new AndroidProcJouleProfiler(this);
+					reportError("WARNING: No hardware-based profilers could be found. Try to use a software-based profiler instead.");
 				}
 			}
 
@@ -270,7 +272,12 @@ public abstract class AbstractAndroidJouleUnitCoordinator extends
 	 */
 	protected void startHardwareProfiling() {
 		reportProgress("Start Hardware probe service...");
-		String command = "shell am startservice -a 'org.qualitune.jouleunit.android.HWService'";
+
+		ILogLineProcessor testProcessor = new TestCaseLogLineProcessor(
+				logOutputReceiver);
+		logOutputReceiver.addLogLineProcessor(testProcessor);
+
+		String command = "am startservice -a 'org.qualitune.jouleunit.android.HWService'";
 
 		try {
 			executeAdbCommand(command);
@@ -301,7 +308,7 @@ public abstract class AbstractAndroidJouleUnitCoordinator extends
 	 * stopHardwareProfiling()
 	 */
 	protected void stopHardwareProfiling() throws ProfilingException {
-		String command = "shell am startservice -a 'org.qualitune.jouleunit.android.HWServiceStopService'";
+		String command = "am startservice -a 'org.qualitune.jouleunit.android.HWServiceStopService'";
 
 		try {
 			executeAdbCommand(command);
@@ -347,74 +354,81 @@ public abstract class AbstractAndroidJouleUnitCoordinator extends
 	 * Starts reading from the log due to a manually implemented receiver, as
 	 * the official solution always breaks.
 	 */
-	private void startLogReading() {
+	protected void startLogReading() {
 
-		/* Create a new output receiver. */
-		logOutputReceiver = createLogOutputReceiver();
+		/*
+		 * Check if log cat reading has been started yet (possible called
+		 * multiple times).
+		 */
+		if (null == logOutputReceiver) {
+			logOutputReceiver = createLogOutputReceiver();
 
-		/* Start the logcat in a different thread. */
-		logCatThread = new Thread("Logcat") { //$NON-NLS-1$
+			/* Start the logcat in a different thread. */
+			logCatThread = new Thread("Logcat") { //$NON-NLS-1$
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see java.lang.Thread#run()
-			 */
-			@Override
-			public void run() {
-				readLog();
-			}
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see java.lang.Thread#run()
+				 */
+				@Override
+				public void run() {
+					readLog();
+				}
 
-			/**
-			 * Helper method to read from the log.
-			 * 
-			 * @param device
-			 *            The IDevice whose log shall be read.
-			 */
-			private void readLog() {
+				/**
+				 * Helper method to read from the log.
+				 * 
+				 * @param device
+				 *            The IDevice whose log shall be read.
+				 */
+				private void readLog() {
 
-				while (null != logOutputReceiver
-						&& !logOutputReceiver.isCancelled()) {
+					while (null != logOutputReceiver
+							&& !logOutputReceiver.isCancelled()) {
 
-					/* TODO If the device is offline, wait 2 seconds. */
-					// while (device.isOnline() == false
-					// && logOutputReceiver != null
-					// && logOutputReceiver.isCancelled() == false) {
-					// try {
-					// sleep(2000);
-					// } catch (InterruptedException e) {
-					// return;
-					// }
-					// }
+						/* TODO If the device is offline, wait 2 seconds. */
+						// while (device.isOnline() == false
+						// && logOutputReceiver != null
+						// && logOutputReceiver.isCancelled() == false) {
+						// try {
+						// sleep(2000);
+						// } catch (InterruptedException e) {
+						// return;
+						// }
+						// }
 
-					if (logOutputReceiver == null
-							|| logOutputReceiver.isCancelled()) {
-						/*
-						 * Logcat was stopped/cancelled before the device became
-						 * ready.
-						 */
-						return;
-					}
+						if (logOutputReceiver == null
+								|| logOutputReceiver.isCancelled()) {
+							/*
+							 * Logcat was stopped/cancelled before the device
+							 * became ready.
+							 */
+							return;
+						}
 
-					try {
-						executeAdbCommand("logcat -v time", logOutputReceiver);
-					} catch (Exception e) {
-						reportError("Exception during receiving of log messages: "
-								+ e.getMessage());
-					}
+						try {
+							executeAdbCommand("logcat -v time",
+									logOutputReceiver);
+						} catch (Exception e) {
+							reportError("Exception during receiving of log messages: "
+									+ e.getMessage());
+						}
 
-					finally {
-						/* At this point the command is terminated. */
-						if (null != logOutputReceiver
-								&& logOutputReceiver.isCancelled())
-							logOutputReceiver = null;
-						// no else.
+						finally {
+							/* At this point the command is terminated. */
+							if (null != logOutputReceiver
+									&& logOutputReceiver.isCancelled())
+								logOutputReceiver = null;
+							// no else.
+						}
 					}
 				}
-			}
-			// end while.
-		};
-		logCatThread.start();
+				// end while.
+			};
+			logCatThread.start();
+		}
+		// no else.
 	}
 
 	/** Stops reading logged events after the test run terminated. */
