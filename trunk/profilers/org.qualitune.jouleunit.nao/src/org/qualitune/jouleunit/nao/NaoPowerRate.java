@@ -107,7 +107,7 @@ public class NaoPowerRate extends AbstractPowerRate {
 	 * @see
 	 * org.qualitune.eunit.profiler.EMeasuringValue#getChargingRateInMilliWatt()
 	 */
-	public long getPowerRate() {
+	public double getPowerRate() {
 		return Math.round(batteryCurrent
 				* (batteryVoltageMin + batteryVoltageMax) * 3);
 	}
