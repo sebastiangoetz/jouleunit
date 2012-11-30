@@ -3,11 +3,10 @@ package org.qualitune.jouleunit.android.logcat;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.qualitune.jouleunit.android.AbstractAndroidJouleUnitCoordinator;
-import org.qualitune.jouleunit.coordinator.TestCaseProfile;
 import org.qualitune.jouleunit.coordinator.TestSuiteProfile;
 
 /**
@@ -22,17 +21,8 @@ public class LogOutputReceiver extends MultiLineReceiver {
 	private final static DateFormat DATE_FORMATTER = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss.SSS");
 
-	/** Prefix of Log Cat messages that indicate a test cases run failed. */
-	private static final String LOG_CAT_FAILED_PREFIX = "failed: ";
-
-	/** Prefix of Log Cat messages that indicate a test cases run finished. */
-	private static final String LOG_CAT_FINISHED_PREFIX = "finished: ";
-
-	/** Prefix of Log Cat messages that indicate a test cases run started. */
-	private static final String LOG_CAT_STARTED_PREFIX = "started: ";
-
 	/** Tag for Log Cat messages that shall be filtered for test run evaluation. */
-	private static final String LOG_CAT_FILTER_TAG = "TestRunner";
+	public static final String LOG_CAT_FILTER_TAG = "TestRunner";
 
 	/** Tag for Log Cat messages that have been sent by the HW service. */
 	private static final String LOG_CAT_HARDWARE_SERVICE_TAG = "org.qualitune.jouleunit.android.hwservice";
@@ -44,25 +34,22 @@ public class LogOutputReceiver extends MultiLineReceiver {
 	private boolean isCancelled = false;
 
 	/**
-	 * A {@link Map} containing {@link TestCaseProfile}s for executed test cases
-	 * received by this {@link LogOutputReceiver}.
-	 */
-	private Map<String, TestCaseProfile> mExecutedTestCases;
-
-	/**
 	 * The time stamp in millis of the last request for a time stamp to
 	 * synchronize clocks.
 	 */
 	private long mLastRequestForTimeStamp = 0l;
 
+	/** The {@link ILogLineProcessor}s of this {@link LogOutputReceiver}. */
+	private List<ILogLineProcessor> mLineProcessors = new ArrayList<ILogLineProcessor>();
+
 	/**
 	 * The {@link AbstractAndroidJouleUnitCoordinator} that uses this
 	 * {@link LogOutputReceiver}.
 	 */
-	private AbstractAndroidJouleUnitCoordinator mCoordinator;
+	protected AbstractAndroidJouleUnitCoordinator mCoordinator;
 
 	/** The {@link TestSuiteProfile} to store the received events. */
-	private TestSuiteProfile mTestSuiteProfile;
+	protected TestSuiteProfile mTestSuiteProfile;
 
 	/**
 	 * Creates a new {@link LogOutputReceiver}.
@@ -79,9 +66,18 @@ public class LogOutputReceiver extends MultiLineReceiver {
 
 		setTrimLine(false);
 
-		mExecutedTestCases = new HashMap<String, TestCaseProfile>();
 		mTestSuiteProfile = profile;
 		mCoordinator = coordinator;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.android.ddmlib.IShellOutputReceiver#isCancelled()
+	 */
+	@Override
+	public boolean isCancelled() {
+		return isCancelled;
 	}
 
 	/*
@@ -97,69 +93,20 @@ public class LogOutputReceiver extends MultiLineReceiver {
 			/* Evaluate the logged events. */
 			for (String line : lines) {
 
-				/* Handle logged test events. */
-				if (line.matches("^\\d\\d-\\d\\d\\s\\d\\d:\\d\\d:\\d\\d\\.\\d\\d\\d\\sI/"
-						+ LOG_CAT_FILTER_TAG + ".*")) {
+				boolean processed = false;
 
-					String msgMsg = line.substring(line.indexOf("):") + 3);
-					String msgTime = line.substring(0, 18);
+				for (ILogLineProcessor processor : mLineProcessors) {
+					processed = processor.processLine(line);
 
-					if (msgMsg.startsWith(LOG_CAT_STARTED_PREFIX)) {
-						msgMsg = msgMsg.substring(
-								LOG_CAT_STARTED_PREFIX.length(),
-								msgMsg.length());
-
-						/* Create test case profile. */
-						TestCaseProfile profile = new TestCaseProfile();
-						profile.setId(msgMsg);
-						mExecutedTestCases.put(msgMsg, profile);
-
-						profile.setStartTime(logDateToMillis(msgTime));
-					}
-
-					else if (msgMsg.startsWith(LOG_CAT_FAILED_PREFIX)) {
-						msgMsg = msgMsg
-								.substring(LOG_CAT_FAILED_PREFIX.length(),
-										msgMsg.length());
-
-						TestCaseProfile profile = mExecutedTestCases
-								.get(msgMsg);
-
-						if (null != profile) {
-							profile.setEndTime(logDateToMillis(msgTime));
-							profile.setFailed(true);
-							mTestSuiteProfile.addTestCase(profile);
-							mCoordinator.reportError(msgMsg + " failed.");
-						} else
-							mCoordinator
-									.reportError("WARNING: Got failure of test case without start: "
-											+ msgMsg);
-					}
-
-					else if (msgMsg.startsWith(LOG_CAT_FINISHED_PREFIX)) {
-						msgMsg = msgMsg.substring(
-								LOG_CAT_FINISHED_PREFIX.length(),
-								msgMsg.length());
-
-						TestCaseProfile profile = mExecutedTestCases
-								.remove(msgMsg);
-
-						if (null != profile) {
-							profile.setEndTime(logDateToMillis(msgTime));
-							mTestSuiteProfile.addTestCase(profile);
-							mCoordinator.reportProgress("  " + msgMsg
-									+ " finished.");
-						} else
-							mCoordinator
-									.reportError("WARNING: Got end of test case without start: "
-											+ msgMsg);
-					}
+					if (processed)
+						break;
 					// no else.
 				}
+				// end for.
 
 				/* Handle logged HW events. */
-				else if (line
-						.matches("^\\d\\d-\\d\\d\\s\\d\\d:\\d\\d:\\d\\d\\.\\d\\d\\d\\sI/"
+				if (!processed
+						&& line.matches("^\\d\\d-\\d\\d\\s\\d\\d:\\d\\d:\\d\\d\\.\\d\\d\\d\\sI/"
 								+ LOG_CAT_HARDWARE_SERVICE_TAG + ".*")) {
 
 					String msgMsg = line.substring(line.indexOf("):") + 3);
@@ -201,8 +148,8 @@ public class LogOutputReceiver extends MultiLineReceiver {
 				}
 
 				/* Handle logged time sync events. */
-				else if (line
-						.matches("^\\d\\d-\\d\\d\\s\\d\\d:\\d\\d:\\d\\d\\.\\d\\d\\d\\sD/"
+				else if (!processed
+						&& line.matches("^\\d\\d-\\d\\d\\s\\d\\d:\\d\\d:\\d\\d\\.\\d\\d\\d\\sD/"
 								+ LOG_CAT_TIME_SYNC_TAG + ".*")) {
 					long lastPossibleTime = System.currentTimeMillis();
 
@@ -228,14 +175,19 @@ public class LogOutputReceiver extends MultiLineReceiver {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Adds a given {@link ILogLineProcessor} to this {@link LogOutputReceiver}.
 	 * 
-	 * @see com.android.ddmlib.IShellOutputReceiver#isCancelled()
+	 * @param processor
+	 *            The {@link ILogLineProcessor} to be added.
+	 * @return <code>true</code> if the given {@link ILogLineProcessor} has been
+	 *         added.
 	 */
-	@Override
-	public boolean isCancelled() {
-		return isCancelled;
+	public boolean addLogLineProcessor(ILogLineProcessor processor) {
+		if (!mLineProcessors.contains(processor))
+			return mLineProcessors.add(processor);
+		else
+			return false;
 	}
 
 	/**
@@ -243,6 +195,18 @@ public class LogOutputReceiver extends MultiLineReceiver {
 	 */
 	public void cancel() {
 		this.isCancelled = true;
+	}
+
+	/**
+	 * Removes an {@link ILogLineProcessor} from this {@link LogOutputReceiver}.
+	 * 
+	 * @param processor
+	 *            The {@link ILogLineProcessor} to be removed.
+	 * @return <code>true</code> if the {@link ILogLineProcessor} has been
+	 *         removed.
+	 */
+	public boolean removeLogLineProcessor(ILogLineProcessor processor) {
+		return mLineProcessors.remove(processor);
 	}
 
 	/**
@@ -312,7 +276,7 @@ public class LogOutputReceiver extends MultiLineReceiver {
 	 *            The log date as a {@link String} as given by log cat.
 	 * @return The given date as a long.
 	 */
-	private long logDateToMillis(String logDate) {
+	protected long logDateToMillis(String logDate) {
 
 		try {
 			@SuppressWarnings("deprecation")
