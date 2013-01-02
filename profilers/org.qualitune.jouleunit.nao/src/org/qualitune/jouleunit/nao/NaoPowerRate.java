@@ -1,8 +1,11 @@
 package org.qualitune.jouleunit.nao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.print.attribute.HashAttributeSet;
 
 import org.qualitune.jouleunit.AbstractPowerRate;
 import org.qualitune.jouleunit.PowerRate;
@@ -36,23 +39,7 @@ public class NaoPowerRate extends AbstractPowerRate {
 	/** The Nao's battery remaining capacity in <code>mJ</code>. */
 	protected double remainingCapacity;
 
-	/**
-	 * The identifiers of the Nao sensors this {@link NaoPowerRate} has to
-	 * request.
-	 */
-	protected static List<Integer> identifiers = new ArrayList<Integer>(5);
-	static {
-		identifiers
-				.add(NaoConstants.SENSOR_ID_DEVICE_SUBDEVICELIST_BATTERY_CHARGE_SENSOR_CELLVOLTAGEMIN);
-		identifiers
-				.add(NaoConstants.SENSOR_ID_DEVICE_SUBDEVICELIST_BATTERY_CHARGE_SENSOR_CELLVOLTAGEMAX);
-		identifiers
-				.add(NaoConstants.SENSOR_ID_DEVICE_SUBDEVICELIST_BATTERY_CURRENT_SENSOR_VALUE);
-		identifiers
-				.add(NaoConstants.SENSOR_ID_DEVICE_SUBDEVICELIST_BATTERY_CHARGE_SENSOR_REMAININGCAPACITY);
-		identifiers
-				.add(NaoConstants.SENSOR_ID_DEVICE_SUBDEVICELIST_BATTERY_CHARGE_SENSOR_STATUS);
-	}
+	private static Map<String, List<Integer>> identifiersForNao = new HashMap<String, List<Integer>>();
 
 	/**
 	 * Creates a new {@link NaoPowerRate}.
@@ -77,6 +64,29 @@ public class NaoPowerRate extends AbstractPowerRate {
 
 		Map<String, String> values;
 		try {
+
+			List<Integer> identifiers = identifiersForNao.get(ipAddress);
+
+			/* Probably compute offset. */
+			if (null == identifiers) {
+				List<String> ids = NaoUtil.getSensorValueIDs(nao);
+
+				identifiers = new ArrayList<Integer>(5);
+				identifiers
+						.add(ids.indexOf(NaoConstants.SENSOR_NAME_BATTERY_CELL_VOLTAGE_MIN));
+				identifiers
+						.add(ids.indexOf(NaoConstants.SENSOR_NAME_BATTERY_CELL_VOLTAGE_MAX));
+				identifiers.add(ids
+						.indexOf(NaoConstants.SENSOR_NAME_BATTERY_CURRENT));
+				identifiers
+						.add(ids.indexOf(NaoConstants.SENSOR_NAME_BATTERY_REMAINING_CAPACITY));
+				identifiers.add(ids
+						.indexOf(NaoConstants.SENSOR_NAME_BATTERY_STATUS));
+
+				identifiersForNao.put(ipAddress, identifiers);
+			}
+			// no else.
+
 			values = NaoUtil.getSensorValues(nao, identifiers);
 			batteryCurrent = Double.parseDouble(values
 					.get(NaoConstants.SENSOR_NAME_BATTERY_CURRENT));
@@ -87,8 +97,10 @@ public class NaoPowerRate extends AbstractPowerRate {
 			remainingCapacity = Double.parseDouble(values
 					.get(NaoConstants.SENSOR_NAME_BATTERY_REMAINING_CAPACITY));
 
-			isPowerAdapterOnline = getBit(Integer.parseInt(values
-					.get(NaoConstants.SENSOR_NAME_BATTERY_STATUS)), 7);
+			// TODO FIXME
+			isPowerAdapterOnline = false;
+			// isPowerAdapterOnline = getBit(Integer.parseInt(values
+			// .get(NaoConstants.SENSOR_NAME_BATTERY_STATUS)), 7);
 
 			timeStamp = Math.round(Double.parseDouble(values
 					.get(NaoConstants.TIME_STAMP)) * 1000000000);
