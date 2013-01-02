@@ -61,6 +61,7 @@ public class NaoProfiler extends AbstractJouleProfiler {
 
 		this.ip = ip;
 		this.port = port;
+		this.nao = new NaoData(ip, port);
 	}
 
 	/**
