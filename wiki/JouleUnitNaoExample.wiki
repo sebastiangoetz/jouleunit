@@ -1,6 +1,0 @@
-= JouleUnit Nao Example =
-This page documents a small JouleUnit example to profile and test an application developed for Nao humanoid robots.
-
-The example is documented in a paper that is currently in a conference submission process. Thus, further details will be public available later (probably in January 2012).
-
-The source code of the example can be found here http://code.google.com/p/jouleunit/source/browse/#svn%2Ftrunk%2Fexamples%2Forg.qualitune.jouleunit.example.nao
