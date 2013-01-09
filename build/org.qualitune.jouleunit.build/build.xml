@@ -40,15 +40,15 @@
 
 	<property name="jar.dir" value="jars"/>
 	
-    <property name="ECLIPSE_HOME" value="../../../../../../Eclipses/Eclipse 3.7"/>
+    <property name="ECLIPSE_HOME" value="c:/Eclipses/Eclipse 4.2.1"/>
 
 	<path id="ntp.classpath">
         <pathelement location="../org.qualitune.jouleunit/lib/commons-net-3.0.1.jar"/>
     </path>
     
-		<path id="junit4.classpath">
-        <pathelement location="${ECLIPSE_HOME}/plugins/org.junit_4.8.2.v4_8_2_v20110321-1705/junit.jar"/>
-        <pathelement location="${ECLIPSE_HOME}/plugins/org.hamcrest.core_1.1.0.v20090501071000.jar"/>
+	<path id="junit4.classpath">
+        <pathelement location="${ECLIPSE_HOME}/plugins/org.junit_4.10.0.v4_10_0_v20120426-0900/junit.jar"/>
+        <!-- <pathelement location="${ECLIPSE_HOME}/plugins/org.hamcrest.core_1.1.0.v20090501071000.jar"/>-->
     </path>
 
 	<target name="clean">
@@ -86,7 +86,7 @@
             <classpath>
                 <dirset dir="${project.dir.jouleunit}"/>
                 <dirset dir="${project.dir.jouleunit.wt210}"/>
-                </classpath>
+            </classpath>
 	    </javac>
     </target>
 	
@@ -128,7 +128,8 @@
     	  <fileset dir="${src.dir.jouleunit.nao}"/>
     	</copy>
     	<copy file="${src.dir.jouleunit.nao}/../README.txt" todir="${project.dir.jouleunit.nao}"/>
-        <javac srcdir="${src.dir.jouleunit.nao}" destdir="${project.dir.jouleunit.nao}">
+    	<javac srcdir="${src.dir.jouleunit.nao}" destdir="${project.dir.jouleunit.nao}">
+            <classpath refid="junit4.classpath"/>
             <classpath>
                 <dirset dir="./../org.qualitune.naoservice.client/bin"/>
                 <dirset dir="${project.dir.jouleunit}"/>
