@@ -31,6 +31,12 @@ public class TestSuiteProfile {
 	/** The {@link EnergyProfile} belonging to this {@link TestSuiteProfile}. */
 	private EnergyProfile energyProfile;
 
+	/**
+	 * Contains a path to the file where this {@link TestSuiteProfile} was
+	 * exported. If <code>null</code> no export was performed.
+	 */
+	private String exportLocation;
+
 	/** Whether or not to use timestamp correction between test runner and PUT. */
 	private boolean isTimestampCorrectionEnabled = true;
 
@@ -193,6 +199,17 @@ public class TestSuiteProfile {
 	}
 
 	/**
+	 * Returns the path to the file where this {@link TestSuiteProfile} was
+	 * exported. If <code>null</code> no export was performed.
+	 * 
+	 * @return The path to the file where this {@link TestSuiteProfile} was
+	 *         exported. If <code>null</code> no export was performed.
+	 */
+	public String getExportLocation() {
+		return exportLocation;
+	}
+
+	/**
 	 * @return The LCD brightness of the PUT logged with time stamps.
 	 */
 	public Map<Long, Long> getLcdBrightness() {
@@ -308,6 +325,18 @@ public class TestSuiteProfile {
 	 */
 	public void setEnergyProfile(EnergyProfile profile) {
 		energyProfile = profile;
+	}
+
+	/**
+	 * Sets the path to the file where this {@link TestSuiteProfile} was
+	 * exported. If <code>null</code> no export was performed.
+	 * 
+	 * @param exportLocation
+	 *            The path to the file where this {@link TestSuiteProfile} was
+	 *            exported. If <code>null</code> no export was performed.
+	 */
+	public void setExportLocation(String exportLocation) {
+		this.exportLocation = exportLocation;
 	}
 
 	/**
