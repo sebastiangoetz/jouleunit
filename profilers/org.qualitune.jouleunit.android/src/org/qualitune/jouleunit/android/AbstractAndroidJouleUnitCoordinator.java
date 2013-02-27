@@ -384,19 +384,26 @@ public abstract class AbstractAndroidJouleUnitCoordinator extends
 				 */
 				private void readLog() {
 
+					boolean deviceMaybeOffline = false;
+
 					while (null != logOutputReceiver
 							&& !logOutputReceiver.isCancelled()) {
 
-						/* TODO If the device is offline, wait 2 seconds. */
-						// while (device.isOnline() == false
-						// && logOutputReceiver != null
-						// && logOutputReceiver.isCancelled() == false) {
-						// try {
-						// sleep(2000);
-						// } catch (InterruptedException e) {
-						// return;
-						// }
-						// }
+						/* If the device is offline, wait 2 seconds. */
+						while (deviceMaybeOffline == true
+								&& logOutputReceiver != null
+								&& logOutputReceiver.isCancelled() == false) {
+							try {
+								sleep(2000);
+								/*
+								 * TODO replace with check whether device is
+								 * offline.
+								 */
+								deviceMaybeOffline = false;
+							} catch (InterruptedException e) {
+								return;
+							}
+						}
 
 						if (logOutputReceiver == null
 								|| logOutputReceiver.isCancelled()) {
@@ -413,6 +420,7 @@ public abstract class AbstractAndroidJouleUnitCoordinator extends
 						} catch (Exception e) {
 							reportError("Exception during receiving of log messages: "
 									+ e.getMessage());
+							deviceMaybeOffline = true;
 						}
 
 						finally {
