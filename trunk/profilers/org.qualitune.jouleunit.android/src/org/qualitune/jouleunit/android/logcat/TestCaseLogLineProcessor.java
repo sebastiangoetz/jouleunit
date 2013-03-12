@@ -90,6 +90,14 @@ public class TestCaseLogLineProcessor implements ILogLineProcessor {
 					profile.setFailed(true);
 					mReceiver.mTestSuiteProfile.addTestCase(profile);
 					mReceiver.mCoordinator.reportError(msgMsg + " failed.");
+
+					/*
+					 * All other test cases that where started but not yet
+					 * finished failed as well (represent nested test cases).
+					 */
+					for (String id : mExecutedTestCases.keySet())
+						mExecutedTestCases.get(id).setFailed(true);
+					// end for.
 				} else
 					mReceiver.mCoordinator
 							.reportError("WARNING: Got failure of test case without start: "
