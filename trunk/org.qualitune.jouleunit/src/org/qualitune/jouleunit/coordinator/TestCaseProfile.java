@@ -44,6 +44,13 @@ public class TestCaseProfile implements Comparable<TestCaseProfile> {
 	private long startTime;
 
 	/**
+	 * The tag of the test case (a further separator to differentiate the same
+	 * tested functionality under different conditions (e.g., sending a mail
+	 * with and without attachment).
+	 */
+	private String tag;
+
+	/**
 	 * The {@link TestSuiteProfile} this {@link TestCaseProfile} belongs to.
 	 * <strong>Can be <code>null</code>!</strong>.
 	 */
@@ -120,6 +127,15 @@ public class TestCaseProfile implements Comparable<TestCaseProfile> {
 		return startTime;
 	}
 
+	/**
+	 * @return The tag of the test case (a further separator to differentiate the
+	 *         same tested functionality under different conditions (e.g.,
+	 *         sending a mail with and without attachment).
+	 */
+	public String getTag() {
+		return tag;
+	}
+
 	/** @return If <code>true</code> the test case failed. */
 	public boolean isFailed() {
 		return failed;
@@ -159,6 +175,16 @@ public class TestCaseProfile implements Comparable<TestCaseProfile> {
 	 */
 	public void setStartTime(long startTime) {
 		this.startTime = startTime;
+	}
+
+	/**
+	 * @param tag
+	 *            The tag of the test case (a further separator to differentiate
+	 *            the same tested functionality under different conditions
+	 *            (e.g., sending a mail with and without attachment).
+	 */
+	public void setTag(String tag) {
+		this.tag = tag;
 	}
 
 	/**
