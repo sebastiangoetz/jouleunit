@@ -65,7 +65,14 @@ public class TestCaseLogLineProcessor implements ILogLineProcessor {
 
 				/* Create test case profile. */
 				TestCaseProfile profile = new TestCaseProfile();
-				profile.setId(msgMsg);
+
+				if (msgMsg.contains("[")) {
+					profile.setId(msgMsg.substring(0, msgMsg.indexOf("[")));
+					profile.setTag(msgMsg.substring(msgMsg.indexOf("[") + 1,
+							msgMsg.indexOf("]")));
+				} else
+					profile.setId(msgMsg);
+
 				mExecutedTestCases.put(msgMsg, profile);
 
 				profile.setStartTime(mReceiver.logDateToMillis(msgTime));

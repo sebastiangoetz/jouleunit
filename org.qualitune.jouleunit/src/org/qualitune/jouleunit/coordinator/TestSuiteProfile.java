@@ -379,7 +379,8 @@ public class TestSuiteProfile {
 				+ testCases.size() + " test case runs");
 
 		if (testCases.size() > 0)
-			writer.append(":\nid,failed?" + EXPORT_SEPARATOR + "start [ms]"
+			writer.append(":\nid" + EXPORT_SEPARATOR + "tag" + EXPORT_SEPARATOR
+					+ "failed?" + EXPORT_SEPARATOR + "start [ms]"
 					+ EXPORT_SEPARATOR + "stop [ms]" + EXPORT_SEPARATOR
 					+ "duration [ms]" + EXPORT_SEPARATOR
 					+ "avg. power rate [mW]" + EXPORT_SEPARATOR
@@ -389,6 +390,13 @@ public class TestSuiteProfile {
 
 		for (TestCaseProfile profile : testCases) {
 			try {
+				writer.append(profile.getId() + EXPORT_SEPARATOR);
+				
+				if (null != profile.getTag())
+					writer.append(profile.getTag() + EXPORT_SEPARATOR);
+				else
+					writer.append("" + EXPORT_SEPARATOR);
+				
 				writer.append(profile.getId() + EXPORT_SEPARATOR);
 				writer.append(profile.isFailed() ? "no" : "yes");
 				writer.append(EXPORT_SEPARATOR);
