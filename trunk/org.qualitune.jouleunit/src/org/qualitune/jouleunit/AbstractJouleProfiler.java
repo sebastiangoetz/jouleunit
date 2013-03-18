@@ -324,9 +324,9 @@ public abstract class AbstractJouleProfiler extends AbstractProfilerNTimes {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.qualitune.eunit.EProfiler#startProfiling()
+	 * @see org.qualitune.jouleunit.JouleProfiler#startProfiling()
 	 */
-	public void startProfiling() {
+	public EnergyProfile startProfiling() {
 
 		if (isProfiling)
 			throw new IllegalStateException("Profiler is already running.");
@@ -343,6 +343,8 @@ public abstract class AbstractJouleProfiler extends AbstractProfilerNTimes {
 			/* Starts a thread that measures continuously. */
 			profilingThread.start();
 		}
+
+		return currentProfile;
 	}
 
 	/**

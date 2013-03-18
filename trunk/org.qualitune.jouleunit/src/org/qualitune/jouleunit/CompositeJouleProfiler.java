@@ -105,7 +105,7 @@ public class CompositeJouleProfiler extends AbstractProfilerNTimes {
 		for (JouleProfiler profiler : profilers)
 			currentProfile.addProfile(profiler.endProfiling());
 		// end for.
-		
+
 		isProfiling = false;
 
 		return currentProfile;
@@ -263,13 +263,17 @@ public class CompositeJouleProfiler extends AbstractProfilerNTimes {
 	 * 
 	 * @see org.qualitune.jouleunit.JouleProfiler#startProfiling()
 	 */
-	public void startProfiling() {
+	public EnergyProfile startProfiling() {
 
-		for (JouleProfiler profiler : profilers)
-			profiler.startProfiling();
+		currentProfile = new CompositeEnergyProfile();
+
+		for (JouleProfiler profiler : profilers) {
+			currentProfile.addProfile(profiler.startProfiling());
+		}
 		// end for.
 
 		isProfiling = true;
-		currentProfile = new CompositeEnergyProfile();
+
+		return currentProfile;
 	}
 }
