@@ -64,21 +64,21 @@ public class AndroidProcJouleProfiler extends AbstractJouleProfiler {
 	 * @see org.qualitune.jouleunit.AbstractJouleProfiler#startProfiling()
 	 */
 	@Override
-	public void startProfiling() {
+	public EnergyProfile startProfiling() {
 		try {
 			startBatteryService();
 		} catch (ProfilingException e1) {
 			mCoordinator
 					.reportError("Error during start of profiling service: "
 							+ e1.getMessage());
-			return;
+			return null;
 		}
 
 		mProcessor = new BatteryLogLineProcessor(this);
 		mCoordinator.startLogReading();
 		mCoordinator.logOutputReceiver.addLogLineProcessor(mProcessor);
 
-		super.startProfiling();
+		return super.startProfiling();
 	}
 
 	/*

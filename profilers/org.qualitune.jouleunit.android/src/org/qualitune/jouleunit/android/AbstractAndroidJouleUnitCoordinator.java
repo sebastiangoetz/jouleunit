@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 
 import org.qualitune.jouleunit.CompositeJouleProfiler;
+import org.qualitune.jouleunit.EnergyProfile;
 import org.qualitune.jouleunit.JouleProfiler;
 import org.qualitune.jouleunit.ProfilingException;
 import org.qualitune.jouleunit.android.logcat.ILogLineProcessor;
@@ -253,7 +254,8 @@ public abstract class AbstractAndroidJouleUnitCoordinator extends
 				}
 			}
 
-			profiler.startProfiling();
+			EnergyProfile profile = profiler.startProfiling();
+			testSuiteProfile.setEnergyProfile(profile);
 
 			return profiler;
 		}

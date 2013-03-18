@@ -157,6 +157,22 @@ public class TestSuiteProfile {
 	}
 
 	/**
+	 * Clears this {@link TestSuiteProfile}. Deletes all contained
+	 * {@link TestCaseProfile}s as well as already profiled energy consumption
+	 * and further hardware information.
+	 * 
+	 * Can be sensible, if long running {@link TestSuiteProfile} are exported
+	 * incrementally.
+	 */
+	public void clear() {
+
+		this.testCases.clear();
+		this.putCpuFrequencies.clear();
+		this.putLcdBrightness.clear();
+		this.putWiFiTraffic.clear();
+	}
+
+	/**
 	 * Returns an array of {@link AvgTestCaseResult} for the
 	 * {@link TestCaseProfile}s of this {@link TestSuiteProfile} grouped by
 	 * their ID.
@@ -391,12 +407,12 @@ public class TestSuiteProfile {
 		for (TestCaseProfile profile : testCases) {
 			try {
 				writer.append(profile.getId() + EXPORT_SEPARATOR);
-				
+
 				if (null != profile.getTag())
 					writer.append(profile.getTag() + EXPORT_SEPARATOR);
 				else
 					writer.append("" + EXPORT_SEPARATOR);
-				
+
 				writer.append(profile.getId() + EXPORT_SEPARATOR);
 				writer.append(profile.isFailed() ? "no" : "yes");
 				writer.append(EXPORT_SEPARATOR);

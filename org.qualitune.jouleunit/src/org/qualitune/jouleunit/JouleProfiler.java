@@ -240,6 +240,8 @@ public interface JouleProfiler {
 	 * @throws IllegalStateException
 	 *             Thrown, if this {@link JouleProfiler} is not able to start
 	 *             profiling (e.g., while profiling is already running).
+	 * @return The {@link EnergyProfile} that will contain the {@link PowerRate}
+	 *         s to be profiled.
 	 */
-	public void startProfiling();
+	public EnergyProfile startProfiling();
 }

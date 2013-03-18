@@ -138,10 +138,10 @@ public class NaoProfiler extends AbstractJouleProfiler {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.qualitune.eunit.EProfiler#startProfiling()
+	 * @see org.qualitune.jouleunit.AbstractJouleProfiler#startProfiling()
 	 */
 	@Override
-	public void startProfiling() {
+	public EnergyProfile startProfiling() {
 
 		if (isProfiling)
 			throw new IllegalStateException("Profiler is already running.");
@@ -162,6 +162,8 @@ public class NaoProfiler extends AbstractJouleProfiler {
 
 			isProfiling = true;
 		}
+
+		return currentProfile;
 	}
 
 	/*
