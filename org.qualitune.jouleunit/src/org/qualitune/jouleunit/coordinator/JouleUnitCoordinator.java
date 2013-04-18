@@ -85,6 +85,9 @@ public abstract class JouleUnitCoordinator {
 	/** The ID of the idle test case in the profiling results. */
 	private static final String IDLE_TEST_CASE_ID = "org.jouleunit.test.Idle";
 
+	/** The {@link JouleProfiler} used for profiling. */
+	protected JouleProfiler profiler;
+	
 	/**
 	 * The {@link TestSuiteProfile} of this {@link JouleUnitCoordinator} to
 	 * store profiled power consumption, hardware information and executed test
@@ -157,7 +160,7 @@ public abstract class JouleUnitCoordinator {
 			testSuiteProfile.getTrTimeStampOffset();
 			computeDutTimestampOffset();
 
-			JouleProfiler profiler = startEnergyProfiling();
+			profiler = startEnergyProfiling();
 
 			if (isHwProfilingEnabled)
 				startHardwareProfiling();

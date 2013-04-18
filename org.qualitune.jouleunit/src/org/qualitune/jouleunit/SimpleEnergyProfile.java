@@ -21,6 +21,12 @@ public class SimpleEnergyProfile extends AbstractEnergyProfile {
 	protected List<PowerRate> measuredValues = new ArrayList<PowerRate>(2);
 
 	/**
+	 * Indicates whether or not the {@link PowerRate} values of this
+	 * {@link SimpleEnergyProfile} are sorted.
+	 */
+	protected boolean areMeasuredValuesSorted = true;
+
+	/**
 	 * Creates a new {@link SimpleEnergyProfile} with no duration and energy
 	 * consumption. Use {@link SimpleEnergyProfile#addPowerRateValue(PowerRate)}
 	 * to modify these values.
@@ -59,25 +65,14 @@ public class SimpleEnergyProfile extends AbstractEnergyProfile {
 		else {
 			double result = 0d;
 
-			Collections.sort(measuredValues);
-
-			PowerRate firstValue = null;
-			PowerRate lastValue = null;
-
-			/* Find bounds. */
-			for (PowerRate value : measuredValues) {
-
-				if (value.getTimeStamp() <= start)
-					firstValue = value;
-				// no else.
-
-				if (value.getTimeStamp() >= end) {
-					lastValue = value;
-					break;
-				}
-				// no else.
+			if (!areMeasuredValuesSorted) {
+				Collections.sort(measuredValues);
+				areMeasuredValuesSorted = true;
 			}
-			// end for.
+			// no else.
+
+			PowerRate firstValue = getNearestValue(measuredValues, start, true);
+			PowerRate lastValue = getNearestValue(measuredValues, end, false);
 
 			/* Check bounds. */
 			if (firstValue == null)
@@ -99,8 +94,7 @@ public class SimpleEnergyProfile extends AbstractEnergyProfile {
 			// no else.
 
 			/* Compute average for each interval. */
-			for (int index = measuredValues.indexOf(firstValue); index < measuredValues
-					.indexOf(lastValue); index++) {
+			for (int index = getIndexOf(firstValue); index < getIndexOf(lastValue); index++) {
 				PowerRate val1 = measuredValues.get(index);
 				PowerRate val2 = measuredValues.get(index + 1);
 
@@ -121,8 +115,7 @@ public class SimpleEnergyProfile extends AbstractEnergyProfile {
 				 * of time an power rate of next two values.
 				 */
 				PowerRate val1 = firstValue;
-				PowerRate val2 = measuredValues.get(measuredValues
-						.indexOf(firstValue) + 1);
+				PowerRate val2 = measuredValues.get(getIndexOf(firstValue) + 1);
 
 				double p1_2 = val1.getPowerRate() - val2.getPowerRate();
 				long t1_2 = val2.getTimeStamp() - val1.getTimeStamp();
@@ -150,8 +143,7 @@ public class SimpleEnergyProfile extends AbstractEnergyProfile {
 				 * Compute power rate for first time stamp based on co-tangens
 				 * of time an power rate of next two values.
 				 */
-				PowerRate val1 = measuredValues.get(measuredValues
-						.indexOf(lastValue) - 1);
+				PowerRate val1 = measuredValues.get(getIndexOf(lastValue) - 1);
 				PowerRate val2 = lastValue;
 
 				double p1_2 = val1.getPowerRate() - val2.getPowerRate();
@@ -295,7 +287,11 @@ public class SimpleEnergyProfile extends AbstractEnergyProfile {
 
 		if (measuredValues.size() > 0) {
 
-			Collections.sort(measuredValues);
+			if (!areMeasuredValuesSorted) {
+				Collections.sort(measuredValues);
+				areMeasuredValuesSorted = true;
+			}
+			// no else.
 
 			PowerRate firstValue;
 			PowerRate lastValue;
@@ -310,8 +306,8 @@ public class SimpleEnergyProfile extends AbstractEnergyProfile {
 			else
 				lastValue = loggedEvents.get(secondID);
 
-			int fromIndex = measuredValues.indexOf(firstValue);
-			int toIndex = measuredValues.indexOf(lastValue);
+			int fromIndex = getIndexOf(firstValue);
+			int toIndex = getIndexOf(lastValue);
 
 			List<PowerRate> significantValues = new ArrayList<PowerRate>(
 					measuredValues.subList(fromIndex, toIndex + 1));
@@ -389,7 +385,11 @@ public class SimpleEnergyProfile extends AbstractEnergyProfile {
 		/* Compute rate. */
 		double rate = 0d;
 
-		Collections.sort(measuredValues);
+		if (!areMeasuredValuesSorted) {
+			Collections.sort(measuredValues);
+			areMeasuredValuesSorted = true;
+		}
+		// no else.
 
 		PowerRate firstValue = null;
 		PowerRate lastValue = null;
@@ -428,8 +428,7 @@ public class SimpleEnergyProfile extends AbstractEnergyProfile {
 			 * next two values.
 			 */
 			PowerRate val1 = firstValue;
-			PowerRate val2 = measuredValues.get(measuredValues
-					.indexOf(firstValue) + 1);
+			PowerRate val2 = measuredValues.get(getIndexOf(firstValue) + 1);
 
 			double p1_2 = val1.getPowerRate() - val2.getPowerRate();
 			long t1_2 = val2.getTimeStamp() - val1.getTimeStamp();
@@ -499,6 +498,7 @@ public class SimpleEnergyProfile extends AbstractEnergyProfile {
 		// no else.
 
 		resetCache();
+		areMeasuredValuesSorted = false;
 		return this.measuredValues.add(value);
 	}
 
@@ -512,6 +512,76 @@ public class SimpleEnergyProfile extends AbstractEnergyProfile {
 	}
 
 	/**
+	 * Helper method to effectively find the {@link PowerRate} in an ordered
+	 * location that is nearest to a specified time value.
+	 * 
+	 * @param values
+	 *            The values as a ordered {@link List} of {@link PowerRate}s.
+	 * @param timestamp
+	 *            The timestamp whose nearest {@link PowerRate} shall be found.
+	 * @param findNearestBelow
+	 *            If <code>true</code>, the nearest value below the given
+	 *            timestamp will be returned, else above.
+	 * @return The found nearest {@link PowerRate} value to the given timestamp.
+	 */
+	public PowerRate getNearestValue(List<PowerRate> values, long timestamp,
+			boolean findNearestBelow) {
+
+		if (values.size() == 0)
+			return null;
+		else if (values.size() == 1) {
+			if (findNearestBelow && values.get(0).getTimeStamp() <= timestamp)
+				return values.get(0);
+			else if (!findNearestBelow
+					&& values.get(0).getTimeStamp() >= timestamp)
+				return values.get(0);
+			else
+				return null;
+		}
+
+		else {
+			/*
+			 * Divide and conquer. Separate the list into two halves and check
+			 * which one is the right one.
+			 */
+			int middleIndex = values.size() / 2;
+
+			PowerRate middleRate = values.get(middleIndex);
+			long middleTimestamp = middleRate.getTimeStamp();
+
+			if (middleTimestamp == timestamp)
+				return middleRate;
+			// no else.
+
+			if (findNearestBelow) {
+				if (middleTimestamp > timestamp)
+					return getNearestValue(values.subList(0, middleIndex),
+							timestamp, findNearestBelow);
+				else if (middleIndex + 1 == values.size())
+					return middleRate;
+				else if (values.get(middleIndex + 1).getTimeStamp() <= timestamp)
+					return getNearestValue(
+							values.subList(middleIndex + 1, values.size()),
+							timestamp, findNearestBelow);
+				else
+					return middleRate;
+			}
+
+			else {
+				if (middleTimestamp < timestamp)
+					return getNearestValue(
+							values.subList(middleIndex, values.size()),
+							timestamp, findNearestBelow);
+				else if (values.get(middleIndex - 1).getTimeStamp() < timestamp)
+					return middleRate;
+				else
+					return getNearestValue(values.subList(0, middleIndex),
+							timestamp, findNearestBelow);
+			}
+		}
+	}
+
+	/**
 	 * Returns the count of {@link PowerRate}s in this
 	 * {@link SimpleEnergyProfile}.
 	 * 
@@ -520,5 +590,58 @@ public class SimpleEnergyProfile extends AbstractEnergyProfile {
 	 */
 	public int getNumberOfValues() {
 		return measuredValues.size();
+	}
+
+	/**
+	 * Helper method that computes the index of a given {@link PowerRate} within
+	 * the measured values of this {@link SimpleEnergyProfile}.
+	 * 
+	 * @param powerRate
+	 *            The {@link PowerRate} whose index shall be computed.
+	 * @return The index of the given {@link PowerRate} or <code>-1</code>.
+	 */
+	public int getIndexOf(PowerRate powerRate) {
+		return this.getIndexOf(powerRate, measuredValues);
+	}
+
+	/**
+	 * Helper method that computes the index of a given {@link PowerRate} within
+	 * the as given {@link List} of {@link PowerRate}s.
+	 * 
+	 * @param powerRate
+	 *            The {@link PowerRate} whose index shall be computed.
+	 * @param values
+	 *            The {@link PowerRate}s.
+	 * @return The index of the given {@link PowerRate} or <code>-1</code>.
+	 */
+	private int getIndexOf(PowerRate powerRate, List<PowerRate> values) {
+
+		if (values.size() == 0)
+			return -1;
+		else if (values.size() == 1 && values.get(0).equals(powerRate))
+			return 0;
+		else {
+			if (!areMeasuredValuesSorted) {
+				Collections.sort(measuredValues);
+				areMeasuredValuesSorted = true;
+			}
+			// no else.
+
+			int middleIndex = values.size() / 2;
+			PowerRate middleRate = values.get(middleIndex);
+
+			if (middleRate.getTimeStamp() == powerRate.getTimeStamp())
+				return middleIndex;
+			else if (middleRate.getTimeStamp() > powerRate.getTimeStamp())
+				return getIndexOf(powerRate, values.subList(0, middleIndex));
+			else {
+				int innerIndex = getIndexOf(powerRate,
+						values.subList(middleIndex + 1, values.size()));
+				if (innerIndex == -1)
+					return innerIndex;
+				else
+					return middleIndex + innerIndex + 1;
+			}
+		}
 	}
 }
