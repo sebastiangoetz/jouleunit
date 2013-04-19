@@ -96,6 +96,27 @@ public class AvgTestCaseResult {
 	}
 
 	/**
+	 * Removes a {@link TestCaseProfile} from this {@link AvgTestCaseResult}.
+	 * 
+	 * @param profile
+	 *            The {@link TestCaseProfile} to be removed.
+	 * @return <code>true</code>, if the {@link TestCaseProfile} belonged to
+	 *         this {@link AvgTestCaseResult} and was removed. Else
+	 *         <code>false</code>.
+	 */
+	public boolean removeProfile(TestCaseProfile profile) {
+
+		boolean result = myProfiles.remove(profile)
+				|| myFailedProfiles.remove(profile);
+
+		if (result)
+			isResultUpToDate = false;
+		// no else.
+
+		return result;
+	}
+
+	/**
 	 * @return The average duration of all {@link TestCaseProfile} of this
 	 *         {@link AvgTestCaseResult} in [ms].
 	 */
