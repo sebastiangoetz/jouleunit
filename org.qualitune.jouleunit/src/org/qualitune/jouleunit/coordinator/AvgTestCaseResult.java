@@ -1,6 +1,9 @@
 package org.qualitune.jouleunit.coordinator;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -93,6 +96,8 @@ public class AvgTestCaseResult {
 			myProfiles.add(profile);
 			isResultUpToDate = false;
 		}
+
+		profile.setAvgTestCaseResult(this);
 	}
 
 	/**
@@ -161,19 +166,6 @@ public class AvgTestCaseResult {
 	}
 
 	/**
-	 * @return The standard deviation of the duration of all
-	 *         {@link TestCaseProfile} of this {@link AvgTestCaseResult} in
-	 *         [ms].
-	 */
-	public double getStdDevDuration() {
-		if (!isResultUpToDate)
-			computeResults();
-		// no else.
-
-		return stdDevDuration;
-	}
-
-	/**
 	 * @return The number of {@link TestCaseProfile}s in this
 	 *         {@link AvgTestCaseResult} (does not include failed test cases).
 	 */
@@ -187,6 +179,53 @@ public class AvgTestCaseResult {
 	 */
 	public int getNumberOfFailedRuns() {
 		return myFailedProfiles.size();
+	}
+
+	/**
+	 * Computes the pTh quantile for the duration of this
+	 * {@link AvgTestCaseResult}. Meaning that the duration of p percent [0 ..
+	 * 1] of the contained {@link TestCaseProfile}s is below this duration.
+	 * 
+	 * @return The standard deviation of the duration of all
+	 *         {@link TestCaseProfile} of this {@link AvgTestCaseResult} in
+	 *         [ms].
+	 */
+	public long getQuantileDuration(float p) {
+
+		if (p < 0f || p > 1f)
+			throw new IllegalArgumentException("P must be between 0.0 and 1.0.");
+		// no else.
+
+		List<Long> durations = new ArrayList<Long>();
+		for (TestCaseProfile profile : new ArrayList<TestCaseProfile>(
+				myProfiles))
+			durations.add(profile.getDuration());
+		// end for.
+
+		Collections.sort(durations);
+
+		int index = Math.round((durations.size() - 1) * p);
+
+		if (index < 0)
+			index = 0;
+		else if (index >= durations.size())
+			index = durations.size() - 1;
+		// no else.
+
+		return durations.get(index);
+	}
+
+	/**
+	 * @return The standard deviation of the duration of all
+	 *         {@link TestCaseProfile} of this {@link AvgTestCaseResult} in
+	 *         [ms].
+	 */
+	public double getStdDevDuration() {
+		if (!isResultUpToDate)
+			computeResults();
+		// no else.
+
+		return stdDevDuration;
 	}
 
 	/**
