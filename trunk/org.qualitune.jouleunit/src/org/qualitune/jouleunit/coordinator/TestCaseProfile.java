@@ -10,6 +10,9 @@ package org.qualitune.jouleunit.coordinator;
  */
 public class TestCaseProfile implements Comparable<TestCaseProfile> {
 
+	/** The {@link AvgTestCaseResult} this {@link TestCaseProfile} belongs to. */
+	private AvgTestCaseResult avgTestCaseResult;
+
 	/**
 	 * The cached consumed energy of this {@link TestCaseProfile} if it has been
 	 * computed before.
@@ -21,6 +24,12 @@ public class TestCaseProfile implements Comparable<TestCaseProfile> {
 	 * computed before.
 	 */
 	private long cachedDuration;
+
+	/**
+	 * The cached outlier info of this {@link TestCaseProfile} if it has been
+	 * computed before.
+	 */
+	private String cachedOutlierInfo = null;
 
 	/**
 	 * The cached power rate of this {@link TestCaseProfile} if it has been
@@ -64,6 +73,17 @@ public class TestCaseProfile implements Comparable<TestCaseProfile> {
 	public int compareTo(TestCaseProfile arg0) {
 		return new Long(this.getStartTime()).compareTo(new Long(arg0
 				.getStartTime()));
+	}
+
+	/**
+	 * Returns the {@link AvgTestCaseResult} this {@link TestCaseProfile}
+	 * belongs to. Can be <code>null</code>!
+	 * 
+	 * @return The {@link AvgTestCaseResult} this {@link TestCaseProfile}
+	 *         belongs to.
+	 */
+	public AvgTestCaseResult getAvgTestCaseResult() {
+		return avgTestCaseResult;
 	}
 
 	/**
@@ -122,14 +142,57 @@ public class TestCaseProfile implements Comparable<TestCaseProfile> {
 		return cachedDuration;
 	}
 
+	/**
+	 * If the {@link AvgTestCaseResult} of this {@link TestCaseProfile} is set,
+	 * this method can be used to check, whether or not, this
+	 * {@link TestCaseProfile} is a outlier w.r.t. the other values of its
+	 * {@link AvgTestCaseResult}. <strong>Will only work, if this
+	 * {@link TestCaseProfile} is not marked as failed.</strong>
+	 * 
+	 * @return A {@link String} containing information whether or not this
+	 *         {@link TestCaseProfile} is an outlier. If this
+	 *         {@link TestCaseProfile} is no outlier, the {@link String} will be
+	 *         empty.
+	 */
+	public String getOutlierInfo() {
+
+		/* TODO Does not consider changes to the AvgTestCaseProfile yet. */
+		if (null == cachedOutlierInfo) {
+			cachedOutlierInfo = "";
+
+			if (!isFailed() && null != avgTestCaseResult) {
+
+				/* Check execution time outlier. */
+				long q25 = avgTestCaseResult.getQuantileDuration(0.25f);
+				long q5 = avgTestCaseResult.getQuantileDuration(0.5f);
+				long q75 = avgTestCaseResult.getQuantileDuration(0.75f);
+
+				long quartilInterval = q75 - q25;
+
+				if (getDuration() < (q5 - quartilInterval * 1.5))
+					cachedOutlierInfo = "Low duration (-"
+							+ ((q5 - getDuration()) / (float) quartilInterval)
+							+ "QI / -" + (q5 - getDuration()) + "ms)";
+				else if (getDuration() > (q5 + quartilInterval * 1.5))
+					cachedOutlierInfo = "High duration (+"
+							+ ((getDuration() - q5) / (float) quartilInterval)
+							+ "QI / +" + (getDuration() - q5) + "ms)";
+				// no else.
+			}
+			// no else.
+		}
+
+		return cachedOutlierInfo;
+	}
+
 	/** @return Time stamp for starting the test case. */
 	public long getStartTime() {
 		return startTime;
 	}
 
 	/**
-	 * @return The tag of the test case (a further separator to differentiate the
-	 *         same tested functionality under different conditions (e.g.,
+	 * @return The tag of the test case (a further separator to differentiate
+	 *         the same tested functionality under different conditions (e.g.,
 	 *         sending a mail with and without attachment).
 	 */
 	public String getTag() {
@@ -139,6 +202,18 @@ public class TestCaseProfile implements Comparable<TestCaseProfile> {
 	/** @return If <code>true</code> the test case failed. */
 	public boolean isFailed() {
 		return failed;
+	}
+
+	/**
+	 * Sets the {@link AvgTestCaseResult} this {@link TestCaseProfile} belongs
+	 * to.
+	 * 
+	 * @param avgTestCaseResult
+	 *            The {@link AvgTestCaseResult} this {@link TestCaseProfile}
+	 *            belongs to. Can be <code>null</code>.
+	 */
+	public void setAvgTestCaseResult(AvgTestCaseResult avgTestCaseResult) {
+		this.avgTestCaseResult = avgTestCaseResult;
 	}
 
 	/**
