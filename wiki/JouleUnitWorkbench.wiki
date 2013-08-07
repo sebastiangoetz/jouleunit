@@ -18,6 +18,8 @@ To check out the JouleUnit plugins you will require an SVN client, e.g., Subvers
 
   * Once you have an SVN client running, check the Eclipse plugin projects located at https://jouleunit.googlecode.com/svn/trunk/workbench/plugins and import them into your Eclipse workspace.
 
+  * Please note that the plugins org.qualitune.jouleunit.android.testrun, org.qualitune.jouleunit.android.testrun.resource, org.qualitune.jouleunit.android.testrun.resource.ui, and org.emftext.commons.antlr3_4_0 are only required when JouleUnit shall be used for the profiling of Android applications.
+
   * Select one of the plugin projects in the workspace, open the context menu with a secondary mouse click and select _Run As -> Eclipse Application_
 
   * Alternatively you can export the plugin projects as JARs into the dropins folder of your Eclipse distribution and restart your Eclipse instance.
