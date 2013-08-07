@@ -1,0 +1,8 @@
+#summary Overview on how to use the Eclipse-based JouleUnit workbench.
+
+= Introduction =
+The JouleUnit workbench is Eclipse-based additional tooling for the JouleUnit framework, especially for the visualization of JouleUnit profiling and testing results.
+
+This documentation explains how to install and use the JouleUnit workbench and the provided examples.
+
+== Installation ==
