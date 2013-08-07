@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.qualitune.jouleunit.android.testrun/src" modelPluginID="org.qualitune.jouleunit.android.testrun"
+    modelName="Testrun" importerID="org.eclipse.emf.importer.ecore" complianceLevel="7.0"
+    copyrightFields="false">
+  <foreignModel>testrun.ecore</foreignModel>
+  <genPackages prefix="Testrun" basePackage="org.qualitune.jouleunit.android" disposableProviderFactory="true"
+      ecorePackage="testrun.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="testrun.ecore#//CursorDirection">
+      <genEnumLiterals ecoreEnumLiteral="testrun.ecore#//CursorDirection/up"/>
+      <genEnumLiterals ecoreEnumLiteral="testrun.ecore#//CursorDirection/down"/>
+      <genEnumLiterals ecoreEnumLiteral="testrun.ecore#//CursorDirection/left"/>
+      <genEnumLiterals ecoreEnumLiteral="testrun.ecore#//CursorDirection/right"/>
+    </genEnums>
+    <genClasses ecoreClass="testrun.ecore#//TestRun">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute testrun.ecore#//TestRun/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EReference testrun.ecore#//TestRun/aut"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute testrun.ecore#//TestRun/packageUnderTest"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference testrun.ecore#//TestRun/junitApk"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute testrun.ecore#//TestRun/junitPackage"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute testrun.ecore#//TestRun/noOfRuns"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute testrun.ecore#//TestRun/idleTime"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute testrun.ecore#//TestRun/hardwareProfilingOn"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute testrun.ecore#//TestRun/remoteRun"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference testrun.ecore#//TestRun/executables"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute testrun.ecore#//TestRun/waitForFullBattery"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="testrun.ecore#//TestExecutable">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute testrun.ecore#//TestExecutable/name"/>
+    </genClasses>
+    <genClasses ecoreClass="testrun.ecore#//TestSuite">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference testrun.ecore#//TestSuite/setUp"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference testrun.ecore#//TestSuite/tearDown"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference testrun.ecore#//TestSuite/executables"/>
+    </genClasses>
+    <genClasses ecoreClass="testrun.ecore#//TestCase">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference testrun.ecore#//TestCase/behavior"/>
+    </genClasses>
+    <genClasses ecoreClass="testrun.ecore#//JunitTestCase"/>
+    <genClasses image="false" ecoreClass="testrun.ecore#//TestBehavior"/>
+    <genClasses ecoreClass="testrun.ecore#//Block">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference testrun.ecore#//Block/statements"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="testrun.ecore#//Statement"/>
+    <genClasses ecoreClass="testrun.ecore#//ClickOnScreenStatement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute testrun.ecore#//ClickOnScreenStatement/x"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute testrun.ecore#//ClickOnScreenStatement/y"/>
+    </genClasses>
+    <genClasses ecoreClass="testrun.ecore#//CursorStatement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute testrun.ecore#//CursorStatement/direction"/>
+    </genClasses>
+    <genClasses ecoreClass="testrun.ecore#//EnterStatement"/>
+    <genClasses ecoreClass="testrun.ecore#//DisplayStatement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute testrun.ecore#//DisplayStatement/switchOn"/>
+    </genClasses>
+    <genClasses ecoreClass="testrun.ecore#//HomeButtonStatement"/>
+    <genClasses ecoreClass="testrun.ecore#//OpenSettingsStatement"/>
+    <genClasses ecoreClass="testrun.ecore#//StartActivityStatement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute testrun.ecore#//StartActivityStatement/package"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute testrun.ecore#//StartActivityStatement/class"/>
+    </genClasses>
+    <genClasses ecoreClass="testrun.ecore#//TestStatement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute testrun.ecore#//TestStatement/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference testrun.ecore#//TestStatement/statements"/>
+    </genClasses>
+    <genClasses ecoreClass="testrun.ecore#//UnlockStatement"/>
+    <genClasses ecoreClass="testrun.ecore#//WaitStatement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute testrun.ecore#//WaitStatement/seconds"/>
+    </genClasses>
+    <genClasses ecoreClass="testrun.ecore#//ApkFile">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute testrun.ecore#//ApkFile/path"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

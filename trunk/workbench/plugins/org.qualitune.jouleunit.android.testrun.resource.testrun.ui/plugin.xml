@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+	<extension point="org.emftext.access.syntax.ui">
+		<metaInformationProvider class="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.TestrunUIMetaInformation" id="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.TestrunUIMetaInformation">
+		</metaInformationProvider>
+	</extension>
+	
+	<extension point="org.eclipse.ui.editors">
+		<editor class="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.TestrunEditor" contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor" extensions="testrun" icon="icons/editor_icon.gif" id="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.TestrunEditor" name="EMFText testrun Editor">
+			<contentTypeBinding contentTypeId="org.qualitune.jouleunit.android.testrun.resource.testrun">
+			</contentTypeBinding>
+		</editor>
+	</extension>
+	
+	<extension point="org.eclipse.core.runtime.preferences">
+		<initializer class="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.TestrunPreferenceInitializer">
+		</initializer>
+	</extension>
+	
+	<extension point="org.eclipse.ui.preferencePages">
+		<page name="Testrun Text Editor" id="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.TestrunPreferencePage" class="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.TestrunPreferencePage" category="org.eclipse.ui.preferencePages.GeneralTextEditor">
+		</page>
+		<page name="Syntax Coloring" id="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.TestrunSyntaxColoringPreferencePage" class="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.TestrunSyntaxColoringPreferencePage" category="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.TestrunPreferencePage">
+		</page>
+		<page name="Brackets" id="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.TestrunBracketPreferencePage" class="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.TestrunBracketPreferencePage" category="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.TestrunPreferencePage">
+		</page>
+	</extension>
+	
+	<extension point="org.eclipse.ui.newWizards">
+		<category id="org.emftext.runtime.ui.EMFTextFileCategory" name="EMFText File">
+		</category>
+		<wizard category="org.emftext.runtime.ui.EMFTextFileCategory" icon="/icons/default_new_icon.gif" class="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.TestrunNewFileWizard" id="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.TestrunNewFileWizard" name="EMFText .testrun file">
+		</wizard>
+		<category id="org.emftext.runtime.ui.EMFTextProjectCategory" name="EMFText Project">
+		</category>
+		<wizard category="org.emftext.runtime.ui.EMFTextProjectCategory" icon="/icons/default_new_icon.gif" class="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.TestrunNewProjectWizard" id="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.TestrunNewProjectWizard" name="EMFText testrun project" project="true">
+		</wizard>
+	</extension>
+	
+	<extension point="org.eclipse.ui.ide.markerResolution">
+		<markerResolutionGenerator class="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.TestrunMarkerResolutionGenerator" markerType="org.qualitune.jouleunit.android.testrun.resource.testrun.problem">
+		</markerResolutionGenerator>
+	</extension>
+	
+	<extension point="org.eclipse.core.filebuffers.annotationModelCreation">
+		<factory class="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.TestrunAnnotationModelFactory" extensions="testrun">
+		</factory>
+	</extension>
+	
+	<extension point="org.eclipse.core.contenttype.contentTypes">
+		<content-type id="org.qualitune.jouleunit.android.testrun.resource.testrun" name=".testrun File" base-type="org.eclipse.core.runtime.text" file-extensions="testrun">
+		</content-type>
+	</extension>
+	
+	<extension point="org.eclipse.ui.editors.documentProviders">
+		<provider class="org.eclipse.ui.editors.text.TextFileDocumentProvider" extensions="testrun" id="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.provider">
+		</provider>
+	</extension>
+	
+	<extension point="org.eclipse.ui.editors.annotationTypes">
+		<type name="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.occurences">
+		</type>
+		<type name="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.occurences.declaration" super="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.occurences">
+		</type>
+	</extension>
+	
+	<extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
+		<specification annotationType="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.occurences" label="Occurrences (in .testrun files)" icon="/icons/occurrence_icon.gif" textPreferenceKey="testrun.occurrenceIndication" textPreferenceValue="false" highlightPreferenceKey="testrun.occurrenceHighlighting" highlightPreferenceValue="true" contributesToHeader="false" overviewRulerPreferenceKey="testrun.occurrenceIndicationInOverviewRuler" overviewRulerPreferenceValue="true" verticalRulerPreferenceKey="testrun.occurrenceIndicationInVerticalRuler" verticalRulerPreferenceValue="false" colorPreferenceKey="testrun.occurrenceIndicationColor" colorPreferenceValue="212,212,212" presentationLayer="4" showInNextPrevDropdownToolbarActionKey="testrun.showOccurrenceInNextPrevDropdownToolbarAction" showInNextPrevDropdownToolbarAction="true" isGoToNextNavigationTargetKey="testrun.isOccurrenceGoToNextNavigationTarget" isGoToNextNavigationTarget="false" isGoToPreviousNavigationTargetKey="testrun.isOccurrenceGoToPreviousNavigationTarget" isGoToPreviousNavigationTarget="false" textStylePreferenceKey="testrun.occurrenceTextStyle" textStylePreferenceValue="NONE">
+		</specification>
+		<specification annotationType="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.occurences.declaration" label="Declarations (in .testrun files)" textPreferenceKey="testrun.declarationIndication" textPreferenceValue="false" highlightPreferenceKey="testrun.declarationHighlighting" highlightPreferenceValue="true" overviewRulerPreferenceKey="testrun.declarationIndicationInOverviewRuler" overviewRulerPreferenceValue="true" verticalRulerPreferenceKey="testrun.declarationIndicationInVerticalRuler" verticalRulerPreferenceValue="false" colorPreferenceKey="testrun.declarationIndicationColor" colorPreferenceValue="240,216,168" presentationLayer="4" textStylePreferenceKey="testrun.declarationTextStyle" textStylePreferenceValue="NONE">
+		</specification>
+	</extension>
+	
+	<extension point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+		<launchConfigurationTypeImage icon="/icons/launch_type_icon.gif" configTypeID="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.launchConfigurationType" id="org.qualitune.jouleunit.android.testrun.launchImage">
+		</launchConfigurationTypeImage>
+	</extension>
+	
+	<extension point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+		<launchConfigurationTabGroup type="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.launchConfigurationType" class="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.launch.TestrunLaunchConfigurationTabGroup" id="org.qualitune.jouleunit.android.testrun.launchConfigurationTabGroup" helpContextId="org.qualitune.jouleunit.android.testrun.launchConfigHelpContext">
+			<launchMode mode="debug" perspective="org.eclipse.debug.ui.DebugPerspective" description="Debug testrun model.">
+			</launchMode>
+			<launchMode mode="run" description="Run testrun model.">
+			</launchMode>
+		</launchConfigurationTabGroup>
+	</extension>
+	
+	<extension point="org.eclipse.debug.ui.launchShortcuts">
+		<shortcut label="testrun Application" icon="/icons/launch_shortcut_icon.gif" helpContextId="org.qualitune.jouleunit.android.testrun.launch" modes="run,debug" class="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.launch.TestrunLaunchShortcut" description="Launch a testrun model" id="org.qualitune.jouleunit.android.testrun.launchShortcut">
+			<description description="Run testrun model" mode="run">
+			</description>
+			<description description="Debug testrun model" mode="debug">
+			</description>
+			<contextualLaunch>
+				<enablement>
+					<with variable="selection">
+						<count value="1">
+						</count>
+						<iterate>
+							<test property="org.qualitune.jouleunit.android.testrun.isLaunchable">
+							</test>
+						</iterate>
+					</with>
+				</enablement>
+			</contextualLaunch>
+			<configurationType id="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.launchConfigurationType">
+			</configurationType>
+		</shortcut>
+	</extension>
+	
+	<extension point="org.eclipse.core.expressions.propertyTesters">
+		<propertyTester id="org.qualitune.jouleunit.android.testrun.PropertyTester" type="java.lang.Object" namespace="org.qualitune.jouleunit.android.testrun" properties="isLaunchable" class="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.TestrunPropertyTester">
+		</propertyTester>
+	</extension>
+	
+	<extension point="org.eclipse.ui.editors.annotationTypes">
+		<type name="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.debug.lineBreakpoint" markerType="org.qualitune.jouleunit.android.testrun.resource.testrun.debug.lineBreakpoint.marker" super="org.eclipse.debug.core.breakpoint">
+		</type>
+	</extension>
+	
+	<extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
+		<specification annotationType="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.debug.lineBreakpoint" label="Breakpoints (in .testrun files)" icon="/icons/breakpoint_icon.gif" textPreferenceKey="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.lineBreakpoint" textPreferenceValue="false" highlightPreferenceKey="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.lineBreakpointHighlighting" highlightPreferenceValue="true" contributesToHeader="false" overviewRulerPreferenceKey="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.lineBreakpointIndicationInOverviewRuler" overviewRulerPreferenceValue="true" verticalRulerPreferenceKey="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.lineBreakpointIndicationInVerticalRuler" verticalRulerPreferenceValue="false" colorPreferenceKey="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.lineBreakpointColor" colorPreferenceValue="212,212,212" presentationLayer="4" showInNextPrevDropdownToolbarActionKey="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.showLineBreakpointInNextPrevDropdownToolbarAction" showInNextPrevDropdownToolbarAction="true" isGoToNextNavigationTargetKey="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.isLineBreakpointGoToNextNavigationTarget" isGoToNextNavigationTarget="false" isGoToPreviousNavigationTargetKey="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.isLineBreakpointGoToPreviousNavigationTarget" isGoToPreviousNavigationTarget="false" textStylePreferenceKey="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.lineBreakpointTextStyle" textStylePreferenceValue="NONE">
+		</specification>
+	</extension>
+	
+	<extension point="org.eclipse.core.runtime.adapters">
+		<factory adaptableType="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.TestrunEditor" class="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.debug.TestrunAdapterFactory">
+			<adapter type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget">
+			</adapter>
+		</factory>
+		<factory adaptableType="org.qualitune.jouleunit.android.testrun.resource.testrun.debug.TestrunDebugVariable" class="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.debug.TestrunAdapterFactory">
+			<adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider">
+			</adapter>
+		</factory>
+		<factory adaptableType="org.qualitune.jouleunit.android.testrun.resource.testrun.debug.TestrunDebugVariable" class="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.debug.TestrunAdapterFactory">
+			<adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider">
+			</adapter>
+		</factory>
+	</extension>
+	
+	<extension point="org.eclipse.ui.popupMenus">
+		<viewerContribution id="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.RulerPopupActions" targetID="org.qualitune.jouleunit.android.testrun.resource.testrun.EditorRuler">
+			<action id="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.toggleBreakpointAction" icon="icons/breakpoint_icon.gif" label="Toggle Breakpoint" class="org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate" menubarPath="debug">
+			</action>
+		</viewerContribution>
+	</extension>
+	
+	<extension point="org.eclipse.ui.editorActions">
+		<editorContribution targetID="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.TestrunEditor" id="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.BreakpointRulerActions">
+			<action id="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.debug.RulerToggleBreakpointAction" label="Add breakpoint" class="org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate" actionID="RulerDoubleClick">
+			</action>
+		</editorContribution>
+	</extension>
+	
+	<extension point="org.eclipse.debug.ui.debugModelPresentations">
+		<debugModelPresentation id="org.qualitune.jouleunit.android.testrun.resource.testrun.debugModel" class="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.debug.TestrunDebugModelPresentation">
+		</debugModelPresentation>
+	</extension>
+	
+</plugin>
