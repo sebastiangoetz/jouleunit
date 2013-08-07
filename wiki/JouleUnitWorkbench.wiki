@@ -14,5 +14,6 @@ Currently, not JouleUnit Update site exist, yet. Therefore, you have to check ou
 
 To check out the JouleUnit plugins you will require an SVN client, e.g., Subversive (http://www.eclipse.org/subversive/).
 
+Once you have an SVN client running, check the Eclipse plugin projects located at https://jouleunit.googlecode.com/svn/trunk/workbench/plugins and import them into your Eclipse workspace.
 
-To be continued ...
+= To be continued ... =
