@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Joule Unit Eclipse UI Plugin
+Bundle-SymbolicName: org.qualitune.jouleunit.ui;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.qualitune.jouleunit.ui.JouleUnitUiPlugIn
+Bundle-Vendor: TU Dresden, Software Technology Group
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.ide,
+ org.eclipse.core.resources,
+ org.eclipse.emf,
+ org.qualitune.jouleunit.core;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .,
+ lib/jcommon-1.0.16.jar,
+ lib/jfreechart-1.0.13-swt.jar,
+ lib/jfreechart-1.0.13.jar,
+ lib/jna.jar
+Import-Package: com.android.ide.eclipse.adt
