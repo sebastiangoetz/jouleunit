@@ -6,3 +6,4 @@ The JouleUnit workbench is Eclipse-based additional tooling for the JouleUnit fr
 This documentation explains how to install and use the JouleUnit workbench and the provided examples.
 
 == Installation ==
+To run the JouleUnit Workbench, Eclipse is required. If you do not have an Eclipse instance ready to use yet, download Eclipse from http://eclipse.org/
