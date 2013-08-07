@@ -34,8 +34,6 @@ import org.eclipse.ui.WorkbenchException;
 import org.qualitune.jouleunit.coordinator.TestCaseProfile;
 import org.qualitune.jouleunit.core.prefs.JouleUnitPreferences;
 
-import com.android.ide.eclipse.adt.AdtPlugin;
-
 public class Util {
 
 	private static Util instance = null;
@@ -619,10 +617,8 @@ public class Util {
 	 */
 
 	public static String getPrefValue(final String prefConst) {
-		IPreferenceStore preferenceStore = JouleUnitUiPlugIn.getDefault()
+		final IPreferenceStore preferenceStore = JouleUnitUiPlugIn.getDefault()
 				.getPreferenceStore();
-		final IPreferenceStore preferenceStoreAdtPlugin = AdtPlugin
-				.getDefault().getPreferenceStore();
 		// Preferences prefs =
 		// Platform.getPreferencesService().getRootNode().node(Plugin.PLUGIN_PREFEERENCES_SCOPE).node(MY_PLUGIN_ID);
 		// InstanceScope.INSTANCE.getNode(JouleUnitUiPlugIn.PLUGIN_ID); // does
@@ -632,16 +628,16 @@ public class Util {
 		final String string = preferenceStore.getString(prefConst);
 		// keep sync adt-plugin-pref and jouleunit-ui-pref
 		if (prefConst == JouleUnitPreferences.P_STRING_SERVER_IP
-				&& preferenceStoreAdtPlugin
+				&& preferenceStore
 						.getString(JouleUnitPreferences.P_STRING_SERVER_IP) != string) {
-			preferenceStoreAdtPlugin.putValue(
-					JouleUnitPreferences.P_STRING_SERVER_IP, string);
+			preferenceStore.putValue(JouleUnitPreferences.P_STRING_SERVER_IP,
+					string);
 		}
 		if (prefConst == JouleUnitPreferences.P_STRING_SERVER_PORT
-				&& preferenceStoreAdtPlugin
+				&& preferenceStore
 						.getString(JouleUnitPreferences.P_STRING_SERVER_PORT) != string) {
-			preferenceStoreAdtPlugin.putValue(
-					JouleUnitPreferences.P_STRING_SERVER_PORT, string);
+			preferenceStore.putValue(JouleUnitPreferences.P_STRING_SERVER_PORT,
+					string);
 		}
 		JouleUnitUiPlugIn.getDefault().getPreferenceStore()
 				.addPropertyChangeListener(new IPropertyChangeListener() {
@@ -661,14 +657,14 @@ public class Util {
 						}
 						if (event.getProperty() == JouleUnitPreferences.P_STRING_SERVER_IP) {
 							SERVER_IP = event.getNewValue().toString();
-							preferenceStoreAdtPlugin.setValue(
+							preferenceStore.setValue(
 									JouleUnitPreferences.P_STRING_SERVER_IP,
 									SERVER_IP);
 						}
 						if (event.getProperty() == JouleUnitPreferences.P_STRING_SERVER_PORT) {
 							SERVER_PORT = Integer.parseInt(event.getNewValue()
 									.toString());
-							preferenceStoreAdtPlugin.setValue(
+							preferenceStore.setValue(
 									JouleUnitPreferences.P_STRING_SERVER_PORT,
 									SERVER_PORT);
 						}
