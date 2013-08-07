@@ -20,4 +20,9 @@ To check out the JouleUnit plugins you will require an SVN client, e.g., Subvers
 
   * Alternatively you can export the plugin projects as JARs into the dropins folder of your Eclipse distribution and restart your Eclipse instance.
 
+== Using the JouleUnit Workbench ==
+Your runtime Eclipse or restarted Eclipse instance should now contain a new perspective called JouleUnit. 
+
+  * You can open the JouleUnit perspective by the menu option _Window -> Open Perspective -> Other ... -> JouleUnit_
+
 = To be continued ... =
