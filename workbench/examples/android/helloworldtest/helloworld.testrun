@@ -1,0 +1,9 @@
+TestRun ExampleWallpaper
+applicationUnderTest : "../helloworld/bin/helloworld" org.jouleunit.helloworld
+unitTests : "bin/helloworldtest" org.jouleunit.helloworld.test
+hardwareProfiling : on
+run : local
+
+TestSuite HelloWorldTests {
+	UnitTestCase org.jouleunit.helloworld.test.HelloWorldTests#testIdle
+}
