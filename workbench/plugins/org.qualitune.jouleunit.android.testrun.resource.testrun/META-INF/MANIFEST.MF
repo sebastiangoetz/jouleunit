@@ -1,0 +1,28 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: EMFText Parser Plugin: testrun
+Bundle-SymbolicName: org.qualitune.jouleunit.android.testrun.resource.testrun;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Vendor: Software Technology Group - TU Dresden Germany
+Require-Bundle: org.eclipse.core.runtime;resolution:=optional,
+ org.eclipse.emf.ecore,
+ org.eclipse.emf.ecore.change,
+ org.eclipse.emf.validation;resolution:=optional,
+ org.emftext.access;resolution:=optional,
+ org.eclipse.debug.core;resolution:=optional,
+ org.emftext.commons.antlr3_4_0,
+ org.qualitune.jouleunit.android.testrun,
+ com.android.ide.eclipse.ddms,
+ org.eclipse.ui.console,
+ org.qualitune.jouleunit.core
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: org.qualitune.jouleunit.android.testrun.resource.testrun,
+ org.qualitune.jouleunit.android.testrun.resource.testrun.analysis,
+ org.qualitune.jouleunit.android.testrun.resource.testrun.debug,
+ org.qualitune.jouleunit.android.testrun.resource.testrun.grammar,
+ org.qualitune.jouleunit.android.testrun.resource.testrun.launch,
+ org.qualitune.jouleunit.android.testrun.resource.testrun.mopp,
+ org.qualitune.jouleunit.android.testrun.resource.testrun.run,
+ org.qualitune.jouleunit.android.testrun.resource.testrun.util
+Bundle-Activator: org.qualitune.jouleunit.android.testrun.resource.testrun.mopp.TestrunPlugin

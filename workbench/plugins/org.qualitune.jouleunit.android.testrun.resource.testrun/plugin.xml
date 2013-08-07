@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+	<extension point="org.emftext.access.syntax">
+		<metaInformationProvider class="org.qualitune.jouleunit.android.testrun.resource.testrun.mopp.TestrunMetaInformation" id="org.qualitune.jouleunit.android.testrun.resource.testrun.mopp.TestrunMetaInformation">
+		</metaInformationProvider>
+	</extension>
+	
+	<extension id="org.qualitune.jouleunit.android.testrun.resource.testrun.problem" name="EMFText Problem" point="org.eclipse.core.resources.markers">
+		<persistent value="true">
+		</persistent>
+		<super type="org.eclipse.core.resources.problemmarker">
+		</super>
+		<super type="org.eclipse.core.resources.textmarker">
+		</super>
+		<super type="org.eclipse.emf.ecore.diagnostic">
+		</super>
+	</extension>
+	
+	<extension id="org.qualitune.jouleunit.android.testrun.resource.testrun.problem.syntax_error" name="EMFText Problem" point="org.eclipse.core.resources.markers">
+		<persistent value="true">
+		</persistent>
+		<super type="org.qualitune.jouleunit.android.testrun.resource.testrun.problem">
+		</super>
+	</extension>
+	
+	<extension id="org.qualitune.jouleunit.android.testrun.resource.testrun.problem.print_problem" name="EMFText Problem" point="org.eclipse.core.resources.markers">
+		<persistent value="true">
+		</persistent>
+		<super type="org.qualitune.jouleunit.android.testrun.resource.testrun.problem">
+		</super>
+	</extension>
+	
+	<extension id="org.qualitune.jouleunit.android.testrun.resource.testrun.problem.unresolved_reference" name="EMFText Problem" point="org.eclipse.core.resources.markers">
+		<persistent value="true">
+		</persistent>
+		<super type="org.qualitune.jouleunit.android.testrun.resource.testrun.problem">
+		</super>
+	</extension>
+	
+	<extension id="org.qualitune.jouleunit.android.testrun.resource.testrun.problem.analysis_problem" name="EMFText Problem" point="org.eclipse.core.resources.markers">
+		<persistent value="true">
+		</persistent>
+		<super type="org.qualitune.jouleunit.android.testrun.resource.testrun.problem">
+		</super>
+	</extension>
+	
+	<extension id="org.qualitune.jouleunit.android.testrun.resource.testrun.problem.builder_error" name="EMFText Problem" point="org.eclipse.core.resources.markers">
+		<persistent value="true">
+		</persistent>
+		<super type="org.qualitune.jouleunit.android.testrun.resource.testrun.problem">
+		</super>
+	</extension>
+	
+	<extension id="org.qualitune.jouleunit.android.testrun.resource.testrun.nature" name="testrun nature" point="org.eclipse.core.resources.natures">
+		<runtime>
+			<run class="org.qualitune.jouleunit.android.testrun.resource.testrun.mopp.TestrunNature">
+			</run>
+		</runtime>
+		<builder id="org.qualitune.jouleunit.android.testrun.resource.testrun.builder">
+		</builder>
+	</extension>
+	
+	<extension point="org.eclipse.core.resources.builders" id="org.qualitune.jouleunit.android.testrun.resource.testrun.builder" name="testrun Builder">
+		<builder hasNature="true">
+			<run class="org.qualitune.jouleunit.android.testrun.resource.testrun.mopp.TestrunBuilderAdapter">
+			</run>
+		</builder>
+	</extension>
+	
+	<extension-point id="org.qualitune.jouleunit.android.testrun.resource.testrun.default_load_options" name="Default Load Options" schema="schema/default_load_options.exsd">
+	</extension-point>
+	
+	<extension point="org.eclipse.emf.ecore.extension_parser">
+		<parser class="org.qualitune.jouleunit.android.testrun.resource.testrun.mopp.TestrunResourceFactoryDelegator" type="testrun">
+		</parser>
+	</extension>
+	
+	<extension-point id="org.qualitune.jouleunit.android.testrun.resource.testrun.additional_extension_parser" name="Additional Extension Parser" schema="schema/additional_extension_parser.exsd">
+	</extension-point>
+	
+	<extension point="org.eclipse.debug.core.breakpoints">
+		<breakpoint class="org.qualitune.jouleunit.android.testrun.resource.testrun.debug.TestrunLineBreakpoint" id="org.qualitune.jouleunit.android.testrun.resource.testrun.debug.breakpoint" markerType="org.qualitune.jouleunit.android.testrun.resource.testrun.debug.lineBreakpoint.marker" name="testrun Breakpoint">
+		</breakpoint>
+	</extension>
+	
+	<extension id="org.qualitune.jouleunit.android.testrun.resource.testrun.debug.lineBreakpoint.marker" point="org.eclipse.core.resources.markers">
+		<super type="org.eclipse.debug.core.lineBreakpointMarker">
+		</super>
+		<super type="org.eclipse.core.resources.textmarker">
+		</super>
+		<persistent value="true">
+		</persistent>
+	</extension>
+	
+	<extension point="org.eclipse.debug.core.launchConfigurationTypes">
+		<launchConfigurationType id="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.launchConfigurationType" delegate="org.qualitune.jouleunit.android.testrun.resource.testrun.launch.TestrunLaunchConfigurationDelegate" modes="run,debug" name="testrun Application" sourceLocatorId="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.sourceLocator" sourcePathComputerId="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.sourcePathComputer" delegateName="testrun Launch Tooling" delegateDescription="This will run or debug .testrun files.">
+		</launchConfigurationType>
+	</extension>
+	
+	<extension point="org.eclipse.debug.core.sourcePathComputers">
+		<sourcePathComputer class="org.qualitune.jouleunit.android.testrun.resource.testrun.debug.TestrunSourcePathComputerDelegate" id="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.sourcePathComputer">
+		</sourcePathComputer>
+	</extension>
+	
+	<extension point="org.eclipse.debug.core.sourceLocators">
+		<sourceLocator id="org.qualitune.jouleunit.android.testrun.resource.testrun.ui.sourceLocator" class="org.qualitune.jouleunit.android.testrun.resource.testrun.debug.TestrunSourceLocator" name="testrun Source Locator">
+		</sourceLocator>
+	</extension>
+	
+</plugin>
