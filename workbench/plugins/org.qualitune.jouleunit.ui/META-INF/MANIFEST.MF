@@ -18,4 +18,3 @@ Bundle-ClassPath: .,
  lib/jfreechart-1.0.13-swt.jar,
  lib/jfreechart-1.0.13.jar,
  lib/jna.jar
-Import-Package: com.android.ide.eclipse.adt
