@@ -7,3 +7,9 @@ This documentation explains how to install and use the JouleUnit workbench and t
 
 == Installation ==
 To run the JouleUnit Workbench, Eclipse is required. If you do not have an Eclipse instance ready to use yet, download Eclipse from http://eclipse.org/
+We recommend to use the Modeling Tools Edition, but feel free to use another Eclipse version instead.
+
+=== Running the JouleUnit Workbench from the SVN ===
+Currently, not JouleUnit Update site exist, yet. Therefore, you have to check out the JouleUnit plugins from the SVN and run them in a Runtime Eclipse instance or to build your own deployable plugin JARs for your Eclipse instance.
+
+To check out the JouleUnit plugins you will require an SVN client, e.g., Subversive (http://www.eclipse.org/subversive/).
