@@ -30,4 +30,12 @@ Once deployed and started on an Android device, the test case _testIdle()_ will 
 
   * To run the test suite as a normal JUnit test, select _Run As -> Android JUnit Test_ in the context menu. Afterwards, the test suite should be deployed on your Android device and being executed.
 
-== To be continued ==
+The exection should result with a green testing bar within the JUnit result view in Eclipse. If so, you can now apply the same JouleUnit test as a JouleUnit test runner.
+
+== Running JouleUnit Tests ==
+In theory, JouleUnit tests for Android are standard Android JUnit tests, meaning, each JUnit test can be executed and its energy consumption being profiled by JouleUnit.
+
+In contrast to the run dialog to trigger JUnit, we use a simple script language that tells the JouleUnit runner, which Android application shall be tested with which JUnit test cases.
+
+
+To be continued.
