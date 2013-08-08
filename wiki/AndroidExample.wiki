@@ -22,7 +22,9 @@ The first project, _helloworld_ contains an example Android application simply d
 
 The second project _helloworldtest_ contains a simple JUnit test suite consisting of one test case. The JUnit test suite is contained in the _src_ directory and called _org.jouleunit.helloworld.test.HelloWorldTest_. If you want to learn more about JUnit testing of Android, please have a look at http://developer.android.com/tools/testing/testing_eclipse.html
 
-  * TODO Screenshot of JUnit test.
+If you open the test suite, it should look as follows:
+
+http://jouleunit.googlecode.com/svn/trunk/images/helloworldtest.png
 
   * TODO Explain test cases. The test case TODO will open the hello world application and will simply wait for ten seconds.
 
