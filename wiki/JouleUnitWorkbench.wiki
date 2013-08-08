@@ -16,6 +16,8 @@ To run the JouleUnit Workbench, Eclipse is required.
 
   * If you want to use JouleUnit to energy profile and test Android applications, you will need to install the Android Development Tools (ADT, http://developer.android.com/sdk/installing/installing-adt.html) and The Android SDK (http://developer.android.com/sdk/) as well.
 
+  * Additionally, for Android testing you will need to install the _EMFText Access_ and the _EMFText Shared ANTLR 3.4.0 Runtime_ plugin from the _EMFText_ core feature at http://www.emftext.org/update/
+
 == Running the Joule Unit Workbench from the SVN ==
 Currently, not JouleUnit Update site exist, yet. Therefore, you have to check out the JouleUnit plugins from the SVN and run them in a Runtime Eclipse instance or to build your own deployable plugin JARs for your Eclipse instance.
 
