@@ -8,4 +8,10 @@ This example shows how to energy profile an Android hello world application by u
 
   * Please also note that you installed all plugins necessary for the Android extensions of the JouleUnit Workbench as mentioned on the respective [http://code.google.com/p/jouleunit/wiki/JouleUnitWorkbench wiki page].
 
+== Example Sources ==
+This example consists of two Eclispe projects, located within the JouleUnit SVN. Please load the following projects from the SVN (https://jouleunit.googlecode.com/svn/trunk/workbench/examples/android) and import them into your Eclipse workspace:
+
+  * helloworld
+  * helloworldtest
+
 == To be continued ==
