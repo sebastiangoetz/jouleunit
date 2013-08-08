@@ -48,4 +48,8 @@ http://jouleunit.googlecode.com/svn/trunk/images/testrun.png
   * The parameter _run_ configures whether to run the test cases on a local device or on a remote tesing server (not yet being publicly available).
   * Afterwards, the test cases being part of the test run are configured, which, in this case is only the _testIdle_ test case, identified by the canonical class and method name.
 
+To trigger the test run, select the file in the project explorer and select the context menu option _Run As -> testrun application_
+
+
+
 To be continued.
