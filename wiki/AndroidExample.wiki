@@ -60,5 +60,13 @@ http://jouleunit.googlecode.com/svn/trunk/images/testrun.png
 
   * Hint, if the Android console shows the message _Error: DebugBridge is not initialized. TestRun cancelled._, simply try to rerun the testrun.
 
+The following screenshot shows the result of the profiling run:
 
-To be continued.
+http://jouleunit.googlecode.com/svn/trunk/images/helloworldresult.png
+
+  * As can be seen, the _Test Run Results_ view contains only one test case, which can be visualized in the _Test Run Details_ view when double clicking on the entry in the view.
+
+  * In our example, the test run resulted in a negative measured power rate, as the device we used for testing was currently connected via USB to a desktop PC and thus, charged. To avoid these effects you have to use either WiFi based communication with the test device or to profile the power provided to your test device via the USB connection as well.
+
+= Summary =
+This tutorial shortly explained how to used the JouleUnitWorkbench for the profiling of Android applications. As this tutorial is rather new it may be incomplete or missing required information. Thus, if you have trouble to understand all the stuff, do not hesitate to contact us and help us to improve the tutorial.
