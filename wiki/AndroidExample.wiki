@@ -4,6 +4,6 @@
 
 = Introduction =
 
-This example shows how to energy profile an Android hello world application by using JouleUnit and the JouleUnitWorkbench. We assume that you installed the JouleUnitWorkbench already. Otherwise check the respective wiki page for further details.
+This example shows how to energy profile an Android hello world application by using JouleUnit and the JouleUnitWorkbench. We assume that you installed the JouleUnitWorkbench already. Otherwise check the respective [http://code.google.com/p/jouleunit/wiki/JouleUnitWorkbench wiki page] for further details.
 
 == To be continued ==
