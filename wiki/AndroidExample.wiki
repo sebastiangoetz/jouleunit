@@ -1,5 +1,9 @@
 #summary An Android example that can be used together with the JouleUnitWorkbench for the Eclipse IDE.
 
+<wiki:toc max_depth="2" />
+
 = Introduction =
 
-TBD.
+This example shows how to energy profile an Android hello world application by using JouleUnit and the JouleUnitWorkbench. We assume that you installed the JouleUnitWorkbench already. Otherwise check the respective wiki page for further details.
+
+== To be continued ==
