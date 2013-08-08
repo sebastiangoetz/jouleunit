@@ -57,5 +57,3 @@ http://jouleunit.googlecode.com/svn/trunk/images/perspective.png
 Select one of the following examples to get further used to the JouleUnit Workbench:
 
   * AndroidExample (a hello world example showing how to energy profile Android applications).
-
-To be continued
