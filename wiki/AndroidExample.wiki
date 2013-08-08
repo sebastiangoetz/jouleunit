@@ -26,8 +26,8 @@ If you open the test suite, it should look as follows:
 
 http://jouleunit.googlecode.com/svn/trunk/images/helloworldtest.png
 
-  * TODO Explain test cases. The test case TODO will open the hello world application and will simply wait for ten seconds.
+Once deployed and started on an Android device, the test case _testIdle()_ will open the hello world application and will simply wait for ten seconds.
 
-  * To run the test suite as a normal JUnit test, select _TODO_ in the context menu. Afterwards, the test suite should be deployed on your Android device and being executed.
+  * To run the test suite as a normal JUnit test, select _Run As -> Android JUnit Test_ in the context menu. Afterwards, the test suite should be deployed on your Android device and being executed.
 
 == To be continued ==
