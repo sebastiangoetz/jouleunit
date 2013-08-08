@@ -8,8 +8,11 @@ The JouleUnit workbench is Eclipse-based additional tooling for the JouleUnit fr
 This documentation explains how to install and use the JouleUnit workbench and the provided examples.
 
 = Installation =
-To run the JouleUnit Workbench, Eclipse is required. If you do not have an Eclipse instance ready to use yet, download Eclipse from http://eclipse.org/
-We recommend to use the Modeling Tools Edition, but feel free to use another Eclipse version instead.
+To run the JouleUnit Workbench, Eclipse is required. 
+
+  * If you do not have an Eclipse instance ready to use yet, download Eclipse from http://eclipse.org/
+  * We recommend to use the Modeling Tools Edition, but feel free to use another Eclipse version instead.
+  * If you want to use JouleUnit to energy profile and test Android applications, you will need to install the Android Development Tools (ADT, http://developer.android.com/sdk/installing/installing-adt.html) and The Android SDK (http://developer.android.com/sdk/) as well.
 
 == Running the Joule Unit Workbench from the SVN ==
 Currently, not JouleUnit Update site exist, yet. Therefore, you have to check out the JouleUnit plugins from the SVN and run them in a Runtime Eclipse instance or to build your own deployable plugin JARs for your Eclipse instance.
