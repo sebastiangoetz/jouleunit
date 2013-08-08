@@ -37,5 +37,15 @@ In theory, JouleUnit tests for Android are standard Android JUnit tests, meaning
 
 In contrast to the run dialog to trigger JUnit, we use a simple script language that tells the JouleUnit runner, which Android application shall be tested with which JUnit test cases.
 
+Thus, within the _helloworldtest_ project, the _helloworld.testrun_ file exist that can be used to trigger a JouleUnit profiling run. A screenshot of the example _helloworld.testrun_ file is shown below:
+
+http://jouleunit.googlecode.com/svn/trunk/images/testrun.png
+
+  * First, a name of the test run (here _ExampleWallpaper_) is given
+  * Following, the relative path to the compiled application (apk) file that shall be profiled is given, together with the package id of the respective Android application (here _org.jouleunit.helloworld_, the package id is configured within the manifest file of the respective Android project).
+  * Similarly, next, the relative path to the compiled JUnit test suite and its package id are given.
+  * The parameter _hardwareProfiling_ configures whether or not to profile further hardware information together with energy consumption (currently, the profiling of CPU utilization, WiFi traffic and display brightness are supported).
+  * The parameter _run_ configures whether to run the test cases on a local device or on a remote tesing server (not yet being publicly available).
+  * Afterwards, the test cases being part of the test run are configured, which, in this case is only the _testIdle_ test case, identified by the canonical class and method name.
 
 To be continued.
