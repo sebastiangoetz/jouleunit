@@ -20,4 +20,8 @@ TODO Screenshot
 
 The first project, _helloworld_ contains an example Android application simply displaying a _Hello World_ message once started on an Android device. If you are new to Android development, you can run the tutorial available at http://developer.android.com/training/basics/firstapp/creating-project.html to get further information about Android applications and how to run them on mobile devices.
 
+The second project _helloworldtest_ contains a simple JUnit test suite consisting of one test case. The JUnit test suite is contained in the _src_ directory and called TODO.
+
+TODO Screenshot of JUnit test.
+
 == To be continued ==
