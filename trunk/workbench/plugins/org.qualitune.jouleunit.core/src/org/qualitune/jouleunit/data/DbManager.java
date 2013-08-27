@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLData;
 import java.sql.Types;
 import java.util.Date;
 
@@ -441,41 +442,44 @@ public class DbManager {
 			}
 
 			/* Save binary for version entry. */
-			query = "INSERT INTO BinaryContent (content, contentType, name) VALUES (?,?,?);";
-			statement = connection.prepareStatement(query);
+			Integer binaryID = null;
 
-			fis = new FileInputStream(autApkFile);
-			statement.setBinaryStream(1, (InputStream) fis,
-					(int) (autApkFile.length()));
-			statement.setString(3, "apk");
-			statement.setString(2, autApkFile.getName());
+			if (null != autApkFile) {
+				query = "INSERT INTO BinaryContent (content, contentType, name) VALUES (?,?,?);";
+				statement = connection.prepareStatement(query);
 
-			status = statement.executeUpdate();
-			fis.close();
+				fis = new FileInputStream(autApkFile);
+				statement.setBinaryStream(1, (InputStream) fis,
+						(int) (autApkFile.length()));
+				statement.setString(3, "apk");
+				statement.setString(2, autApkFile.getName());
 
-			if (status <= 0) {
-				reportError("Error during saving the BinaryContent for version entry.");
-				closeConnection();
-				return -1;
+				status = statement.executeUpdate();
+				fis.close();
+
+				if (status <= 0) {
+					reportError("Error during saving the BinaryContent for version entry.");
+					closeConnection();
+					return -1;
+				}
+				// no else.
+
+				/* Get binary ID. */
+				query = "SELECT MAX(binaryID) FROM BinaryContent;";
+				statement = connection.prepareStatement(query);
+				rs = statement.executeQuery();
+
+				if (rs.next()) {
+					binaryID = rs.getInt(1);
+				}
+
+				else {
+					reportError("Error during read of binary content ID");
+					closeConnection();
+					return -1;
+				}
 			}
 			// no else.
-
-			/* Get binary ID. */
-			query = "SELECT MAX(binaryID) FROM BinaryContent;";
-			statement = connection.prepareStatement(query);
-			rs = statement.executeQuery();
-
-			int binaryID = 0;
-
-			if (rs.next()) {
-				binaryID = rs.getInt(1);
-			}
-
-			else {
-				reportError("Error during read of binary content ID");
-				closeConnection();
-				return -1;
-			}
 
 			/* Get visibility type ID. */
 			/* TODO Extract type name to constant. */
@@ -499,14 +503,17 @@ public class DbManager {
 			query = "INSERT INTO Version (apkBinaryID, appID, vendorVersionID, visibilityTypeID) VALUES (?,?,?,?);";
 			statement = connection.prepareStatement(query);
 
-			statement.setInt(1, binaryID);
+			if (null != binaryID)
+				statement.setInt(1, binaryID);
+			else
+				statement.setNull(1, Types.INTEGER);
+
 			statement.setInt(2, appID);
 			/* TODO Should be extracted from project settings. */
 			statement.setString(3, "application under test");
 			statement.setInt(4, visibilityTypeID);
 
 			status = statement.executeUpdate();
-			fis.close();
 
 			if (status <= 0) {
 				reportError("Error during saving the Version entry.");
@@ -598,7 +605,6 @@ public class DbManager {
 			statement.setInt(5, versionID);
 
 			status = statement.executeUpdate();
-			fis.close();
 
 			if (status <= 0) {
 				reportError("Error during saving TestSuite entry.");
