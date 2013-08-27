@@ -1460,15 +1460,19 @@ public class TestrunInterpreter extends
 								logOutputReceiver.addOutput(data, offset,
 										length);
 							}
-						});
+						}, 0);
 			} catch (TimeoutException e) {
-				printError(e.getMessage());
+				printError("TimeoutException during execution of ADB command ["
+						+ cmd + "]:\n" + e.getMessage());
 			} catch (AdbCommandRejectedException e) {
-				printError(e.getMessage());
+				printError("AdbCommandRejectedException during execution of ADB command ["
+						+ cmd + "]:\n" + e.getMessage());
 			} catch (ShellCommandUnresponsiveException e) {
-				printError(e.getMessage());
+				printError("ShellCommandUnresponsiveException during execution of ADB command ["
+						+ cmd + "]:\n" + e.getMessage());
 			} catch (IOException e) {
-				printError(e.getMessage());
+				printError("IOException during execution of ADB command ["
+						+ cmd + "]:\n" + e.getMessage());
 			}
 		}
 
