@@ -81,7 +81,7 @@ public class TestrunInterpreter extends
 	 * Creates a new {@link TestrunInterpreter}.
 	 * 
 	 * @param console
-	 *            The {@link PrintStream} used to propage interpretation
+	 *            The {@link PrintStream} used to propagate interpretation
 	 *            progress and errors.
 	 */
 	public TestrunInterpreter(PrintStream console) {
@@ -777,8 +777,10 @@ public class TestrunInterpreter extends
 		// end for.
 
 		/* Delete application data for clean reset. */
-		executeShellCommand("pm clear "
-				+ coordinator.testRun.getPackageUnderTest());
+		if (null != coordinator.testRun.getPackageUnderTest())
+			executeShellCommand("pm clear "
+					+ coordinator.testRun.getPackageUnderTest());
+		// no else.
 
 		try {
 			Thread.sleep(1000);
@@ -933,13 +935,17 @@ public class TestrunInterpreter extends
 			return false;
 		}
 
-		int testRunID = dbMgr.saveTestRun(new File(testRun.getAut().getPath()),
-				testRun.getPackageUnderTest(),
-				(null == testRun.getJunitApk() || null == testRun.getJunitApk()
-						.getPath()) ? null : new File(testRun.getJunitApk()
-						.getPath()), testRun.getJunitPackage(), testRun
-						.isHardwareProfilingOn(), testRun.getIdleTime(),
-				testRun.getNoOfRuns(), buffer.buffer.toString());
+		int testRunID = dbMgr
+				.saveTestRun((null == testRun.getAut() || null == testRun
+						.getAut().getPath()) ? null : new File(testRun.getAut()
+						.getPath()), testRun.getPackageUnderTest(),
+						(null == testRun.getJunitApk() || null == testRun
+								.getJunitApk().getPath()) ? null : new File(
+								testRun.getJunitApk().getPath()), testRun
+								.getJunitPackage(), testRun
+								.isHardwareProfilingOn(),
+						testRun.getIdleTime(), testRun.getNoOfRuns(),
+						buffer.buffer.toString());
 
 		if (testRunID <= 0) {
 			printError("Illegal Test Run ID. Test Run Export to DataBase failed. TestRun cancelled.");
@@ -1377,9 +1383,13 @@ public class TestrunInterpreter extends
 		 */
 		@Override
 		protected void deployTestCases() throws ProfilingException {
-			if (!installAut(testRun.getAut()))
-				throw new ProfilingException(
-						"Failure during installation of Application under Test.");
+
+			if (null != testRun.getAut() && null != testRun.getAut().getPath()
+					&& testRun.getAut().getPath().length() > 0)
+				if (!installAut(testRun.getAut()))
+					throw new ProfilingException(
+							"Failure during installation of Application under Test.");
+			// no else.
 
 			if (null != testRun.getJunitApk()
 					&& null != testRun.getJunitApk().getPath()
