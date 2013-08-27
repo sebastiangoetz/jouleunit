@@ -275,10 +275,6 @@ public abstract class AbstractAndroidJouleUnitCoordinator extends
 	protected void startHardwareProfiling() {
 		reportProgress("Start Hardware probe service...");
 
-		ILogLineProcessor testProcessor = new TestCaseLogLineProcessor(
-				logOutputReceiver);
-		logOutputReceiver.addLogLineProcessor(testProcessor);
-
 		String command = "am startservice -a 'org.qualitune.jouleunit.android.HWService'";
 
 		try {
@@ -439,6 +435,10 @@ public abstract class AbstractAndroidJouleUnitCoordinator extends
 			logCatThread.start();
 		}
 		// no else.
+
+		ILogLineProcessor testProcessor = new TestCaseLogLineProcessor(
+				logOutputReceiver);
+		logOutputReceiver.addLogLineProcessor(testProcessor);
 	}
 
 	/** Stops reading logged events after the test run terminated. */
