@@ -55,6 +55,11 @@
     </genClasses>
     <genClasses ecoreClass="testrun.ecore#//HomeButtonStatement"/>
     <genClasses ecoreClass="testrun.ecore#//OpenSettingsStatement"/>
+    <genClasses ecoreClass="testrun.ecore#//SendPortMessageStatement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute testrun.ecore#//SendPortMessageStatement/ip"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute testrun.ecore#//SendPortMessageStatement/port"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute testrun.ecore#//SendPortMessageStatement/message"/>
+    </genClasses>
     <genClasses ecoreClass="testrun.ecore#//StartActivityStatement">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute testrun.ecore#//StartActivityStatement/package"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute testrun.ecore#//StartActivityStatement/class"/>

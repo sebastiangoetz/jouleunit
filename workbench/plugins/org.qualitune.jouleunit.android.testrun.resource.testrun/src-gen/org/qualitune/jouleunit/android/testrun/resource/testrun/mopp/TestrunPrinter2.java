@@ -236,20 +236,24 @@ public class TestrunPrinter2 implements org.qualitune.jouleunit.android.testrun.
 			printInternal(element, org.qualitune.jouleunit.android.testrun.resource.testrun.grammar.TestrunGrammarInformationProvider.TESTRUN_10, foundFormattingElements);
 			return;
 		}
-		if (element instanceof org.qualitune.jouleunit.android.testrun.StartActivityStatement) {
+		if (element instanceof org.qualitune.jouleunit.android.testrun.SendPortMessageStatement) {
 			printInternal(element, org.qualitune.jouleunit.android.testrun.resource.testrun.grammar.TestrunGrammarInformationProvider.TESTRUN_11, foundFormattingElements);
 			return;
 		}
-		if (element instanceof org.qualitune.jouleunit.android.testrun.WaitStatement) {
+		if (element instanceof org.qualitune.jouleunit.android.testrun.StartActivityStatement) {
 			printInternal(element, org.qualitune.jouleunit.android.testrun.resource.testrun.grammar.TestrunGrammarInformationProvider.TESTRUN_12, foundFormattingElements);
 			return;
 		}
-		if (element instanceof org.qualitune.jouleunit.android.testrun.UnlockStatement) {
+		if (element instanceof org.qualitune.jouleunit.android.testrun.WaitStatement) {
 			printInternal(element, org.qualitune.jouleunit.android.testrun.resource.testrun.grammar.TestrunGrammarInformationProvider.TESTRUN_13, foundFormattingElements);
 			return;
 		}
-		if (element instanceof org.qualitune.jouleunit.android.testrun.TestStatement) {
+		if (element instanceof org.qualitune.jouleunit.android.testrun.UnlockStatement) {
 			printInternal(element, org.qualitune.jouleunit.android.testrun.resource.testrun.grammar.TestrunGrammarInformationProvider.TESTRUN_14, foundFormattingElements);
+			return;
+		}
+		if (element instanceof org.qualitune.jouleunit.android.testrun.TestStatement) {
+			printInternal(element, org.qualitune.jouleunit.android.testrun.resource.testrun.grammar.TestrunGrammarInformationProvider.TESTRUN_15, foundFormattingElements);
 			return;
 		}
 		

@@ -76,7 +76,12 @@ public class UpdateTestCaseViewJob extends Job {
 			 * Compute consume energy before running on UI thread to avoid
 			 * blocking.
 			 */
-			testProfile.getConsumedEnergy();
+			try {
+				testProfile.getConsumedEnergy();
+			} catch (IllegalArgumentException e) {
+				// TODO How to handle this? (Happens when start and stop
+				// timestamps interfere.
+			}
 
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
@@ -174,9 +179,11 @@ public class UpdateTestCaseViewJob extends Job {
 		monitor.beginTask("Export test results for history", 1);
 		if ("".equals(profile.getExportLocation())
 				|| profile.getExportLocation() == null) {
-			Util.getInstance().exportTestResultForHistory(profile.getTestCaseProfiles(), "");
+			Util.getInstance().exportTestResultForHistory(
+					profile.getTestCaseProfiles(), "");
 		} else {
-			Util.getInstance().exportTestResultForHistory(profile.getTestCaseProfiles(), profile.getExportLocation());
+			Util.getInstance().exportTestResultForHistory(
+					profile.getTestCaseProfiles(), profile.getExportLocation());
 		}
 		monitor.worked(1);
 

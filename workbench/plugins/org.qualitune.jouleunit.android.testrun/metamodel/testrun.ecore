@@ -58,6 +58,12 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="HomeButtonStatement" eSuperTypes="#//Statement"/>
   <eClassifiers xsi:type="ecore:EClass" name="OpenSettingsStatement" eSuperTypes="#//Statement"/>
+  <eClassifiers xsi:type="ecore:EClass" name="SendPortMessageStatement" eSuperTypes="#//Statement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ip" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="port" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="message" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="StartActivityStatement" eSuperTypes="#//Statement">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="package" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>

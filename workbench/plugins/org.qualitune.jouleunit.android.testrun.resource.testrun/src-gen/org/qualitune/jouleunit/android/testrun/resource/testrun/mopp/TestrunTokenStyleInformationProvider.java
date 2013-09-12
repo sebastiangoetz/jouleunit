@@ -101,6 +101,12 @@ public class TestrunTokenStyleInformationProvider {
 		if ("SETTINGS".equals(tokenName)) {
 			return new org.qualitune.jouleunit.android.testrun.resource.testrun.mopp.TestrunTokenStyle(new int[] {0x80, 0x00, 0x55}, null, true, false, false, false);
 		}
+		if ("SEND".equals(tokenName)) {
+			return new org.qualitune.jouleunit.android.testrun.resource.testrun.mopp.TestrunTokenStyle(new int[] {0x80, 0x00, 0x55}, null, true, false, false, false);
+		}
+		if ("MESSAGE".equals(tokenName)) {
+			return new org.qualitune.jouleunit.android.testrun.resource.testrun.mopp.TestrunTokenStyle(new int[] {0x80, 0x00, 0x55}, null, true, false, false, false);
+		}
 		if ("START".equals(tokenName)) {
 			return new org.qualitune.jouleunit.android.testrun.resource.testrun.mopp.TestrunTokenStyle(new int[] {0x80, 0x00, 0x55}, null, true, false, false, false);
 		}

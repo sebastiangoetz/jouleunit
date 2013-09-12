@@ -136,6 +136,12 @@ public class AbstractTestrunInterpreter<ResultType, ContextType> {
 		if (result != null) {
 			return result;
 		}
+		if (object instanceof org.qualitune.jouleunit.android.testrun.SendPortMessageStatement) {
+			result = interprete_org_qualitune_jouleunit_android_testrun_SendPortMessageStatement((org.qualitune.jouleunit.android.testrun.SendPortMessageStatement) object, context);
+		}
+		if (result != null) {
+			return result;
+		}
 		if (object instanceof org.qualitune.jouleunit.android.testrun.StartActivityStatement) {
 			result = interprete_org_qualitune_jouleunit_android_testrun_StartActivityStatement((org.qualitune.jouleunit.android.testrun.StartActivityStatement) object, context);
 		}
@@ -228,6 +234,10 @@ public class AbstractTestrunInterpreter<ResultType, ContextType> {
 	}
 	
 	public ResultType interprete_org_qualitune_jouleunit_android_testrun_OpenSettingsStatement(org.qualitune.jouleunit.android.testrun.OpenSettingsStatement openSettingsStatement, ContextType context) {
+		return null;
+	}
+	
+	public ResultType interprete_org_qualitune_jouleunit_android_testrun_SendPortMessageStatement(org.qualitune.jouleunit.android.testrun.SendPortMessageStatement sendPortMessageStatement, ContextType context) {
 		return null;
 	}
 	

@@ -21,6 +21,7 @@ public class TestrunSyntaxCoverageInformationProvider {
 			org.qualitune.jouleunit.android.testrun.TestrunPackage.eINSTANCE.getEnterStatement(),
 			org.qualitune.jouleunit.android.testrun.TestrunPackage.eINSTANCE.getHomeButtonStatement(),
 			org.qualitune.jouleunit.android.testrun.TestrunPackage.eINSTANCE.getOpenSettingsStatement(),
+			org.qualitune.jouleunit.android.testrun.TestrunPackage.eINSTANCE.getSendPortMessageStatement(),
 			org.qualitune.jouleunit.android.testrun.TestrunPackage.eINSTANCE.getStartActivityStatement(),
 			org.qualitune.jouleunit.android.testrun.TestrunPackage.eINSTANCE.getWaitStatement(),
 			org.qualitune.jouleunit.android.testrun.TestrunPackage.eINSTANCE.getUnlockStatement(),

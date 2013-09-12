@@ -14,7 +14,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
-import org.osgi.service.prefs.Preferences;
 import org.qualitune.jouleunit.ProfilingException;
 import org.qualitune.jouleunit.android.AbstractAndroidJouleUnitCoordinator;
 import org.qualitune.jouleunit.android.logcat.LogOutputReceiver;
@@ -28,6 +27,7 @@ import org.qualitune.jouleunit.android.testrun.EnterStatement;
 import org.qualitune.jouleunit.android.testrun.HomeButtonStatement;
 import org.qualitune.jouleunit.android.testrun.JunitTestCase;
 import org.qualitune.jouleunit.android.testrun.OpenSettingsStatement;
+import org.qualitune.jouleunit.android.testrun.SendPortMessageStatement;
 import org.qualitune.jouleunit.android.testrun.StartActivityStatement;
 import org.qualitune.jouleunit.android.testrun.Statement;
 import org.qualitune.jouleunit.android.testrun.TestBehavior;
@@ -44,7 +44,6 @@ import org.qualitune.jouleunit.android.testrun.resource.testrun.util.AbstractTes
 import org.qualitune.jouleunit.coordinator.JouleUnitCoordinator;
 import org.qualitune.jouleunit.coordinator.TestCaseProfile;
 import org.qualitune.jouleunit.coordinator.TestSuiteProfile;
-import org.qualitune.jouleunit.core.JouleUnitPlugin;
 import org.qualitune.jouleunit.core.prefs.JouleUnitPreferences;
 import org.qualitune.jouleunit.data.DbManager;
 import org.qualitune.jouleunit.data.ResultPropagator;
@@ -294,6 +293,83 @@ public class TestrunInterpreter extends
 	 * 
 	 * @see org.qualitune.jouleunit.android.testrun.resource.testrun.util.
 	 * AbstractTestrunInterpreter
+	 * #interprete_org_qualitune_jouleunit_android_testrun_SendPortMessageStatement
+	 * (org.qualitune.jouleunit.android.testrun.SendPortMessageStatement,
+	 * java.lang.Object)
+	 */
+	@Override
+	public Boolean interprete_org_qualitune_jouleunit_android_testrun_SendPortMessageStatement(
+			SendPortMessageStatement sendPortMessageStatement, Boolean context) {
+
+		Socket kkSocket = null;
+		PrintWriter out = null;
+		BufferedReader in = null;
+
+		String serverIP = sendPortMessageStatement.getIp();
+		int serverPort = sendPortMessageStatement.getPort();
+
+		printProgress("Try to send port message to " + serverIP + ":"
+				+ serverPort + " ...");
+		try {
+			kkSocket = new Socket(serverIP, serverPort);
+			out = new PrintWriter(kkSocket.getOutputStream(), true);
+			in = new BufferedReader(new InputStreamReader(
+					kkSocket.getInputStream()));
+		}
+
+		catch (UnknownHostException e) {
+			printError("Cannot connect to host " + serverIP
+					+ ". Are you sure that your settings are correct?");
+			return false;
+		}
+
+		catch (IOException e) {
+			printError("Couldn't get I/O for the connection to " + serverIP
+					+ ". Are you sure that your settings are correct?");
+			return false;
+		}
+
+		BufferedReader stdIn = new BufferedReader(new InputStreamReader(
+				System.in));
+		String fromServer;
+
+		try {
+			out.println(sendPortMessageStatement.getMessage());
+
+			while ((fromServer = in.readLine()) != null) {
+				printProgress(fromServer);
+
+				if (fromServer.equals("... done") || fromServer.equals("abort")) {
+					break;
+				}
+			}
+
+			in.close();
+			out.close();
+			stdIn.close();
+			kkSocket.close();
+		}
+
+		catch (IOException e) {
+			printError("Connection to remote sever failed. Are you sure that the settings are correct?\nCaused Exception: "
+					+ e.getMessage() + ".");
+			return false;
+		}
+
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// not that important.
+		}
+
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.qualitune.jouleunit.android.testrun.resource.testrun.util.
+	 * AbstractTestrunInterpreter
 	 * #interprete_org_qualitune_jouleunit_android_testrun_StartActivityStatement
 	 * (org.qualitune.jouleunit.android.testrun.StartActivityStatement,
 	 * java.lang.Object)
@@ -350,6 +426,9 @@ public class TestrunInterpreter extends
 		else if (statement instanceof OpenSettingsStatement)
 			return interprete_org_qualitune_jouleunit_android_testrun_OpenSettingsStatement(
 					(OpenSettingsStatement) statement, context);
+		else if (statement instanceof SendPortMessageStatement)
+			return interprete_org_qualitune_jouleunit_android_testrun_SendPortMessageStatement(
+					(SendPortMessageStatement) statement, context);
 
 		else if (statement instanceof StartActivityStatement)
 			return interprete_org_qualitune_jouleunit_android_testrun_StartActivityStatement(

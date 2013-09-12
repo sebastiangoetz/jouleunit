@@ -18,6 +18,7 @@ import org.qualitune.jouleunit.android.testrun.EnterStatement;
 import org.qualitune.jouleunit.android.testrun.HomeButtonStatement;
 import org.qualitune.jouleunit.android.testrun.JunitTestCase;
 import org.qualitune.jouleunit.android.testrun.OpenSettingsStatement;
+import org.qualitune.jouleunit.android.testrun.SendPortMessageStatement;
 import org.qualitune.jouleunit.android.testrun.StartActivityStatement;
 import org.qualitune.jouleunit.android.testrun.Statement;
 import org.qualitune.jouleunit.android.testrun.TestBehavior;
@@ -147,6 +148,13 @@ public class TestrunPackageImpl extends EPackageImpl implements TestrunPackage {
 	 * @generated
 	 */
 	private EClass openSettingsStatementEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass sendPortMessageStatementEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -602,6 +610,42 @@ public class TestrunPackageImpl extends EPackageImpl implements TestrunPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getSendPortMessageStatement() {
+		return sendPortMessageStatementEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getSendPortMessageStatement_Ip() {
+		return (EAttribute)sendPortMessageStatementEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getSendPortMessageStatement_Port() {
+		return (EAttribute)sendPortMessageStatementEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getSendPortMessageStatement_Message() {
+		return (EAttribute)sendPortMessageStatementEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getStartActivityStatement() {
 		return startActivityStatementEClass;
 	}
@@ -737,6 +781,11 @@ public class TestrunPackageImpl extends EPackageImpl implements TestrunPackage {
 
 		openSettingsStatementEClass = createEClass(OPEN_SETTINGS_STATEMENT);
 
+		sendPortMessageStatementEClass = createEClass(SEND_PORT_MESSAGE_STATEMENT);
+		createEAttribute(sendPortMessageStatementEClass, SEND_PORT_MESSAGE_STATEMENT__IP);
+		createEAttribute(sendPortMessageStatementEClass, SEND_PORT_MESSAGE_STATEMENT__PORT);
+		createEAttribute(sendPortMessageStatementEClass, SEND_PORT_MESSAGE_STATEMENT__MESSAGE);
+
 		startActivityStatementEClass = createEClass(START_ACTIVITY_STATEMENT);
 		createEAttribute(startActivityStatementEClass, START_ACTIVITY_STATEMENT__PACKAGE);
 		createEAttribute(startActivityStatementEClass, START_ACTIVITY_STATEMENT__CLASS);
@@ -795,6 +844,7 @@ public class TestrunPackageImpl extends EPackageImpl implements TestrunPackage {
 		displayStatementEClass.getESuperTypes().add(this.getStatement());
 		homeButtonStatementEClass.getESuperTypes().add(this.getStatement());
 		openSettingsStatementEClass.getESuperTypes().add(this.getStatement());
+		sendPortMessageStatementEClass.getESuperTypes().add(this.getStatement());
 		startActivityStatementEClass.getESuperTypes().add(this.getStatement());
 		testStatementEClass.getESuperTypes().add(this.getStatement());
 		unlockStatementEClass.getESuperTypes().add(this.getStatement());
@@ -849,6 +899,11 @@ public class TestrunPackageImpl extends EPackageImpl implements TestrunPackage {
 		initEClass(homeButtonStatementEClass, HomeButtonStatement.class, "HomeButtonStatement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(openSettingsStatementEClass, OpenSettingsStatement.class, "OpenSettingsStatement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(sendPortMessageStatementEClass, SendPortMessageStatement.class, "SendPortMessageStatement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getSendPortMessageStatement_Ip(), ecorePackage.getEString(), "ip", null, 1, 1, SendPortMessageStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSendPortMessageStatement_Port(), ecorePackage.getEInt(), "port", null, 1, 1, SendPortMessageStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSendPortMessageStatement_Message(), ecorePackage.getEString(), "message", null, 1, 1, SendPortMessageStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(startActivityStatementEClass, StartActivityStatement.class, "StartActivityStatement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getStartActivityStatement_Package(), ecorePackage.getEString(), "package", null, 1, 1, StartActivityStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

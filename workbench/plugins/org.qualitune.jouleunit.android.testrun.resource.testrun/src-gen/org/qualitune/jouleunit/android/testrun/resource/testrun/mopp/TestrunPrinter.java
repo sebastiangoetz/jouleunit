@@ -96,6 +96,10 @@ public class TestrunPrinter implements org.qualitune.jouleunit.android.testrun.r
 			print_org_qualitune_jouleunit_android_testrun_OpenSettingsStatement((org.qualitune.jouleunit.android.testrun.OpenSettingsStatement) element, globaltab, out);
 			return;
 		}
+		if (element instanceof org.qualitune.jouleunit.android.testrun.SendPortMessageStatement) {
+			print_org_qualitune_jouleunit_android_testrun_SendPortMessageStatement((org.qualitune.jouleunit.android.testrun.SendPortMessageStatement) element, globaltab, out);
+			return;
+		}
 		if (element instanceof org.qualitune.jouleunit.android.testrun.StartActivityStatement) {
 			print_org_qualitune_jouleunit_android_testrun_StartActivityStatement((org.qualitune.jouleunit.android.testrun.StartActivityStatement) element, globaltab, out);
 			return;
@@ -1076,6 +1080,71 @@ public class TestrunPrinter implements org.qualitune.jouleunit.android.testrun.r
 		// DEFINITION PART BEGINS (CsString)
 		out.print("SETTINGS");
 		out.print(" ");
+	}
+	
+	
+	public void print_org_qualitune_jouleunit_android_testrun_SendPortMessageStatement(org.qualitune.jouleunit.android.testrun.SendPortMessageStatement element, String outertab, java.io.PrintWriter out) {
+		// The printCountingMap contains a mapping from feature names to the number of
+		// remaining elements that still need to be printed. The map is initialized with
+		// the number of elements stored in each structural feature. For lists this is the
+		// list size. For non-multiple features it is either 1 (if the feature is set) or
+		// 0 (if the feature is null).
+		java.util.Map<String, Integer> printCountingMap = new java.util.LinkedHashMap<String, Integer>(3);
+		Object temp;
+		temp = element.eGet(element.eClass().getEStructuralFeature(org.qualitune.jouleunit.android.testrun.TestrunPackage.SEND_PORT_MESSAGE_STATEMENT__IP));
+		printCountingMap.put("ip", temp == null ? 0 : 1);
+		temp = element.eGet(element.eClass().getEStructuralFeature(org.qualitune.jouleunit.android.testrun.TestrunPackage.SEND_PORT_MESSAGE_STATEMENT__PORT));
+		printCountingMap.put("port", temp == null ? 0 : 1);
+		temp = element.eGet(element.eClass().getEStructuralFeature(org.qualitune.jouleunit.android.testrun.TestrunPackage.SEND_PORT_MESSAGE_STATEMENT__MESSAGE));
+		printCountingMap.put("message", temp == null ? 0 : 1);
+		// print collected hidden tokens
+		int count;
+		// DEFINITION PART BEGINS (CsString)
+		out.print("SEND");
+		// DEFINITION PART BEGINS (WhiteSpaces)
+		out.print(" ");
+		// DEFINITION PART BEGINS (CsString)
+		out.print("MESSAGE");
+		// DEFINITION PART BEGINS (WhiteSpaces)
+		out.print(" ");
+		// DEFINITION PART BEGINS (PlaceholderInQuotes)
+		count = printCountingMap.get("ip");
+		if (count > 0) {
+			Object o = element.eGet(element.eClass().getEStructuralFeature(org.qualitune.jouleunit.android.testrun.TestrunPackage.SEND_PORT_MESSAGE_STATEMENT__IP));
+			if (o != null) {
+				org.qualitune.jouleunit.android.testrun.resource.testrun.ITestrunTokenResolver resolver = tokenResolverFactory.createTokenResolver("QUOTED_34_34");
+				resolver.setOptions(getOptions());
+				out.print(resolver.deResolve((Object) o, element.eClass().getEStructuralFeature(org.qualitune.jouleunit.android.testrun.TestrunPackage.SEND_PORT_MESSAGE_STATEMENT__IP), element));
+			}
+			printCountingMap.put("ip", count - 1);
+		}
+		// DEFINITION PART BEGINS (WhiteSpaces)
+		out.print(" ");
+		// DEFINITION PART BEGINS (PlaceholderUsingSpecifiedToken)
+		count = printCountingMap.get("port");
+		if (count > 0) {
+			Object o = element.eGet(element.eClass().getEStructuralFeature(org.qualitune.jouleunit.android.testrun.TestrunPackage.SEND_PORT_MESSAGE_STATEMENT__PORT));
+			if (o != null) {
+				org.qualitune.jouleunit.android.testrun.resource.testrun.ITestrunTokenResolver resolver = tokenResolverFactory.createTokenResolver("NUMBER");
+				resolver.setOptions(getOptions());
+				out.print(resolver.deResolve((Object) o, element.eClass().getEStructuralFeature(org.qualitune.jouleunit.android.testrun.TestrunPackage.SEND_PORT_MESSAGE_STATEMENT__PORT), element));
+			}
+			printCountingMap.put("port", count - 1);
+		}
+		// DEFINITION PART BEGINS (WhiteSpaces)
+		out.print(" ");
+		// DEFINITION PART BEGINS (PlaceholderInQuotes)
+		count = printCountingMap.get("message");
+		if (count > 0) {
+			Object o = element.eGet(element.eClass().getEStructuralFeature(org.qualitune.jouleunit.android.testrun.TestrunPackage.SEND_PORT_MESSAGE_STATEMENT__MESSAGE));
+			if (o != null) {
+				org.qualitune.jouleunit.android.testrun.resource.testrun.ITestrunTokenResolver resolver = tokenResolverFactory.createTokenResolver("QUOTED_34_34");
+				resolver.setOptions(getOptions());
+				out.print(resolver.deResolve((Object) o, element.eClass().getEStructuralFeature(org.qualitune.jouleunit.android.testrun.TestrunPackage.SEND_PORT_MESSAGE_STATEMENT__MESSAGE), element));
+				out.print(" ");
+			}
+			printCountingMap.put("message", count - 1);
+		}
 	}
 	
 	
