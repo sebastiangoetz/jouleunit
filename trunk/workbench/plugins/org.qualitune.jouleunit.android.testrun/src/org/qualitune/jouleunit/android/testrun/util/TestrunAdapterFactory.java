@@ -140,6 +140,10 @@ public class TestrunAdapterFactory extends AdapterFactoryImpl {
 				return createOpenSettingsStatementAdapter();
 			}
 			@Override
+			public Adapter caseSendPortMessageStatement(SendPortMessageStatement object) {
+				return createSendPortMessageStatementAdapter();
+			}
+			@Override
 			public Adapter caseStartActivityStatement(StartActivityStatement object) {
 				return createStartActivityStatementAdapter();
 			}
@@ -400,6 +404,20 @@ public class TestrunAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createOpenSettingsStatementAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.qualitune.jouleunit.android.testrun.SendPortMessageStatement <em>Send Port Message Statement</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.qualitune.jouleunit.android.testrun.SendPortMessageStatement
+	 * @generated
+	 */
+	public Adapter createSendPortMessageStatementAdapter() {
 		return null;
 	}
 

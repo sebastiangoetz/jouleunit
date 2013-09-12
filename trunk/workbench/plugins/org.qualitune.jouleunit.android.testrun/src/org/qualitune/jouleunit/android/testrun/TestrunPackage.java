@@ -483,7 +483,7 @@ public interface TestrunPackage extends EPackage {
 	 * @see org.qualitune.jouleunit.android.testrun.impl.TestrunPackageImpl#getWaitStatement()
 	 * @generated
 	 */
-	int WAIT_STATEMENT = 17;
+	int WAIT_STATEMENT = 18;
 
 	/**
 	 * The meta object id for the '{@link org.qualitune.jouleunit.android.testrun.impl.TestStatementImpl <em>Test Statement</em>}' class.
@@ -493,7 +493,7 @@ public interface TestrunPackage extends EPackage {
 	 * @see org.qualitune.jouleunit.android.testrun.impl.TestrunPackageImpl#getTestStatement()
 	 * @generated
 	 */
-	int TEST_STATEMENT = 15;
+	int TEST_STATEMENT = 16;
 
 	/**
 	 * The meta object id for the '{@link org.qualitune.jouleunit.android.testrun.impl.DisplayStatementImpl <em>Display Statement</em>}' class.
@@ -531,7 +531,7 @@ public interface TestrunPackage extends EPackage {
 	 * @see org.qualitune.jouleunit.android.testrun.impl.TestrunPackageImpl#getUnlockStatement()
 	 * @generated
 	 */
-	int UNLOCK_STATEMENT = 16;
+	int UNLOCK_STATEMENT = 17;
 
 	/**
 	 * The meta object id for the '{@link org.qualitune.jouleunit.android.testrun.impl.OpenSettingsStatementImpl <em>Open Settings Statement</em>}' class.
@@ -572,6 +572,52 @@ public interface TestrunPackage extends EPackage {
 	int OPEN_SETTINGS_STATEMENT_FEATURE_COUNT = STATEMENT_FEATURE_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link org.qualitune.jouleunit.android.testrun.impl.SendPortMessageStatementImpl <em>Send Port Message Statement</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.qualitune.jouleunit.android.testrun.impl.SendPortMessageStatementImpl
+	 * @see org.qualitune.jouleunit.android.testrun.impl.TestrunPackageImpl#getSendPortMessageStatement()
+	 * @generated
+	 */
+	int SEND_PORT_MESSAGE_STATEMENT = 14;
+
+	/**
+	 * The feature id for the '<em><b>Ip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SEND_PORT_MESSAGE_STATEMENT__IP = STATEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Port</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SEND_PORT_MESSAGE_STATEMENT__PORT = STATEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Message</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SEND_PORT_MESSAGE_STATEMENT__MESSAGE = STATEMENT_FEATURE_COUNT + 2;
+
+	/**
+	 * The number of structural features of the '<em>Send Port Message Statement</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SEND_PORT_MESSAGE_STATEMENT_FEATURE_COUNT = STATEMENT_FEATURE_COUNT + 3;
+
+	/**
 	 * The meta object id for the '{@link org.qualitune.jouleunit.android.testrun.impl.StartActivityStatementImpl <em>Start Activity Statement</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -579,7 +625,7 @@ public interface TestrunPackage extends EPackage {
 	 * @see org.qualitune.jouleunit.android.testrun.impl.TestrunPackageImpl#getStartActivityStatement()
 	 * @generated
 	 */
-	int START_ACTIVITY_STATEMENT = 14;
+	int START_ACTIVITY_STATEMENT = 15;
 
 	/**
 	 * The feature id for the '<em><b>Package</b></em>' attribute.
@@ -671,7 +717,7 @@ public interface TestrunPackage extends EPackage {
 	 * @see org.qualitune.jouleunit.android.testrun.impl.TestrunPackageImpl#getApkFile()
 	 * @generated
 	 */
-	int APK_FILE = 18;
+	int APK_FILE = 19;
 
 	/**
 	 * The feature id for the '<em><b>Path</b></em>' attribute.
@@ -700,7 +746,7 @@ public interface TestrunPackage extends EPackage {
 	 * @see org.qualitune.jouleunit.android.testrun.impl.TestrunPackageImpl#getCursorDirection()
 	 * @generated
 	 */
-	int CURSOR_DIRECTION = 19;
+	int CURSOR_DIRECTION = 20;
 
 
 	/**
@@ -1128,6 +1174,49 @@ public interface TestrunPackage extends EPackage {
 	EClass getOpenSettingsStatement();
 
 	/**
+	 * Returns the meta object for class '{@link org.qualitune.jouleunit.android.testrun.SendPortMessageStatement <em>Send Port Message Statement</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Send Port Message Statement</em>'.
+	 * @see org.qualitune.jouleunit.android.testrun.SendPortMessageStatement
+	 * @generated
+	 */
+	EClass getSendPortMessageStatement();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.qualitune.jouleunit.android.testrun.SendPortMessageStatement#getIp <em>Ip</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Ip</em>'.
+	 * @see org.qualitune.jouleunit.android.testrun.SendPortMessageStatement#getIp()
+	 * @see #getSendPortMessageStatement()
+	 * @generated
+	 */
+	EAttribute getSendPortMessageStatement_Ip();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.qualitune.jouleunit.android.testrun.SendPortMessageStatement#getPort <em>Port</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Port</em>'.
+	 * @see org.qualitune.jouleunit.android.testrun.SendPortMessageStatement#getPort()
+	 * @see #getSendPortMessageStatement()
+	 * @generated
+	 */
+	EAttribute getSendPortMessageStatement_Port();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.qualitune.jouleunit.android.testrun.SendPortMessageStatement#getMessage <em>Message</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Message</em>'.
+	 * @see org.qualitune.jouleunit.android.testrun.SendPortMessageStatement#getMessage()
+	 * @see #getSendPortMessageStatement()
+	 * @generated
+	 */
+	EAttribute getSendPortMessageStatement_Message();
+
+	/**
 	 * Returns the meta object for class '{@link org.qualitune.jouleunit.android.testrun.StartActivityStatement <em>Start Activity Statement</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1534,6 +1623,36 @@ public interface TestrunPackage extends EPackage {
 		 * @generated
 		 */
 		EClass OPEN_SETTINGS_STATEMENT = eINSTANCE.getOpenSettingsStatement();
+		/**
+		 * The meta object literal for the '{@link org.qualitune.jouleunit.android.testrun.impl.SendPortMessageStatementImpl <em>Send Port Message Statement</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.qualitune.jouleunit.android.testrun.impl.SendPortMessageStatementImpl
+		 * @see org.qualitune.jouleunit.android.testrun.impl.TestrunPackageImpl#getSendPortMessageStatement()
+		 * @generated
+		 */
+		EClass SEND_PORT_MESSAGE_STATEMENT = eINSTANCE.getSendPortMessageStatement();
+		/**
+		 * The meta object literal for the '<em><b>Ip</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SEND_PORT_MESSAGE_STATEMENT__IP = eINSTANCE.getSendPortMessageStatement_Ip();
+		/**
+		 * The meta object literal for the '<em><b>Port</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SEND_PORT_MESSAGE_STATEMENT__PORT = eINSTANCE.getSendPortMessageStatement_Port();
+		/**
+		 * The meta object literal for the '<em><b>Message</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SEND_PORT_MESSAGE_STATEMENT__MESSAGE = eINSTANCE.getSendPortMessageStatement_Message();
 		/**
 		 * The meta object literal for the '{@link org.qualitune.jouleunit.android.testrun.impl.StartActivityStatementImpl <em>Start Activity Statement</em>}' class.
 		 * <!-- begin-user-doc -->

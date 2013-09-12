@@ -139,6 +139,15 @@ public interface TestrunFactory extends EFactory {
 	OpenSettingsStatement createOpenSettingsStatement();
 
 	/**
+	 * Returns a new object of class '<em>Send Port Message Statement</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Send Port Message Statement</em>'.
+	 * @generated
+	 */
+	SendPortMessageStatement createSendPortMessageStatement();
+
+	/**
 	 * Returns a new object of class '<em>Start Activity Statement</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

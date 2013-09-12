@@ -77,6 +77,9 @@ RULES {
 	OpenSettingsStatement ::=
 		"OPEN" #1 "SETTINGS";
 		
+	SendPortMessageStatement ::=
+		"SEND" #1 "MESSAGE" #1 ip['"','"'] #1 port[NUMBER] #1 message['"','"'];
+		
 	StartActivityStatement ::=
 		"START" #1 "ACTIVITY" #1 package['"','"'] #1 class['"','"'];
 		

@@ -177,6 +177,13 @@ public class TestrunSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case TestrunPackage.SEND_PORT_MESSAGE_STATEMENT: {
+				SendPortMessageStatement sendPortMessageStatement = (SendPortMessageStatement)theEObject;
+				T result = caseSendPortMessageStatement(sendPortMessageStatement);
+				if (result == null) result = caseStatement(sendPortMessageStatement);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case TestrunPackage.START_ACTIVITY_STATEMENT: {
 				StartActivityStatement startActivityStatement = (StartActivityStatement)theEObject;
 				T result = caseStartActivityStatement(startActivityStatement);
@@ -452,6 +459,21 @@ public class TestrunSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseOpenSettingsStatement(OpenSettingsStatement object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Send Port Message Statement</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Send Port Message Statement</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseSendPortMessageStatement(SendPortMessageStatement object) {
 		return null;
 	}
 

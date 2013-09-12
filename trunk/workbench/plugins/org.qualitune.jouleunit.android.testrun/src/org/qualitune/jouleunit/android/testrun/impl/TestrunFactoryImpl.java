@@ -83,6 +83,7 @@ public class TestrunFactoryImpl extends EFactoryImpl implements TestrunFactory {
 			case TestrunPackage.DISPLAY_STATEMENT: return createDisplayStatement();
 			case TestrunPackage.HOME_BUTTON_STATEMENT: return createHomeButtonStatement();
 			case TestrunPackage.OPEN_SETTINGS_STATEMENT: return createOpenSettingsStatement();
+			case TestrunPackage.SEND_PORT_MESSAGE_STATEMENT: return createSendPortMessageStatement();
 			case TestrunPackage.START_ACTIVITY_STATEMENT: return createStartActivityStatement();
 			case TestrunPackage.TEST_STATEMENT: return createTestStatement();
 			case TestrunPackage.UNLOCK_STATEMENT: return createUnlockStatement();
@@ -251,6 +252,16 @@ public class TestrunFactoryImpl extends EFactoryImpl implements TestrunFactory {
 	public OpenSettingsStatement createOpenSettingsStatement() {
 		OpenSettingsStatementImpl openSettingsStatement = new OpenSettingsStatementImpl();
 		return openSettingsStatement;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public SendPortMessageStatement createSendPortMessageStatement() {
+		SendPortMessageStatementImpl sendPortMessageStatement = new SendPortMessageStatementImpl();
+		return sendPortMessageStatement;
 	}
 
 	/**
