@@ -258,8 +258,8 @@ public class LogOutputReceiver extends MultiLineReceiver {
 		else if (computedTimeOfResponse > lastPossibleTime) {
 			mTestSuiteProfile.setPutTimeStampOffset(mTestSuiteProfile
 					.getPutTimeStampOffset()
-					- computedTimeOfResponse
-					- lastPossibleTime);
+					- (computedTimeOfResponse
+					- lastPossibleTime));
 			mCoordinator
 					.reportError("WARNING: Fixed time synchronization offset by -"
 							+ (computedTimeOfResponse - lastPossibleTime)
