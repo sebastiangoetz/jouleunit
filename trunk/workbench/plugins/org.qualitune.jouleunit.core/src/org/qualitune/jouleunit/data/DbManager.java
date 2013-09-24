@@ -1,16 +1,19 @@
 package org.qualitune.jouleunit.data;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLData;
 import java.sql.Types;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.Platform;
 import org.qualitune.jouleunit.SimpleEnergyProfile;
@@ -25,6 +28,12 @@ import org.qualitune.jouleunit.persist.RestoredPowerRate;
  * @author maquiz, Claas Wilke
  */
 public class DbManager {
+
+	private static final String TYPE_NAME_TEST_RUN_SCHEDULED = "scheduledTestRun";
+
+	private static final String TYPE_NAME_VERSION_VISIBILITY_PRIVATE = "versionPrivate";
+
+	private static final String TYPE_NAME_APP_OWNER = "appOwner";
 
 	/** Connection URL to the DB. */
 	private static String connectionURL = "jdbc:mysql://"
@@ -378,6 +387,11 @@ public class DbManager {
 	 * Helper method to save a test run in the DB to trigger its execution
 	 * afterwards. Returns the ID of the created test run entry.
 	 * 
+	 * @param projectName
+	 *            The name of the project for which a test run shall be
+	 *            triggered.
+	 * @param testSuiteName
+	 *            The name of the test suite.
 	 * @param autApkFile
 	 *            The APK of the application under test.
 	 * @param autPackageID
@@ -394,244 +408,469 @@ public class DbManager {
 	 *            The number of test runs to be performed.
 	 * @return The ID of the created test run entry.
 	 */
-	public int saveTestRun(File autApkFile, String autPackageID,
-			File testApkFile, String testPackageID, boolean hwProfilingEnabled,
-			int idleTime, int noOfRuns, String testScript) {
+	public int saveTestRun(String projectName, String testSuiteName,
+			File autApkFile, String autPackageID, File testApkFile,
+			String testPackageID, boolean hwProfilingEnabled, int idleTime,
+			int noOfRuns, String testScript) {
 
 		try {
 			createConnection();
 
 			FileInputStream fis;
 
-			/* Save app entry. */
-			String query = "INSERT INTO App (packageID, genreID, paymentPlanID, vendorID) VALUES (?,?,?,?);";
+			/* Check whether the app project already exists. */
+			String query = "SELECT MAX(appID) FROM app WHERE packageID = ?;";
 			statement = connection.prepareStatement(query);
-
 			statement.setString(1, autPackageID);
-			/* TODO Should be extracted from project settings. */
-			statement.setInt(2, 1);
-			/* TODO Should be extracted from project settings. */
-			statement.setInt(3, 1);
-			/* TODO Should be extracted from project settings. */
-			statement.setInt(4, 1);
-
-			int status = statement.executeUpdate();
-
-			if (status <= 0) {
-				reportError("Error during saving the app entry.");
-				closeConnection();
-				return -1;
-			}
-			// no else.
-
-			/* Get app ID. */
-			query = "SELECT MAX(appID) FROM app;";
-			statement = connection.prepareStatement(query);
 			ResultSet rs = statement.executeQuery();
 
-			int appID = 0;
+			Integer appID = null;
 
-			if (rs.next()) {
+			if (rs.next())
 				appID = rs.getInt(1);
-			}
+			// no else.
 
-			else {
-				reportError("Error during read of binary content ID");
-				closeConnection();
-				return -1;
-			}
-
-			/* Save binary for version entry. */
-			Integer binaryID = null;
-
-			if (null != autApkFile) {
-				query = "INSERT INTO BinaryContent (content, contentType, name) VALUES (?,?,?);";
+			/* If the project does not exist, create it. */
+			if (null == appID) {
+				query = "INSERT INTO App (packageID, genreID, paymentPlanID, vendorID, name) VALUES (?,?,?,?,?);";
 				statement = connection.prepareStatement(query);
 
-				fis = new FileInputStream(autApkFile);
-				statement.setBinaryStream(1, (InputStream) fis,
-						(int) (autApkFile.length()));
-				statement.setString(3, "apk");
-				statement.setString(2, autApkFile.getName());
+				statement.setString(1, autPackageID);
+				/* TODO Should be extracted from project settings. */
+				statement.setInt(2, 1);
+				/* TODO Should be extracted from project settings. */
+				statement.setInt(3, 1);
+				/* TODO Should be extracted from project settings. */
+				statement.setInt(4, 1);
+				statement.setString(5, projectName);
 
-				status = statement.executeUpdate();
-				fis.close();
+				int status = statement.executeUpdate();
 
 				if (status <= 0) {
-					reportError("Error during saving the BinaryContent for version entry.");
+					reportError("Error during saving the app entry.");
 					closeConnection();
 					return -1;
 				}
 				// no else.
 
-				/* Get binary ID. */
-				query = "SELECT MAX(binaryID) FROM BinaryContent;";
+				/* Get app ID. */
+				query = "SELECT MAX(appID) FROM app WHERE packageID = ?;";
 				statement = connection.prepareStatement(query);
+				statement.setString(1, autPackageID);
 				rs = statement.executeQuery();
 
-				if (rs.next()) {
-					binaryID = rs.getInt(1);
-				}
+				if (rs.next())
+					appID = rs.getInt(1);
 
 				else {
-					reportError("Error during read of binary content ID");
+					reportError("Error during read of project ID from DB.");
 					closeConnection();
 					return -1;
 				}
+
+				/* Get user type appOwner */
+				query = "SELECT MAX(typeID) FROM Type WHERE name = ?;";
+				statement = connection.prepareStatement(query);
+				statement.setString(1, TYPE_NAME_APP_OWNER);
+				rs = statement.executeQuery();
+
+				int appOwnerTypeID = 0;
+
+				if (rs.next())
+					appOwnerTypeID = rs.getInt(1);
+
+				else {
+					reportError("Error during read of appOwner type ID");
+					closeConnection();
+					return -1;
+				}
+
+				/* Add member entry. */
+				query = "INSERT INTO Member (appID, userID, typeID) VALUES (?,?,?);";
+				statement = connection.prepareStatement(query);
+				statement.setInt(1, appID);
+				/* TODO Get the user ID somewhere else. */
+				statement.setInt(2, 1);
+				statement.setInt(3, appOwnerTypeID);
+
+				status = statement.executeUpdate();
+
+				if (status <= 0) {
+					reportError("Error during saving the app member entry.");
+					closeConnection();
+					return -1;
+				}
+				// no else.
 			}
 			// no else.
 
-			/* Get visibility type ID. */
-			/* TODO Extract type name to constant. */
-			query = "SELECT MAX(typeID) FROM Type WHERE name = 'versionPrivate';";
+			/* Check whether a corresponding version for the app already exists. */
+			String versionName = "application under test";
+
+			/* Try to get the app version from the apk file. */
+			if (null != autApkFile) {
+				/* TODO Adapt the aapt location more genericly. */
+				String aaptPath = System.getenv("ANDROID_HOME")
+						+ "/build-tools/18.0.1/aapt";
+
+				Process pr = new ProcessBuilder(new String[] { aaptPath, "d",
+						"--values", "badging",
+						"\"" + autApkFile.getAbsolutePath() + "\"" }).start();
+
+				InputStream inputStream = pr.getInputStream();
+				InputStreamReader isReader = new InputStreamReader(inputStream);
+				BufferedReader bufferedReader = new BufferedReader(isReader);
+
+				String line;
+				while ((line = bufferedReader.readLine()) != null) {
+					Pattern p = Pattern.compile("versionName='(.*?)'");
+					Matcher m = p.matcher(line);
+					if (m.find()) {
+						versionName = m.group(1);
+						break;
+					}
+					// no else.
+				}
+				// end while.
+
+				pr.waitFor();
+			}
+
+			/* Try to get version ID. */
+			query = "SELECT versionID, apkBinaryID FROM Version WHERE appID = ? AND vendorVersionID = ?;";
 			statement = connection.prepareStatement(query);
+			statement.setInt(1, appID);
+			statement.setString(2, versionName);
 			rs = statement.executeQuery();
 
-			int visibilityTypeID = 0;
-
-			if (rs.next()) {
-				visibilityTypeID = rs.getInt(1);
-			}
-
-			else {
-				reportError("Error during read of visibility type ID");
-				closeConnection();
-				return -1;
-			}
-
-			/* Save version entry. */
-			query = "INSERT INTO Version (apkBinaryID, appID, vendorVersionID, visibilityTypeID) VALUES (?,?,?,?);";
-			statement = connection.prepareStatement(query);
-
-			if (null != binaryID)
-				statement.setInt(1, binaryID);
-			else
-				statement.setNull(1, Types.INTEGER);
-
-			statement.setInt(2, appID);
-			/* TODO Should be extracted from project settings. */
-			statement.setString(3, "application under test");
-			statement.setInt(4, visibilityTypeID);
-
-			status = statement.executeUpdate();
-
-			if (status <= 0) {
-				reportError("Error during saving the Version entry.");
-				closeConnection();
-				return -1;
-			}
-			// no else.
-
-			/* Get version ID. */
-			query = "SELECT MAX(versionID) FROM Version;";
-			statement = connection.prepareStatement(query);
-			rs = statement.executeQuery();
-
-			int versionID = 0;
+			Integer versionID = null;
+			Integer binaryID = null;
 
 			if (rs.next()) {
 				versionID = rs.getInt(1);
+				binaryID = rs.getInt(2);
 			}
 
+			/* Save or update the version apk file. */
+			if (null == binaryID) {
+				/* Save binary for version entry. */
+				if (null != autApkFile) {
+					query = "INSERT INTO BinaryContent (content, contentType, name) VALUES (?,?,?);";
+					statement = connection.prepareStatement(query);
+
+					fis = new FileInputStream(autApkFile);
+					statement.setBinaryStream(1, (InputStream) fis,
+							(int) (autApkFile.length()));
+					statement.setString(3, "apk");
+					statement.setString(2, autApkFile.getName());
+
+					int status = statement.executeUpdate();
+					fis.close();
+
+					if (status <= 0) {
+						reportError("Error during saving the BinaryContent for version entry.");
+						closeConnection();
+						return -1;
+					}
+					// no else.
+
+					/* Get binary ID. */
+					query = "SELECT MAX(binaryID) FROM BinaryContent;";
+					statement = connection.prepareStatement(query);
+					rs = statement.executeQuery();
+
+					if (rs.next()) {
+						binaryID = rs.getInt(1);
+					}
+
+					else {
+						reportError("Error during read of binary content ID");
+						closeConnection();
+						return -1;
+					}
+				}
+				// no else.
+			}
+
+			/* Update the apk binary of the version. */
 			else {
-				reportError("Error during read of version ID");
-				closeConnection();
-				return -1;
+				/* Save binary for version entry. */
+				if (null != autApkFile) {
+					query = "UPDATE BinaryContent SET content = ?, contentType = ?, name = ? WHERE binaryID = ?;";
+					statement = connection.prepareStatement(query);
+
+					fis = new FileInputStream(autApkFile);
+					statement.setBinaryStream(1, (InputStream) fis,
+							(int) (autApkFile.length()));
+					statement.setString(2, autApkFile.getName());
+					statement.setString(3, "apk");
+					statement.setInt(4, binaryID);
+
+					int status = statement.executeUpdate();
+					fis.close();
+
+					if (status <= 0) {
+						reportError("Error during updating the BinaryContent for version entry.");
+						closeConnection();
+						return -1;
+					}
+					// no else.
+				}
+				// no else.
 			}
 
-			/* Save binary for test suite entry. */
-			if (null != testApkFile) {
-				query = "INSERT INTO BinaryContent (content, contentType, name) VALUES (?,?,?);";
+			/* Probably save the version entry. */
+			if (null == versionID) {
+				/* Get visibility type ID. */
+				query = "SELECT MAX(typeID) FROM Type WHERE name = ?;";
+				statement = connection.prepareStatement(query);
+				statement.setString(1, TYPE_NAME_VERSION_VISIBILITY_PRIVATE);
+				rs = statement.executeQuery();
+
+				int visibilityTypeID = 0;
+
+				if (rs.next()) {
+					visibilityTypeID = rs.getInt(1);
+				}
+
+				else {
+					reportError("Error during read of visibility type ID");
+					closeConnection();
+					return -1;
+				}
+
+				/* Save version entry. */
+				query = "INSERT INTO Version (apkBinaryID, appID, vendorVersionID, visibilityTypeID) VALUES (?,?,?,?);";
 				statement = connection.prepareStatement(query);
 
-				fis = new FileInputStream(testApkFile);
-				statement.setBinaryStream(1, (InputStream) fis,
-						(int) (testApkFile.length()));
-				statement.setString(3, "apk");
-				statement.setString(2, testApkFile.getName());
+				if (null != binaryID)
+					statement.setInt(1, binaryID);
+				else
+					statement.setNull(1, Types.INTEGER);
 
-				status = statement.executeUpdate();
-				fis.close();
+				statement.setInt(2, appID);
+				statement.setString(3, versionName);
+				statement.setInt(4, visibilityTypeID);
+
+				int status = statement.executeUpdate();
 
 				if (status <= 0) {
-					reportError("Error during saving the BinaryContent for test suite entry.");
+					reportError("Error during saving the Version entry.");
 					closeConnection();
 					return -1;
 				}
 				// no else.
 
-				/* Get binary ID. */
-				query = "SELECT MAX(binaryID) FROM BinaryContent;";
+				/* Get version ID. */
+				query = "SELECT MAX(versionID) FROM Version;";
 				statement = connection.prepareStatement(query);
 				rs = statement.executeQuery();
 
-				binaryID = 0;
-
-				if (rs.next()) {
-					binaryID = rs.getInt(1);
-				}
+				if (rs.next())
+					versionID = rs.getInt(1);
 
 				else {
-					reportError("Error during read of binary content ID");
+					reportError("Error during read of version ID");
 					closeConnection();
 					return -1;
 				}
 			}
-			// no else (not test apk).
 
-			/* Save test suite entry. */
-			int testSuiteID = 0;
+			/* Otherwise update the version entry. */
+			else {
+				/* Save version entry. */
+				query = "UPDATE Version SET apkBinaryID = ?, appID = ?, vendorVersionID = ? WHERE versionID = ?;";
+				statement = connection.prepareStatement(query);
 
-			query = "INSERT INTO TestSuite (name, packageID, testScript, apkBinaryID, versionID) VALUES (?,?,?,?,?);";
-			statement = connection.prepareStatement(query);
+				if (null != binaryID)
+					statement.setInt(1, binaryID);
+				else
+					statement.setNull(1, Types.INTEGER);
 
-			/* TODO Should be extracted from project settings. */
-			statement.setString(1, "test suite");
-			if (null != testPackageID && testPackageID.length() > 0)
-				statement.setString(2, testPackageID);
-			else
-				statement.setNull(2, Types.VARCHAR);
+				statement.setInt(2, appID);
+				statement.setString(3, versionName);
+				statement.setInt(4, versionID);
 
-			if (null != testScript && testScript.length() > 0)
-				statement.setString(3, testScript);
-			else
-				statement.setNull(3, Types.VARCHAR);
+				int status = statement.executeUpdate();
 
-			if (null != testApkFile)
-				statement.setInt(4, binaryID);
-			else
-				statement.setNull(4, Types.INTEGER);
-
-			statement.setInt(5, versionID);
-
-			status = statement.executeUpdate();
-
-			if (status <= 0) {
-				reportError("Error during saving TestSuite entry.");
-				closeConnection();
-				return -1;
+				if (status <= 0) {
+					reportError("Error during updating the Version entry.");
+					closeConnection();
+					return -1;
+				}
+				// no else.
 			}
-			// no else.
 
-			/* Get test suite ID. */
-			query = "SELECT MAX(testSuiteID) FROM TestSuite;";
+			/* Check if test suite and test suite binary exist. */
+			query = "SELECT testSuiteID, apkBinaryID FROM TestSuite WHERE versionID = ? AND name = ?;";
 			statement = connection.prepareStatement(query);
+			statement.setInt(1, versionID);
+			statement.setString(2, testSuiteName);
 			rs = statement.executeQuery();
+
+			Integer testSuiteID = null;
+			binaryID = null;
 
 			if (rs.next()) {
 				testSuiteID = rs.getInt(1);
+				binaryID = rs.getInt(2);
+			}
+			// no else.
+
+			/* Probably add the test suite binary. */
+			if (null == binaryID) {
+				if (null != testApkFile) {
+					query = "INSERT INTO BinaryContent (content, contentType, name) VALUES (?,?,?);";
+					statement = connection.prepareStatement(query);
+
+					fis = new FileInputStream(testApkFile);
+					statement.setBinaryStream(1, (InputStream) fis,
+							(int) (testApkFile.length()));
+					statement.setString(3, "apk");
+					statement.setString(2, testApkFile.getName());
+
+					int status = statement.executeUpdate();
+					fis.close();
+
+					if (status <= 0) {
+						reportError("Error during saving the BinaryContent for test suite entry.");
+						closeConnection();
+						return -1;
+					}
+					// no else.
+
+					/* Get binary ID. */
+					query = "SELECT MAX(binaryID) FROM BinaryContent;";
+					statement = connection.prepareStatement(query);
+					rs = statement.executeQuery();
+
+					binaryID = 0;
+
+					if (rs.next()) {
+						binaryID = rs.getInt(1);
+					}
+
+					else {
+						reportError("Error during read of binary content ID");
+						closeConnection();
+						return -1;
+					}
+				}
+				// no else (not test apk).
 			}
 
+			/* Else update the test suite binary. */
 			else {
-				reportError("Error during read of TestSuite ID.");
-				closeConnection();
-				return -1;
+				if (null != testApkFile) {
+					query = "UPDATE BinaryContent SET content = ?, contentType = ?, name = ? WHERE binaryID = ?;";
+					statement = connection.prepareStatement(query);
+
+					fis = new FileInputStream(testApkFile);
+					statement.setBinaryStream(1, (InputStream) fis,
+							(int) (testApkFile.length()));
+					statement.setString(2, testApkFile.getName());
+					statement.setString(3, "apk");
+					statement.setInt(4, binaryID);
+
+					int status = statement.executeUpdate();
+					fis.close();
+
+					if (status <= 0) {
+						reportError("Error during updating the BinaryContent for test suite entry.");
+						closeConnection();
+						return -1;
+					}
+					// no else.
+				}
+				// no else (not test apk).
+			}
+
+			/* Probably add the test suite. */
+			if (null == testSuiteID) {
+				query = "INSERT INTO TestSuite (name, packageID, testScript, apkBinaryID, versionID) VALUES (?,?,?,?,?);";
+				statement = connection.prepareStatement(query);
+
+				statement.setString(1, testSuiteName);
+				if (null != testPackageID && testPackageID.length() > 0)
+					statement.setString(2, testPackageID);
+				else
+					statement.setNull(2, Types.VARCHAR);
+
+				if (null != testScript && testScript.length() > 0)
+					statement.setString(3, testScript);
+				else
+					statement.setNull(3, Types.VARCHAR);
+
+				if (null != testApkFile)
+					statement.setInt(4, binaryID);
+				else
+					statement.setNull(4, Types.INTEGER);
+
+				statement.setInt(5, versionID);
+
+				int status = statement.executeUpdate();
+
+				if (status <= 0) {
+					reportError("Error during saving TestSuite entry.");
+					closeConnection();
+					return -1;
+				}
+				// no else.
+
+				/* Get test suite ID. */
+				query = "SELECT MAX(testSuiteID) FROM TestSuite;";
+				statement = connection.prepareStatement(query);
+				rs = statement.executeQuery();
+
+				if (rs.next()) {
+					testSuiteID = rs.getInt(1);
+				}
+
+				else {
+					reportError("Error during read of TestSuite ID.");
+					closeConnection();
+					return -1;
+				}
+			}
+
+			/* Else update the test suite. */
+			else {
+				query = "UPDATE TestSuite SET name = ?, packageID = ?, testScript = ?, apkBinaryID = ?, versionID = ? WHERE testSuiteID = ?;";
+				statement = connection.prepareStatement(query);
+
+				statement.setString(1, testSuiteName);
+				if (null != testPackageID && testPackageID.length() > 0)
+					statement.setString(2, testPackageID);
+				else
+					statement.setNull(2, Types.VARCHAR);
+
+				if (null != testScript && testScript.length() > 0)
+					statement.setString(3, testScript);
+				else
+					statement.setNull(3, Types.VARCHAR);
+
+				if (null != testApkFile)
+					statement.setInt(4, binaryID);
+				else
+					statement.setNull(4, Types.INTEGER);
+
+				statement.setInt(5, versionID);
+				statement.setInt(6, testSuiteID);
+
+				int status = statement.executeUpdate();
+
+				if (status <= 0) {
+					reportError("Error during updating TestSuite entry.");
+					closeConnection();
+					return -1;
+				}
+				// no else.
 			}
 
 			/* Get test run type ID. */
-			/* TODO Extract type name to constant. */
-			query = "SELECT MAX(typeID) FROM Type WHERE name = 'scheduledTestRun';";
+			query = "SELECT MAX(typeID) FROM Type WHERE name = ?;";
 			statement = connection.prepareStatement(query);
+			statement.setString(1, TYPE_NAME_TEST_RUN_SCHEDULED);
 			rs = statement.executeQuery();
 
 			int testRunTypeID = 0;
@@ -664,7 +903,7 @@ public class DbManager {
 			statement.setInt(6, testSuiteID);
 			statement.setInt(7, testRunTypeID);
 
-			status = statement.executeUpdate();
+			int status = statement.executeUpdate();
 
 			if (status <= 0) {
 				reportError("Error during saving TestRun entry.");
