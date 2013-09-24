@@ -589,6 +589,9 @@ public class TestSuiteProfile {
 	 */
 	private void computeTrTimeStampOffset() {
 
+		String[] ntpServerLocations = new String[] { "ptbtime1.ptb.de",
+				"ntps1-1.cs.tu-berlin.de" };
+
 		/* Compute the mapping between nano time and millis for the test runner. */
 		long nanoTime = System.nanoTime();
 		long milliTime = System.currentTimeMillis();
@@ -599,24 +602,41 @@ public class TestSuiteProfile {
 		/* Adaptation to global clock. */
 
 		NTPUDPClient client = new NTPUDPClient();
-		// We want to timeout if a response takes longer than 10 seconds
 		client.setDefaultTimeout(10000);
+		String errMsg = null;
+
 		try {
 			client.open();
 
-			InetAddress hostAddr = InetAddress.getByName(NTP_SERVER_LOCATION);
-			TimeInfo info = client.getTime(hostAddr);
+			for (String ntpServerAddress : ntpServerLocations) {
+				try {
+					InetAddress hostAddr = InetAddress
+							.getByName(ntpServerAddress);
+					TimeInfo info = client.getTime(hostAddr);
 
-			/* Compute offset/delay. */
-			info.computeDetails();
-			trTimeStampOffset = info.getOffset();
+					/* Compute offset/delay. */
+					info.computeDetails();
+					trTimeStampOffset = info.getOffset();
+					errMsg = null;
+					break;
+				} catch (IOException e) {
+					/*
+					 * Do nothing for now, try to fetch infos from the next
+					 * server.
+					 */
+					errMsg = e.getMessage();
+				}
+			}
 		}
 
 		catch (IOException ioe) {
+			errMsg = ioe.getMessage();
+		}
+
+		if (null != errMsg)
 			System.out
 					.println("Exception during computation of test runner clock time offset: "
-							+ ioe.getMessage());
-		}
+							+ errMsg);
 
 		client.close();
 	}
