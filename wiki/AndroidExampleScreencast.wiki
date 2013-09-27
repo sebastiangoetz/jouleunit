@@ -2,4 +2,4 @@
 
 = Screencast =
 
-This screencast illustrates the usage of JouleUnit for an Android example together with a remote profiling service. [http://code.google.com/p/jouleunit/source/browse/trunk/workbench/screencast/qmark.swf To show the screencast, click on this link.]
+This screencast illustrates the usage of JouleUnit for an Android example together with a remote profiling service. [http://jouleunit.googlecode.com/svn/trunk/workbench/screencast/qmark.swf To show the screencast, click on this link.]
