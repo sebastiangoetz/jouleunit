@@ -3,3 +3,5 @@
 = Screencast =
 
 This screencast illustrates the usage of JouleUnit for an Android example together with a remote profiling service. [http://jouleunit.googlecode.com/svn/trunk/workbench/screencast/qmark.html To show the screencast, click on this link.]
+
+{{{<EMBED SRC="http://jouleunit.googlecode.com/svn/trunk/workbench/screencast/qmark.html/qmark.swf" WIDTH=1024 HEIGHT=788 quality=low loop=false wmode=transparent TYPE="application/x-shockwave-flash" PLUGINSPAGE="http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash"/>}}}
