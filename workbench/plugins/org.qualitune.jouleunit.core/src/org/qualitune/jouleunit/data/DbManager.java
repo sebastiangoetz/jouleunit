@@ -36,7 +36,7 @@ public class DbManager {
 	private static final String TYPE_NAME_APP_OWNER = "appOwner";
 
 	/** Connection URL to the DB. */
-	private static String connectionURL = "jdbc:mysql://"
+	private static String connectionURL = "jdbc:jtds:sqlserver://"
 			+ Platform.getPreferencesService().getString(
 					JouleUnitPreferences.PREFERENCE_IDENTIFIER,
 					JouleUnitPreferences.P_STRING_DB_SERVER_IP,
@@ -46,7 +46,7 @@ public class DbManager {
 					JouleUnitPreferences.PREFERENCE_IDENTIFIER,
 					JouleUnitPreferences.P_STRING_DB_SERVER_PORT,
 					JouleUnitPreferences.P_STRING_DB_SERVER_PORT_DEFAULT, null)
-			+ "/qmark";
+			+ "/QMark;tds=8.0;lastupdatecount=true";
 
 	/** DB login. */
 	private static String login = Platform.getPreferencesService().getString(
@@ -1004,7 +1004,7 @@ public class DbManager {
 	 */
 	private void createConnection() throws Exception {
 		try {
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			Class.forName("net.sourceforge.jtds.jdbc.Driver").newInstance();
 			connection = DriverManager.getConnection(connectionURL, login,
 					password);
 		}

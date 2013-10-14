@@ -107,7 +107,6 @@ public class TestrunInterpreter extends
 						+ "/platform-tools/adb", true);
 			}
 		}
-
 	}
 
 	/*
@@ -1014,17 +1013,25 @@ public class TestrunInterpreter extends
 			return false;
 		}
 
-		int testRunID = dbMgr
-				.saveTestRun((null == testRun.getAut() || null == testRun
-						.getAut().getPath()) ? null : new File(testRun.getAut()
-						.getPath()), testRun.getPackageUnderTest(),
-						(null == testRun.getJunitApk() || null == testRun
-								.getJunitApk().getPath()) ? null : new File(
-								testRun.getJunitApk().getPath()), testRun
-								.getJunitPackage(), testRun
-								.isHardwareProfilingOn(),
-						testRun.getIdleTime(), testRun.getNoOfRuns(),
-						buffer.buffer.toString());
+		File autFile = (null == testRun.getAut() || null == testRun.getAut()
+				.getPath()) ? null : new File(testRun.getAut().getPath());
+
+		/* Compute the project name. */
+		String projectName = testRun.getName();
+		if (projectName.endsWith("Tests"))
+			projectName = projectName
+					.substring(0, projectName.indexOf("Tests"));
+		else
+			projectName = testRun.getPackageUnderTest();
+		// TODO What todo if project name is null?
+
+		int testRunID = dbMgr.saveTestRun(projectName, testRun.getName(),
+				autFile, testRun.getPackageUnderTest(), (null == testRun
+						.getJunitApk() || null == testRun.getJunitApk()
+						.getPath()) ? null : new File(testRun.getJunitApk()
+						.getPath()), testRun.getJunitPackage(), testRun
+						.isHardwareProfilingOn(), testRun.getIdleTime(),
+				testRun.getNoOfRuns(), buffer.buffer.toString());
 
 		if (testRunID <= 0) {
 			printError("Illegal Test Run ID. Test Run Export to DataBase failed. TestRun cancelled.");

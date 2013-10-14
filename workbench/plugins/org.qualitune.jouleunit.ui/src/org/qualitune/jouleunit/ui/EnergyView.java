@@ -61,7 +61,8 @@ import org.qualitune.jouleunit.data.ResultPropagator;
  * 
  * @author Claas Wilke
  */
-public class EnergyView extends ViewPart implements IProfilingResultReceiver, PerformActionListener {
+public class EnergyView extends ViewPart implements IProfilingResultReceiver,
+		PerformActionListener {
 
 	/**
 	 * {@link MouseListener} implementation that updates this {@link EnergyView}
@@ -91,13 +92,13 @@ public class EnergyView extends ViewPart implements IProfilingResultReceiver, Pe
 		 * events.MouseEvent)
 		 */
 		public void mouseUp(MouseEvent e) {
-			if(tabFolder.getSelectionIndex() == 0) {
-				updateChartInterval(mShell);				
+			if (tabFolder.getSelectionIndex() == 0) {
+				updateChartInterval(mShell);
 			}
-			if(tabFolder.getSelectionIndex() == 1) {
+			if (tabFolder.getSelectionIndex() == 1) {
 				updateBarChart(mShell);
 			}
-			
+
 		}
 
 		/*
@@ -135,13 +136,13 @@ public class EnergyView extends ViewPart implements IProfilingResultReceiver, Pe
 
 	/** Title of time axis. */
 	private static final String TIME_AXIS = "Time [secs]";
-	
+
 	/** Title of time axis in progressDaigram. */
 	private static final String TIME_AXIS_PROGRESS = "Testresult No.";
-	
+
 	/** Title of y axis in progressDaigram. */
 	private static final String Y_AXIS_PROGRESS = "Values";
-	
+
 	/**
 	 * The resolution of the view (typically 1/1000 for seconds instead of
 	 * milliseconds).
@@ -153,7 +154,7 @@ public class EnergyView extends ViewPart implements IProfilingResultReceiver, Pe
 
 	/** Title of diagram. */
 	private static final String VIEW_TITLE = "Joule Unit Test Results";
-	
+
 	/** Title of diagram in progressDaigram. */
 	private static final String VIEW_TITLE_PROGRESS = "Previous Testruns Comparison - Trendtracking";
 
@@ -166,19 +167,19 @@ public class EnergyView extends ViewPart implements IProfilingResultReceiver, Pe
 
 	/** {@link ChartComposite} to contain {@link JFreeChart}. */
 	private ChartComposite chart;
-	
+
 	/** {@link ChartComposite} to contain {@link JFreeChart}. */
 	protected ChartComposite chartProgress;
 
 	/** The {@link XYSeriesCollection} data set of the {@link JFreeChart}. */
 	private XYSeriesCollection dataset;
-	
+
 	/** The {@link XYSeriesCollection} data set of the {@link JFreeChart}. */
 	protected DefaultCategoryDataset datasetProgress;
 
 	/** {@link JFreeChart} to display values. */
 	private JFreeChart jfc;
-	
+
 	/** {@link JFreeChart} to display values progress. */
 	protected JFreeChart jfcProgress;
 
@@ -201,10 +202,10 @@ public class EnergyView extends ViewPart implements IProfilingResultReceiver, Pe
 	 * zero time on x-axis).
 	 */
 	private long minStartTime;
-	
+
 	/** The {@link Text} for the entriesCounter. */
 	private Text counterEntriesText;
-	
+
 	private int countOfBarEntries = Util.LIMIT_BAR_ENTRIES_TO;
 
 	/**
@@ -224,21 +225,27 @@ public class EnergyView extends ViewPart implements IProfilingResultReceiver, Pe
 
 	/** The check box to enable or disable WiFi info display. */
 	private Button showLcdInfos;
-	
+
 	private Button orderResultsForID;
-	
+
 	private Button showJustTestsWithSameID;
-	
+
 	private Button showJustTheSingleTest;
-	
+
 	protected Button showFailedTest;
-	
-	
+
+	protected Button showHistoryPowerRate;
+
+	protected Button showHistoryDuration;
+
+	protected Button showHistoryConsumption;
+
 	/** Tabfolder containing all charts */
 	private TabFolder tabFolder = null;
-	
+
 	/**
-	 * remeber which ID was the last, which was shown in the bar-chart, to redraw bar-chart if settings are changed
+	 * remeber which ID was the last, which was shown in the bar-chart, to
+	 * redraw bar-chart if settings are changed
 	 */
 	protected HistoryTestResultObject latestComparedHTRO = null;
 
@@ -256,31 +263,31 @@ public class EnergyView extends ViewPart implements IProfilingResultReceiver, Pe
 	 * .Composite)
 	 */
 	public void createPartControl(final Composite parent) {
-		
+
 		createViewer(parent);
-		
+
 		PerformActionPropagator.getInstance().registerEventListener(this);
-		
+
 	}
 
 	private void createViewer(Composite parent) {
-		
+
 		tabFolder = new TabFolder(parent, SWT.NONE);
 
 		/* Individual test case results. */
 		{
 			TabItem energiePartItem = new TabItem(tabFolder, SWT.NULL);
-		
-			energiePartItem.setText("Individual Test Case Results");
-			
+
+			energiePartItem.setText("Current Test Run");
+
 			tabFolder.setLayout(new GridLayout(1, false));
-			
+
 			Composite controlWhole = new Composite(tabFolder, SWT.NONE);
 			controlWhole.setLayout(new GridLayout(1, false));
-			
+
 			Composite control = new Composite(controlWhole, SWT.NONE);
 			control.setLayout(new RowLayout(SWT.HORIZONTAL));
-	
+
 			Label lowerBoundLabel = new Label(control, SWT.NONE);
 			lowerBoundLabel.setText("Show values from sec. ");
 			lowerBoundText = new Text(control, SWT.BORDER);
@@ -288,7 +295,7 @@ public class EnergyView extends ViewPart implements IProfilingResultReceiver, Pe
 			RowData rowData = new RowData();
 			rowData.width = 100;
 			lowerBoundText.setLayoutData(rowData);
-	
+
 			Label upperBoundLabel = new Label(control, SWT.NONE);
 			upperBoundLabel.setText(" to sec. ");
 			upperBoundText = new Text(control, SWT.BORDER);
@@ -296,58 +303,56 @@ public class EnergyView extends ViewPart implements IProfilingResultReceiver, Pe
 			rowData = new RowData();
 			rowData.width = 100;
 			upperBoundText.setLayoutData(rowData);
-	
+
 			Button resizeButton = new Button(control, SWT.NONE);
 			resizeButton.setText("Update Chart");
-	
-			resizeButton
-					.addMouseListener(new UpdateMouseListener(parent.getShell()));
-	
+
+			resizeButton.addMouseListener(new UpdateMouseListener(parent
+					.getShell()));
+
 			showCpuInfos = new Button(control, SWT.CHECK);
 			showCpuInfos.setSelection(true);
-			showCpuInfos
-					.addMouseListener(new UpdateMouseListener(parent.getShell()));
+			showCpuInfos.addMouseListener(new UpdateMouseListener(parent
+					.getShell()));
 			Label showCpuInfoLabel = new Label(control, SWT.NONE);
 			showCpuInfoLabel.setText("Show CPU infos ");
-	
+
 			showWiFiInfos = new Button(control, SWT.CHECK);
 			showWiFiInfos.setSelection(true);
 			showWiFiInfos.addMouseListener(new UpdateMouseListener(parent
 					.getShell()));
 			Label showWiFiInfoLabel = new Label(control, SWT.NONE);
 			showWiFiInfoLabel.setText("Show WiFi infos ");
-	
+
 			showLcdInfos = new Button(control, SWT.CHECK);
 			showLcdInfos.setSelection(true);
-			showLcdInfos
-					.addMouseListener(new UpdateMouseListener(parent.getShell()));
+			showLcdInfos.addMouseListener(new UpdateMouseListener(parent
+					.getShell()));
 			Label showLcdInfoLabel = new Label(control, SWT.NONE);
 			showLcdInfoLabel.setText("Show display infos ");
-			
-			
-	
+
 			Composite chartPane = new Composite(controlWhole, SWT.NONE);
 			chartPane.setLayout(new FillLayout());
 			GridData data = new GridData(GridData.FILL_BOTH);
 			chartPane.setLayoutData(data);
-	
+
 			DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-			jfc = ChartFactory.createLineChart(VIEW_TITLE, "", TIME_AXIS, dataset,
-					PlotOrientation.HORIZONTAL, false, false, false);
+			jfc = ChartFactory.createLineChart(VIEW_TITLE, "", TIME_AXIS,
+					dataset, PlotOrientation.HORIZONTAL, false, false, false);
 			chart = new ChartComposite(chartPane, SWT.NONE);
 			chart.setChart(jfc);
-	
+
 			makeActions();
 			contributeToActionBars();
-	
-			ResultPropagator.registerListener(this);		
+
+			ResultPropagator.registerListener(this);
 			energiePartItem.setControl(controlWhole);
-		
+
 		}
-		
+
 		{
 			TabItem progressPartItem = new TabItem(tabFolder, SWT.NULL);
-			progressPartItem.setText("Track Trends");
+			progressPartItem.setText("Test Run History");
 
 			tabFolder.setLayout(new GridLayout(1, false));
 
@@ -361,50 +366,69 @@ public class EnergyView extends ViewPart implements IProfilingResultReceiver, Pe
 			control.setLayout(rowL);
 
 			Label counteEntriesLabel = new Label(control, SWT.NONE);
-			counteEntriesLabel.setText("How many entries should be shown");
+			counteEntriesLabel.setText("Show ");
 			counterEntriesText = new Text(control, SWT.BORDER);
 			counterEntriesText.setText(countOfBarEntries + "");
 			RowData rowData = new RowData();
 			rowData.width = 50;
 			counterEntriesText.setLayoutData(rowData);
+			Label counteEntriesLabel2 = new Label(control, SWT.NONE);
+			counteEntriesLabel2.setText(" entries");
 
 			Button resizeButton = new Button(control, SWT.NONE);
-			resizeButton.setText("Update Bar-Chart");
-			resizeButton.addMouseListener(new UpdateMouseListener(parent.getShell()));
+			resizeButton.setText("Refresh");
+			resizeButton.addMouseListener(new UpdateMouseListener(parent
+					.getShell()));
+
+			showHistoryPowerRate = new Button(control, SWT.CHECK);
+			showHistoryPowerRate.setSelection(true);
+			Label showHistoryPowerRateLabel = new Label(control, SWT.NONE);
+			showHistoryPowerRateLabel.setText("Power Rates");
+
+			showHistoryDuration = new Button(control, SWT.CHECK);
+			showHistoryDuration.setSelection(true);
+			Label showHistoryDurationLabel = new Label(control, SWT.NONE);
+			showHistoryDurationLabel.setText("Duration");
+
+			showHistoryConsumption = new Button(control, SWT.CHECK);
+			showHistoryConsumption.setSelection(true);
+			Label showHistoryConsumptionLabel = new Label(control, SWT.NONE);
+			showHistoryConsumptionLabel.setText("Consumption");
 
 			showJustTestsWithSameID = new Button(control, SWT.CHECK);
 			showJustTestsWithSameID.setSelection(true);
 			Label showJustTestsWithSameIDLabel = new Label(control, SWT.NONE);
-			showJustTestsWithSameIDLabel.setText("Just show Testcases with same ID");
-			
+			showJustTestsWithSameIDLabel.setText("Only Tests with one ID");
+
 			orderResultsForID = new Button(control, SWT.CHECK);
 			orderResultsForID.setSelection(true);
 			Label orderResultsForIDLabel = new Label(control, SWT.NONE);
-			orderResultsForIDLabel.setText("Order Testcases according to their ID");
-			
-			showJustTheSingleTest = new Button(control, SWT.CHECK);
-			showJustTheSingleTest.setSelection(false);
-			Label showJustTheSingleTestLabel = new Label(control, SWT.NONE);
-			showJustTheSingleTestLabel.setText("Just show selected test on click");
-			
+			orderResultsForIDLabel.setText("Ordered by ID");
+
+			// showJustTheSingleTest = new Button(control, SWT.CHECK);
+			// showJustTheSingleTest.setSelection(false);
+			// Label showJustTheSingleTestLabel = new Label(control, SWT.NONE);
+			// showJustTheSingleTestLabel.setText("Show selected test on click");
+
 			showFailedTest = new Button(control, SWT.CHECK);
 			showFailedTest.setSelection(false);
 			Label showFailedTestLabel = new Label(control, SWT.NONE);
-			showFailedTestLabel.setText("Display failed tests");
+			showFailedTestLabel.setText("Show failed tests");
 
 			Composite chartPaneProgress = new Composite(controlWhole, SWT.NONE);
 			chartPaneProgress.setLayout(new FillLayout());
-			
+
 			GridData data = new GridData(GridData.FILL_BOTH);
 			chartPaneProgress.setLayoutData(data);
-			
-			
+
 			DefaultCategoryDataset datasetProgress = new DefaultCategoryDataset();
-			jfcProgress = ChartFactory.createBarChart(VIEW_TITLE_PROGRESS, TIME_AXIS_PROGRESS, Y_AXIS_PROGRESS, datasetProgress, PlotOrientation.VERTICAL, true, true, false);
+			jfcProgress = ChartFactory.createBarChart(VIEW_TITLE_PROGRESS,
+					TIME_AXIS_PROGRESS, Y_AXIS_PROGRESS, datasetProgress,
+					PlotOrientation.VERTICAL, true, true, false);
 			chartProgress = new ChartComposite(chartPaneProgress, SWT.NONE);
 			chartProgress.setChart(jfcProgress);
 
-			//updateBarChartValues(null);
+			// updateBarChartValues(null);
 			initBarChart(null, false);
 
 			tabFolder.addSelectionListener(new SelectionListener() {
@@ -419,7 +443,7 @@ public class EnergyView extends ViewPart implements IProfilingResultReceiver, Pe
 			});
 			progressPartItem.setControl(controlWhole);
 		}
-		
+
 	}
 
 	/**
@@ -495,14 +519,15 @@ public class EnergyView extends ViewPart implements IProfilingResultReceiver, Pe
 
 		/* If the profile is null, draw an empty chart. */
 		else {
-			//XY-Chart
+			// XY-Chart
 			jfc = ChartFactory.createXYLineChart(VIEW_TITLE, "", TIME_AXIS,
 					dataset, PlotOrientation.HORIZONTAL, true, false, false);
 			chart.setChart(jfc);
 			chart.forceRedraw();
-			
-			//BAR-Chart
-			jfcProgress = ChartFactory.createBarChart(VIEW_TITLE_PROGRESS, TIME_AXIS_PROGRESS, Y_AXIS_PROGRESS, datasetProgress,
+
+			// BAR-Chart
+			jfcProgress = ChartFactory.createBarChart(VIEW_TITLE_PROGRESS,
+					TIME_AXIS_PROGRESS, Y_AXIS_PROGRESS, datasetProgress,
 					PlotOrientation.VERTICAL, true, true, false);
 			chartProgress.setChart(jfcProgress);
 			chartProgress.forceRedraw();
@@ -512,39 +537,52 @@ public class EnergyView extends ViewPart implements IProfilingResultReceiver, Pe
 	private void updateBarChartValues(HistoryTestResultObject o) {
 		updateBarChartValues(o, false);
 	}
-	
-	private void updateBarChartValues(HistoryTestResultObject o, final boolean justSingle) {
+
+	private void updateBarChartValues(HistoryTestResultObject o,
+			final boolean justSingle) {
 		datasetProgress = new DefaultCategoryDataset();
 		latestComparedHTRO = o;
 		final String id = o != null ? o.getId() : "";
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
-				List<HistoryTestResultObject> allHTROList = Util.getInstance().trimTestResultFromHistoryList(id, justSingle ? 1 : Integer.parseInt(counterEntriesText.getText()), false);
-				
-				UpdateEnergyViewJob job = new UpdateEnergyViewJob(allHTROList, EnergyView.this);				
+				List<HistoryTestResultObject> allHTROList = Util
+						.getInstance()
+						.trimTestResultFromHistoryList(
+								id,
+								justSingle ? 1 : Integer
+										.parseInt(counterEntriesText.getText()),
+								false);
+
+				UpdateEnergyViewJob job = new UpdateEnergyViewJob(allHTROList,
+						EnergyView.this);
 				job.schedule();
 			}
 		});
+
+		jfcProgress = ChartFactory.createAreaChart(VIEW_TITLE_PROGRESS,
+				TIME_AXIS_PROGRESS, Y_AXIS_PROGRESS, datasetProgress,
+				PlotOrientation.VERTICAL, true, true, false);
 		
-		jfcProgress = ChartFactory.createBarChart(VIEW_TITLE_PROGRESS, TIME_AXIS_PROGRESS, Y_AXIS_PROGRESS, datasetProgress, PlotOrientation.VERTICAL, true, true, false);
 		chartProgress.setChart(jfcProgress);
 		chartProgress.forceRedraw();
 	}
-	
-	private void initBarChart(HistoryTestResultObject o, final boolean justSingle) {
+
+	private void initBarChart(HistoryTestResultObject o,
+			final boolean justSingle) {
 		datasetProgress = new DefaultCategoryDataset();
 		latestComparedHTRO = o;
-		
-		jfcProgress = ChartFactory.createBarChart(VIEW_TITLE_PROGRESS, TIME_AXIS_PROGRESS, Y_AXIS_PROGRESS, datasetProgress, PlotOrientation.VERTICAL, true, true, false);
+
+		jfcProgress = ChartFactory.createBarChart(VIEW_TITLE_PROGRESS,
+				TIME_AXIS_PROGRESS, Y_AXIS_PROGRESS, datasetProgress,
+				PlotOrientation.VERTICAL, true, true, false);
 		chartProgress.setChart(jfcProgress);
 		chartProgress.forceRedraw();
 	}
 
 	private void updateXYChartValues(TestSuiteProfile profile) {
 		dataset = new XYSeriesCollection();
-		jfc = ChartFactory
-				.createXYLineChart("", "", TIME_AXIS, dataset,
-						PlotOrientation.HORIZONTAL, true, false, false);
+		jfc = ChartFactory.createXYLineChart("", "", TIME_AXIS, dataset,
+				PlotOrientation.HORIZONTAL, true, false, false);
 		final XYPlot plot = jfc.getXYPlot();
 		final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
 
@@ -559,19 +597,17 @@ public class EnergyView extends ViewPart implements IProfilingResultReceiver, Pe
 		/* Paint a range for each test case. */
 		for (TestCaseProfile aProfile : profile.getTestCaseProfiles()) {
 
-			double start = (profile.adaptPutTimeStamp(aProfile
-					.getStartTime()) - minStartTime)
+			double start = (profile.adaptPutTimeStamp(aProfile.getStartTime()) - minStartTime)
 					* TIME_AXIS_RESOLUTION;
-			double stop = (profile.adaptPutTimeStamp(aProfile
-					.getEndTime()) - minStartTime)
+			double stop = (profile.adaptPutTimeStamp(aProfile.getEndTime()) - minStartTime)
 					* TIME_AXIS_RESOLUTION;
 
 			/* Only add test cases within the specified range. */
 			if (start >= lowerBound || stop <= upperBound) {
 
 				/*
-				 * If test cases overlap with bound, indicate this with
-				 * a standard overlap of 0.5 secs.
+				 * If test cases overlap with bound, indicate this with a
+				 * standard overlap of 0.5 secs.
 				 */
 				if (start <= lowerBound)
 					start = lowerBound - 0.5d;
@@ -579,19 +615,17 @@ public class EnergyView extends ViewPart implements IProfilingResultReceiver, Pe
 					stop = upperBound + 0.5d;
 				// no else.
 
-				IntervalMarker testCaseMarker = new IntervalMarker(
-						start, stop);
+				IntervalMarker testCaseMarker = new IntervalMarker(start, stop);
 
 				String labelText = aProfile.getId();
 				if (labelText.contains("("))
-					labelText = labelText.substring(0,
-							labelText.indexOf("("));
+					labelText = labelText.substring(0, labelText.indexOf("("));
 				// no else.
 
 				testCaseMarker.setLabel(labelText);
 				testCaseMarker.setLabelTextAnchor(TextAnchor.TOP_LEFT);
-				testCaseMarker.setLabelFont(testCaseMarker
-						.getLabelFont().deriveFont(12f));
+				testCaseMarker.setLabelFont(testCaseMarker.getLabelFont()
+						.deriveFont(12f));
 
 				/* Set color of test case depending on its result. */
 				if (aProfile.isFailed())
@@ -607,12 +641,10 @@ public class EnergyView extends ViewPart implements IProfilingResultReceiver, Pe
 
 		/* Add values for the PUT CPU frequency. */
 		if (showCpuInfos.getSelection()) {
-			Map<Long, Long[]> cpuFrequencies = profile
-					.getCpuFrequencies();
+			Map<Long, Long[]> cpuFrequencies = profile.getCpuFrequencies();
 			if (cpuFrequencies.size() > 0) {
 				/* Split one map into multiple maps. */
-				int cpuCount = cpuFrequencies.values().iterator()
-						.next().length;
+				int cpuCount = cpuFrequencies.values().iterator().next().length;
 				List<Map<Long, Long>> singleCpuFrequencies = new ArrayList<Map<Long, Long>>(
 						cpuCount);
 
@@ -629,10 +661,10 @@ public class EnergyView extends ViewPart implements IProfilingResultReceiver, Pe
 				// end for.
 
 				for (int index = 0; index < singleCpuFrequencies.size(); index++) {
-					addLineSeries(singleCpuFrequencies.get(index),
-							CPU_VALUES, new Color(200, 0, 0), dataset,
-							renderer, profile, minStartTime,
-							TIME_AXIS_RESOLUTION, lineNumber, 1000);
+					addLineSeries(singleCpuFrequencies.get(index), CPU_VALUES,
+							new Color(200, 0, 0), dataset, renderer, profile,
+							minStartTime, TIME_AXIS_RESOLUTION, lineNumber,
+							1000);
 					lineNumber++;
 				}
 				// end for.
@@ -643,19 +675,18 @@ public class EnergyView extends ViewPart implements IProfilingResultReceiver, Pe
 
 		/* Add values for the PUT WiFi traffic. */
 		if (showWiFiInfos.getSelection()) {
-			addLineSeries(profile.getWiFiTraffic(), WIFI_VALUES,
-					Color.ORANGE, dataset, renderer, profile,
-					minStartTime, TIME_AXIS_RESOLUTION, lineNumber, 1);
+			addLineSeries(profile.getWiFiTraffic(), WIFI_VALUES, Color.ORANGE,
+					dataset, renderer, profile, minStartTime,
+					TIME_AXIS_RESOLUTION, lineNumber, 1);
 			lineNumber++;
 		}
 		// no else.
 
 		/* Add values for the LCD brightness. */
 		if (showLcdInfos.getSelection()) {
-			addLineSeries(profile.getLcdBrightness(), LCD_VALUES,
-					new Color(050, 150, 050), dataset, renderer,
-					profile, minStartTime, TIME_AXIS_RESOLUTION,
-					lineNumber, 1);
+			addLineSeries(profile.getLcdBrightness(), LCD_VALUES, new Color(
+					050, 150, 050), dataset, renderer, profile, minStartTime,
+					TIME_AXIS_RESOLUTION, lineNumber, 1);
 			lineNumber++;
 		}
 		// no else.
@@ -664,13 +695,12 @@ public class EnergyView extends ViewPart implements IProfilingResultReceiver, Pe
 
 		// change the auto tick unit selection to integer units only...
 		final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-		rangeAxis.setStandardTickUnits(NumberAxis
-				.createIntegerTickUnits());
+		rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 		rangeAxis.setRange(lowerBound - 0.5d, upperBound + 0.5d);
 
 		chart.setChart(jfc);
 		chart.forceRedraw();
-		
+
 	}
 
 	/**
@@ -951,9 +981,10 @@ public class EnergyView extends ViewPart implements IProfilingResultReceiver, Pe
 			updateValues(lastTestSuiteProfile);
 		// no else.
 	}
-	
+
 	/**
-	 * Helper method to repaint the bar-chart if the {@link Text} fields have been modified.
+	 * Helper method to repaint the bar-chart if the {@link Text} fields have
+	 * been modified.
 	 * 
 	 * @param shell
 	 *            The {@link Shell} used to open {@link Dialog}s.
@@ -961,25 +992,25 @@ public class EnergyView extends ViewPart implements IProfilingResultReceiver, Pe
 	private void updateBarChart(Shell shell) {
 		updateBarChartValues(latestComparedHTRO);
 	}
-	
 
 	@Override
 	public void handleEvent(String id, int action, Object o) {
 		if (id == ID) {
 			switch (action) {
-				case UPDATE_BAR_CHART:
-					if(showJustTheSingleTest.getSelection()) {
-						updateBarChartValues((HistoryTestResultObject)o, true);
-					} else {
-						updateBarChartValues((HistoryTestResultObject)o);
-					}
-					tabFolder.setSelection(1);	//select history-diagram
-					break;
-				case SHOW_ENERGY_MODEL:
-					tabFolder.setSelection(0);	//select history-diagram
-					break;
-				default:
-					break;
+			case UPDATE_BAR_CHART:
+				if (null != showJustTheSingleTest
+						&& showJustTheSingleTest.getSelection()) {
+					updateBarChartValues((HistoryTestResultObject) o, true);
+				} else {
+					updateBarChartValues((HistoryTestResultObject) o);
+				}
+				tabFolder.setSelection(1); // select history-diagram
+				break;
+			case SHOW_ENERGY_MODEL:
+				tabFolder.setSelection(0); // select history-diagram
+				break;
+			default:
+				break;
 			}
 		}
 	}
