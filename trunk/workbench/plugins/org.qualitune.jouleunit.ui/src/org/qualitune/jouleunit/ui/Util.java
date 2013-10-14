@@ -415,9 +415,9 @@ public class Util {
 			// list = importedList;
 			// }
 
-			if (!reverse) {
-				Collections.reverse(list);
-			}
+			// TODO WTF? if (!reverse) {
+			// Collections.reverse(list);
+			// }
 			return list;
 		}
 	}
@@ -520,11 +520,11 @@ public class Util {
 			try {
 				FileOutputStream out = new FileOutputStream(file);
 				memento.save(new PrintWriter(out));
-				System.out.println("Saved File at '" + file.getAbsolutePath()
-						+ "' started: "
-						+ new Date(tcp.getStartTime()).toString()
-						+ " Entries in File: "
-						+ memento.getChildren("testcase").length);
+//				System.out.println("Saved File at '" + file.getAbsolutePath()
+//						+ "' started: "
+//						+ new Date(tcp.getStartTime()).toString()
+//						+ " Entries in File: "
+//						+ memento.getChildren("testcase").length);
 				out.close();
 			} catch (IOException e) {
 				e.printStackTrace();

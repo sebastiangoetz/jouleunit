@@ -14,7 +14,7 @@ Bundle-ClassPath: lib/JPIB.jar,
  lib/org.qualitune.jouleunit_v0.2.jar,
  lib/org.qualitune.jouleunit.android_v0.2.jar,
  lib/org.qualitune.jouleunit.wt210_v0.2.jar,
- lib/mysql-connector-java-5.1.22-bin.jar
+ lib/jtds-1.2.8.jar
 Export-Package: org.qualitune.jouleunit,
  org.qualitune.jouleunit.android,
  org.qualitune.jouleunit.android.logcat,

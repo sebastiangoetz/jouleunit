@@ -68,7 +68,8 @@ import org.qualitune.jouleunit.data.UpdateTestCaseToDBJob;
 import org.qualitune.jouleunit.persist.RestoredPowerRate;
 
 @SuppressWarnings("restriction")
-public class TestCaseView extends ViewPart implements IProfilingResultReceiver, PerformActionListener {
+public class TestCaseView extends ViewPart implements IProfilingResultReceiver,
+		PerformActionListener {
 
 	/**
 	 * The ID of the view as specified by the extension.
@@ -106,7 +107,7 @@ public class TestCaseView extends ViewPart implements IProfilingResultReceiver, 
 
 	/** The current {@link TestSuiteProfile} to be displayed. */
 	private TestSuiteProfile testSuiteProfile;
-	
+
 	public static final int UPDATE_OLD_HISTORY_TABLE = 0;
 
 	/*
@@ -402,9 +403,9 @@ public class TestCaseView extends ViewPart implements IProfilingResultReceiver, 
 	 */
 	private void createColumns(final Composite parent, final TableViewer viewer) {
 
-		String[] titles = { "Test Case", "Tag", "Start [ms]", "Stop [ms]",
-				"Duration [ms]", "Avg. Power Rate [mW]",
-				"Energy Consumption [mJ]", "Outlier?" };
+		String[] titles = { "Test Case", "Tag", "Duration [ms]",
+				"Avg. Power Rate [mW]", "Energy Consumption [mJ]", "Outlier?",
+				"Start [ms]", "Stop [ms]" };
 		int[] bounds = { 300, 100, 100, 100, 100, 200, 200, 100 };
 
 		/* First column is the id. */
@@ -465,7 +466,92 @@ public class TestCaseView extends ViewPart implements IProfilingResultReceiver, 
 		});
 
 		/* Third column is the duration. */
-		col = createTableViewerColumn(viewer, titles[2], bounds[2], 1);
+		col = createTableViewerColumn(viewer, titles[2], bounds[2], 2);
+		col.setLabelProvider(new ColumnLabelProvider() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see
+			 * org.eclipse.jface.viewers.ColumnLabelProvider#getText(java.lang
+			 * .Object)
+			 */
+			public String getText(Object element) {
+				TestCaseProfile profile = (TestCaseProfile) element;
+				try {
+					return String.format("%.2f",
+							new Double(profile.getDuration()));
+				} catch (IllegalArgumentException e) {
+					return e.getMessage();
+				}
+			}
+		});
+
+		/* Fourth column is the Power Rate. */
+		col = createTableViewerColumn(viewer, titles[3], bounds[3], 3);
+		col.setLabelProvider(new ColumnLabelProvider() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see
+			 * org.eclipse.jface.viewers.ColumnLabelProvider#getText(java.lang
+			 * .Object)
+			 */
+			public String getText(Object element) {
+				TestCaseProfile profile = (TestCaseProfile) element;
+				try {
+					return String.format("%.2f",
+							new Double(profile.getPowerRate()));
+				} catch (IllegalArgumentException e) {
+					return e.getMessage();
+				}
+			}
+		});
+
+		/* Fifth column is energy consumption. */
+		col = createTableViewerColumn(viewer, titles[4], bounds[4], 4);
+		col.setLabelProvider(new ColumnLabelProvider() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see
+			 * org.eclipse.jface.viewers.ColumnLabelProvider#getText(java.lang
+			 * .Object)
+			 */
+			@Override
+			public String getText(Object element) {
+				TestCaseProfile profile = (TestCaseProfile) element;
+				try {
+					return String.format("%.2f",
+							new Double(profile.getConsumedEnergy()));
+				} catch (IllegalArgumentException e) {
+					return e.getMessage();
+				}
+			}
+		});
+
+		/* Sixth column enlists outliers. */
+		col = createTableViewerColumn(viewer, titles[5], bounds[5], 5);
+		col.setLabelProvider(new ColumnLabelProvider() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see
+			 * org.eclipse.jface.viewers.ColumnLabelProvider#getText(java.lang
+			 * .Object)
+			 */
+			@Override
+			public String getText(Object element) {
+				TestCaseProfile profile = (TestCaseProfile) element;
+				try {
+					return profile.getOutlierInfo();
+				} catch (IllegalArgumentException e) {
+					return e.getMessage();
+				}
+			}
+		});
+
+		/* Seventh column is the start time. */
+		col = createTableViewerColumn(viewer, titles[6], bounds[6], 6);
 		col.setLabelProvider(new ColumnLabelProvider() {
 			/*
 			 * (non-Javadoc)
@@ -489,8 +575,8 @@ public class TestCaseView extends ViewPart implements IProfilingResultReceiver, 
 			}
 		});
 
-		/* Fourth column is the duration. */
-		col = createTableViewerColumn(viewer, titles[3], bounds[3], 2);
+		/* Eighth column is the stop time. */
+		col = createTableViewerColumn(viewer, titles[7], bounds[7], 7);
 		col.setLabelProvider(new ColumnLabelProvider() {
 			/*
 			 * (non-Javadoc)
@@ -509,91 +595,6 @@ public class TestCaseView extends ViewPart implements IProfilingResultReceiver, 
 							e,
 							"Error during test result report: "
 									+ e.getMessage());
-					return e.getMessage();
-				}
-			}
-		});
-
-		/* Second column is the duration. */
-		col = createTableViewerColumn(viewer, titles[4], bounds[4], 4);
-		col.setLabelProvider(new ColumnLabelProvider() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see
-			 * org.eclipse.jface.viewers.ColumnLabelProvider#getText(java.lang
-			 * .Object)
-			 */
-			public String getText(Object element) {
-				TestCaseProfile profile = (TestCaseProfile) element;
-				try {
-					return String.format("%.2f",
-							new Double(profile.getDuration()));
-				} catch (IllegalArgumentException e) {
-					return e.getMessage();
-				}
-			}
-		});
-
-		/* Power Rate column. */
-		col = createTableViewerColumn(viewer, titles[5], bounds[5], 5);
-		col.setLabelProvider(new ColumnLabelProvider() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see
-			 * org.eclipse.jface.viewers.ColumnLabelProvider#getText(java.lang
-			 * .Object)
-			 */
-			public String getText(Object element) {
-				TestCaseProfile profile = (TestCaseProfile) element;
-				try {
-					return String.format("%.2f",
-							new Double(profile.getPowerRate()));
-				} catch (IllegalArgumentException e) {
-					return e.getMessage();
-				}
-			}
-		});
-
-		/* Power Consumption column. */
-		col = createTableViewerColumn(viewer, titles[6], bounds[6], 6);
-		col.setLabelProvider(new ColumnLabelProvider() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see
-			 * org.eclipse.jface.viewers.ColumnLabelProvider#getText(java.lang
-			 * .Object)
-			 */
-			@Override
-			public String getText(Object element) {
-				TestCaseProfile profile = (TestCaseProfile) element;
-				try {
-					return String.format("%.2f",
-							new Double(profile.getConsumedEnergy()));
-				} catch (IllegalArgumentException e) {
-					return e.getMessage();
-				}
-			}
-		});
-
-		/* Outlier column. */
-		col = createTableViewerColumn(viewer, titles[7], bounds[7], 7);
-		col.setLabelProvider(new ColumnLabelProvider() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see
-			 * org.eclipse.jface.viewers.ColumnLabelProvider#getText(java.lang
-			 * .Object)
-			 */
-			@Override
-			public String getText(Object element) {
-				TestCaseProfile profile = (TestCaseProfile) element;
-				try {
-					return profile.getOutlierInfo();
-				} catch (IllegalArgumentException e) {
 					return e.getMessage();
 				}
 			}
@@ -709,12 +710,12 @@ public class TestCaseView extends ViewPart implements IProfilingResultReceiver, 
 	private void createOldTestResultColumns(final Composite parent,
 			final TableViewer viewer) {
 
-		String[] titles = { "No.", "Test-Case-ID", "Created on", "Modified on",
-				"Failed?", "Duration [ms]", "APR", "Avg. Power Rate [mW]",
-				"AEC", "Energy Consumption [mJ]", "Start [ms]", "Stop [ms]",
-				"File available?", "File-location" };
-		int[] bounds = { 50, 175, 175, 175, 50, 100, 40, 150, 40, 150, 100,
-				100, 100, 75 };
+		String[] titles = { "No.", "Test-Case-ID", "Created on", "Failed?",
+				"Duration [ms]", "APR", "Avg. Power Rate [mW]", "AEC",
+				"Energy Consumption [mJ]", "Start [ms]", "Stop [ms]",
+				"File available?", "File-location", "Modified on" };
+		int[] bounds = { 50, 175, 175, 50, 100, 40, 150, 40, 150, 100, 100,
+				100, 75, 175 };
 		int i = 0;
 
 		/* First column is the id. */
@@ -752,17 +753,8 @@ public class TestCaseView extends ViewPart implements IProfilingResultReceiver, 
 		col.setLabelProvider(new ColumnLabelProvider() {
 
 			public String getText(Object element) {
-				return ((HistoryTestResultObject) element).getModifiedOn()
-						.toString();
-			}
-		});
-		i++;
-
-		col = createTableViewerColumn(viewer, titles[i], bounds[i], i);
-		col.setLabelProvider(new ColumnLabelProvider() {
-
-			public String getText(Object element) {
-				return ((HistoryTestResultObject) element).isFailed() + "";
+				return ((HistoryTestResultObject) element).isFailed() ? "failed"
+						: "";
 			}
 		});
 		i++;
@@ -858,6 +850,16 @@ public class TestCaseView extends ViewPart implements IProfilingResultReceiver, 
 
 			public String getText(Object element) {
 				return ((HistoryTestResultObject) element).getLocation();
+			}
+		});
+		i++;
+
+		col = createTableViewerColumn(viewer, titles[i], bounds[i], i);
+		col.setLabelProvider(new ColumnLabelProvider() {
+
+			public String getText(Object element) {
+				return ((HistoryTestResultObject) element).getModifiedOn()
+						.toString();
 			}
 		});
 		i++;
@@ -1164,13 +1166,13 @@ public class TestCaseView extends ViewPart implements IProfilingResultReceiver, 
 		oldTestResultViewer.setSorter(new TestCaseTableSorter());
 
 		// add historyTestResults to Table
-		//updateOldTestResultViewer();
+		// updateOldTestResultViewer();
 
 		// add menu to table
 		oldTestResultViewer.getControl().setMenu(
 				createMenuForOldTestResultViewer(oldTestResultViewer)
 						.createContextMenu(oldTestResultViewer.getControl()));
-		
+
 		oldTestResultViewer
 				.addSelectionChangedListener(new ISelectionChangedListener() {
 
@@ -1188,197 +1190,198 @@ public class TestCaseView extends ViewPart implements IProfilingResultReceiver, 
 						}
 					}
 				});
-		
+
 		tabFolder.addSelectionListener(new SelectionListener() {
-			
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				//if the old-history-table gets selected, update content
-				if(tabFolder.getSelectionIndex() == 2) {
+				// if the old-history-table gets selected, update content
+				if (tabFolder.getSelectionIndex() == 2) {
 					updateOldTestResultViewer();
-				}				
+				}
 			}
-			
+
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		});
 	}
 
 	/** Helper method to export an {@link EnergyModel} from the profiled data. */
 	private void exportEnergyModel() {
-		
+
 		// TODO Extract export of EnergyModel
-//		ElementTreeSelectionDialog dialog;
-//		WorkbenchLabelProvider aWorkbenchLabelProvider;
-//		WorkbenchContentProvider aWorkbenchContentProvider;
-//
-//		int pressedButton;
-//		IResource resource;
-//
-//		/* Create a dialog to select a File. */
-//		aWorkbenchLabelProvider = new WorkbenchLabelProvider();
-//		aWorkbenchContentProvider = new WorkbenchContentProvider();
-//
-//		/* File filter for UML models only. */
-//		PatternFilter filter = new PatternFilter();
-//		filter.setPattern("*.uml");
-//
-//		/* Configure the Dialog properties. */
-//		dialog = new FilteredElementTreeSelectionDialog(getSite().getShell(),
-//				aWorkbenchLabelProvider, aWorkbenchContentProvider, filter);
-//
-//		dialog.setTitle("Select Service Model");
-//		dialog.setMessage("Please select the service model, the profiled data belongs to.");
-//		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
-//		dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
-//		dialog.setAllowMultiple(false);
-//
-//		/* Open the dialog. */
-//		pressedButton = dialog.open();
-//		resource = (IResource) dialog.getFirstResult();
-//
-//		/* If OK was pressed set the File path. */
-//		if (pressedButton == IDialogConstants.OK_ID) {
-//
-//			/* Get the EMF model. */
-//			ResourceSet rs = new ResourceSetImpl();
-//			Resource emfResource = rs
-//					.createResource(org.eclipse.emf.common.util.URI
-//							.createFileURI(resource.getFullPath().toFile()
-//									.toString()));
-//
-//			if (!emfResource.isLoaded())
-//				try {
-//					emfResource.load(null);
-//				} catch (IOException e) {
-//					JouleUnitUiPlugIn.log(e, "Unable to open UML resource.");
-//				}
-//			// no else.
-//
-//			Activity activityModel = null;
-//
-//			for (EObject object : emfResource.getContents()) {
-//				if (object instanceof Model) {
-//					Model model = (Model) object;
-//					for (NamedElement element : model.getMembers()) {
-//						if (element instanceof Activity) {
-//							activityModel = (Activity) element;
-//							break;
-//						}
-//						// no else.
-//					}
-//					// end for.
-//				}
-//				// no else.
-//			}
-//			// end for.
-//
-//			if (activityModel != null) {
-//
-//				FileDialog fd = new FileDialog(getSite().getShell(), SWT.SAVE);
-//				fd.setText("Select Energy Model File for Export");
-//				String[] filterExt = { "*.energymodel", "*.*" };
-//				fd.setFilterExtensions(filterExt);
-//				fd.setFilterPath(resource.getLocation().removeLastSegments(1)
-//						.toFile().toString());
-//				fd.setFileName("my.energymodel");
-//
-//				String path = fd.open();
-//
-//				EnergyModel energyModel = EnergymodelFactory.eINSTANCE
-//						.createEnergyModel();
-//				energyModel.setActivityModel(activityModel);
-//
-//				/* Add profiled results for mapping transitions. */
-//				if (testSuiteProfile != null) {
-//					for (AvgTestCaseResult testCaseResult : testSuiteProfile
-//							.getAvgTestCaseResults()) {
-//						String transitionName = testCaseResult.getID();
-//
-//						ActivityEdge testedTransition = activityModel.getEdge(
-//								transitionName, true, null, false);
-//
-//						if (testedTransition != null
-//								&& testedTransition instanceof ControlFlow) {
-//							PowerRateValue value = EnergymodelFactory.eINSTANCE
-//									.createPowerRateValue();
-//							value.setTransition((ControlFlow) testedTransition);
-//							value.setPowerRate(new Double(testCaseResult
-//									.getAvgPowerRate()).floatValue());
-//							value.setDuration(new Double(testCaseResult
-//									.getAvgDuration()).floatValue());
-//							energyModel.getValues().add(value);
-//						}
-//						// no else.
-//					}
-//					// end for.
-//				}
-//				// no else.
-//
-//				BufferedOutputStream bos;
-//				try {
-//					bos = new BufferedOutputStream(new FileOutputStream(path));
-//
-//					EnergymodelPrinter2 printer = new EnergymodelPrinter2(bos,
-//							null);
-//					printer.print(energyModel);
-//
-//					bos.close();
-//				} catch (FileNotFoundException e) {
-//					JouleUnitUiPlugIn.log(e, "Unable to export energy model.");
-//				} catch (IOException e) {
-//					JouleUnitUiPlugIn.log(e, "Unable to export energy model.");
-//				}
-//
-//				/* Refresh the project to get external updates. */
-//				try {
-//					IResource wsResource = ResourcesPlugin
-//							.getWorkspace()
-//							.getRoot()
-//							.findMember(
-//									new Path(resource
-//											.getLocation()
-//											.removeLastSegments(1)
-//											.removeFirstSegments(
-//													ResourcesPlugin
-//															.getWorkspace()
-//															.getRoot()
-//															.getLocation()
-//															.segmentCount())
-//											.toFile()
-//											.toString()
-//											.substring(
-//													resource.getLocation()
-//															.getDevice()
-//															.length())));
-//					wsResource.refreshLocal(IResource.DEPTH_INFINITE, null);
-//				}
-//
-//				catch (CoreException e) {
-//					JouleUnitUiPlugIn.log(
-//							e,
-//							"Refresh of newly created test cases failed: "
-//									+ e.getMessage());
-//				}
-//			}
-//
-//			else {
-//				ErrorDialog eDialog = new ErrorDialog(
-//						getSite().getShell(),
-//						"Service Model not found",
-//						"Cannot find an activity within the selected service model.",
-//						new Status(
-//								IStatus.ERROR,
-//								JouleUnitUiPlugIn.PLUGIN_ID,
-//								"Cannot find an activity within the selected service model.",
-//								null), SWT.NONE);
-//				eDialog.open();
-//			}
-//		}
-//		// no else.
+		// ElementTreeSelectionDialog dialog;
+		// WorkbenchLabelProvider aWorkbenchLabelProvider;
+		// WorkbenchContentProvider aWorkbenchContentProvider;
+		//
+		// int pressedButton;
+		// IResource resource;
+		//
+		// /* Create a dialog to select a File. */
+		// aWorkbenchLabelProvider = new WorkbenchLabelProvider();
+		// aWorkbenchContentProvider = new WorkbenchContentProvider();
+		//
+		// /* File filter for UML models only. */
+		// PatternFilter filter = new PatternFilter();
+		// filter.setPattern("*.uml");
+		//
+		// /* Configure the Dialog properties. */
+		// dialog = new FilteredElementTreeSelectionDialog(getSite().getShell(),
+		// aWorkbenchLabelProvider, aWorkbenchContentProvider, filter);
+		//
+		// dialog.setTitle("Select Service Model");
+		// dialog.setMessage("Please select the service model, the profiled data belongs to.");
+		// dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
+		// dialog.setComparator(new
+		// ResourceComparator(ResourceComparator.NAME));
+		// dialog.setAllowMultiple(false);
+		//
+		// /* Open the dialog. */
+		// pressedButton = dialog.open();
+		// resource = (IResource) dialog.getFirstResult();
+		//
+		// /* If OK was pressed set the File path. */
+		// if (pressedButton == IDialogConstants.OK_ID) {
+		//
+		// /* Get the EMF model. */
+		// ResourceSet rs = new ResourceSetImpl();
+		// Resource emfResource = rs
+		// .createResource(org.eclipse.emf.common.util.URI
+		// .createFileURI(resource.getFullPath().toFile()
+		// .toString()));
+		//
+		// if (!emfResource.isLoaded())
+		// try {
+		// emfResource.load(null);
+		// } catch (IOException e) {
+		// JouleUnitUiPlugIn.log(e, "Unable to open UML resource.");
+		// }
+		// // no else.
+		//
+		// Activity activityModel = null;
+		//
+		// for (EObject object : emfResource.getContents()) {
+		// if (object instanceof Model) {
+		// Model model = (Model) object;
+		// for (NamedElement element : model.getMembers()) {
+		// if (element instanceof Activity) {
+		// activityModel = (Activity) element;
+		// break;
+		// }
+		// // no else.
+		// }
+		// // end for.
+		// }
+		// // no else.
+		// }
+		// // end for.
+		//
+		// if (activityModel != null) {
+		//
+		// FileDialog fd = new FileDialog(getSite().getShell(), SWT.SAVE);
+		// fd.setText("Select Energy Model File for Export");
+		// String[] filterExt = { "*.energymodel", "*.*" };
+		// fd.setFilterExtensions(filterExt);
+		// fd.setFilterPath(resource.getLocation().removeLastSegments(1)
+		// .toFile().toString());
+		// fd.setFileName("my.energymodel");
+		//
+		// String path = fd.open();
+		//
+		// EnergyModel energyModel = EnergymodelFactory.eINSTANCE
+		// .createEnergyModel();
+		// energyModel.setActivityModel(activityModel);
+		//
+		// /* Add profiled results for mapping transitions. */
+		// if (testSuiteProfile != null) {
+		// for (AvgTestCaseResult testCaseResult : testSuiteProfile
+		// .getAvgTestCaseResults()) {
+		// String transitionName = testCaseResult.getID();
+		//
+		// ActivityEdge testedTransition = activityModel.getEdge(
+		// transitionName, true, null, false);
+		//
+		// if (testedTransition != null
+		// && testedTransition instanceof ControlFlow) {
+		// PowerRateValue value = EnergymodelFactory.eINSTANCE
+		// .createPowerRateValue();
+		// value.setTransition((ControlFlow) testedTransition);
+		// value.setPowerRate(new Double(testCaseResult
+		// .getAvgPowerRate()).floatValue());
+		// value.setDuration(new Double(testCaseResult
+		// .getAvgDuration()).floatValue());
+		// energyModel.getValues().add(value);
+		// }
+		// // no else.
+		// }
+		// // end for.
+		// }
+		// // no else.
+		//
+		// BufferedOutputStream bos;
+		// try {
+		// bos = new BufferedOutputStream(new FileOutputStream(path));
+		//
+		// EnergymodelPrinter2 printer = new EnergymodelPrinter2(bos,
+		// null);
+		// printer.print(energyModel);
+		//
+		// bos.close();
+		// } catch (FileNotFoundException e) {
+		// JouleUnitUiPlugIn.log(e, "Unable to export energy model.");
+		// } catch (IOException e) {
+		// JouleUnitUiPlugIn.log(e, "Unable to export energy model.");
+		// }
+		//
+		// /* Refresh the project to get external updates. */
+		// try {
+		// IResource wsResource = ResourcesPlugin
+		// .getWorkspace()
+		// .getRoot()
+		// .findMember(
+		// new Path(resource
+		// .getLocation()
+		// .removeLastSegments(1)
+		// .removeFirstSegments(
+		// ResourcesPlugin
+		// .getWorkspace()
+		// .getRoot()
+		// .getLocation()
+		// .segmentCount())
+		// .toFile()
+		// .toString()
+		// .substring(
+		// resource.getLocation()
+		// .getDevice()
+		// .length())));
+		// wsResource.refreshLocal(IResource.DEPTH_INFINITE, null);
+		// }
+		//
+		// catch (CoreException e) {
+		// JouleUnitUiPlugIn.log(
+		// e,
+		// "Refresh of newly created test cases failed: "
+		// + e.getMessage());
+		// }
+		// }
+		//
+		// else {
+		// ErrorDialog eDialog = new ErrorDialog(
+		// getSite().getShell(),
+		// "Service Model not found",
+		// "Cannot find an activity within the selected service model.",
+		// new Status(
+		// IStatus.ERROR,
+		// JouleUnitUiPlugIn.PLUGIN_ID,
+		// "Cannot find an activity within the selected service model.",
+		// null), SWT.NONE);
+		// eDialog.open();
+		// }
+		// }
+		// // no else.
 	}
 
 	/** Creates pull down menu. */
@@ -1448,7 +1451,8 @@ public class TestCaseView extends ViewPart implements IProfilingResultReceiver, 
 				ProfilingResultExportJob job = new ProfilingResultExportJob(
 						testSuiteProfile, path);
 				job.schedule();
-				Util.getInstance().exportTestResultForHistory(testSuiteProfile.getTestCaseProfiles(), path);
+				Util.getInstance().exportTestResultForHistory(
+						testSuiteProfile.getTestCaseProfiles(), path);
 				updateOldTestResultViewer();
 			}
 		};
@@ -1553,7 +1557,7 @@ public class TestCaseView extends ViewPart implements IProfilingResultReceiver, 
 		oldTestResultViewer.setInput(Util.getInstance()
 				.importTestResultFromHistory(Util.LIMIT_ENTRIES_TO, true));
 	}
-	
+
 	// private void compareToCurrentTest(HistoryTestResultObject
 	// historyTestResultObject) {
 	// MessageDialog.openInformation(null, "Information",
@@ -1611,13 +1615,13 @@ public class TestCaseView extends ViewPart implements IProfilingResultReceiver, 
 	public void handleEvent(String id, int action, Object o) {
 		if (id == ID) {
 			switch (action) {
-				case UPDATE_OLD_HISTORY_TABLE:
-					updateOldTestResultViewer();
-					break;
-				default:
-					break;
+			case UPDATE_OLD_HISTORY_TABLE:
+				updateOldTestResultViewer();
+				break;
+			default:
+				break;
 			}
 		}
-		
+
 	}
 }
