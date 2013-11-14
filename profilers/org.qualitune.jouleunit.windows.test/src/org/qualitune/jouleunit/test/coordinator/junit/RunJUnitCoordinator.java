@@ -4,10 +4,10 @@ import org.junit.Test;
 import org.qualitune.jouleunit.coordinator.junit.JUnitCoordinator;
 import org.qualitune.jouleunit.windows.WindowsProfiler;
 
-public class TestJUnitCoordinator {
+public class RunJUnitCoordinator {
 
 	@Test
-	public void testCoordinator() {
+	public static void main(String args[]) {
 
 		JUnitCoordinator coordinator = new JUnitCoordinator(
 				new WindowsProfiler(), SimpleTest.class);
