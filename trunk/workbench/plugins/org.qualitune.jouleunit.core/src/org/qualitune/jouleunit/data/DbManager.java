@@ -152,7 +152,7 @@ public class DbManager {
 			TestSuiteProfile result = new TestSuiteProfile();
 			result.setTimestampCorrectionEnabled(false);
 
-			String query = "SELECT name, tag, `start`, `stop`, `result`, testCaseID FROM TestCase WHERE testRunID = ? ORDER BY `start` ASC;";
+			String query = "SELECT name, tag, [start], [stop], [result], testCaseID FROM TestCase WHERE testRunID = ? ORDER BY [start] ASC;";
 			statement = connection.prepareStatement(query);
 			statement.setInt(1, testRunID);
 
@@ -172,7 +172,7 @@ public class DbManager {
 
 			/* Read energy profile. */
 			SimpleEnergyProfile energyProfile = new SimpleEnergyProfile();
-			query = "SELECT power, `time` FROM ResultPowerRate WHERE testRunID = ? ORDER BY `time` ASC;";
+			query = "SELECT power, [time] FROM ResultPowerRate WHERE testRunID = ? ORDER BY [time] ASC;";
 			statement = connection.prepareStatement(query);
 			statement.setInt(1, testRunID);
 
@@ -189,7 +189,7 @@ public class DbManager {
 			result.setEnergyProfile(energyProfile);
 
 			/* Read CPU data. */
-			query = "SELECT MAX(`number`) FROM ResultCPU WHERE testRunID = ?;";
+			query = "SELECT MAX([number]) FROM ResultCPU WHERE testRunID = ?;";
 			statement = connection.prepareStatement(query);
 			statement.setInt(1, testRunID);
 
@@ -198,7 +198,7 @@ public class DbManager {
 			if (rs.next()) {
 				int numberOfCPUs = rs.getInt(1);
 
-				query = "SELECT frequence, `number`, `time` FROM ResultCPU WHERE testRunID = ? ORDER BY `time`, `number` ASC;";
+				query = "SELECT frequence, [number], [time] FROM ResultCPU WHERE testRunID = ? ORDER BY [time], [number] ASC;";
 				statement = connection.prepareStatement(query);
 				statement.setInt(1, testRunID);
 
@@ -239,7 +239,7 @@ public class DbManager {
 			/* No else (no CPU data found). */
 
 			/* Read Display data. */
-			query = "SELECT brightness, `time` FROM ResultDisplay WHERE testRunID = ? ORDER BY `time` ASC;";
+			query = "SELECT brightness, [time] FROM ResultDisplay WHERE testRunID = ? ORDER BY [time] ASC;";
 			statement = connection.prepareStatement(query);
 			statement.setInt(1, testRunID);
 
@@ -250,7 +250,7 @@ public class DbManager {
 			// end while.
 
 			/* Read WiFi data. */
-			query = "SELECT traffic, `time` FROM ResultWifi WHERE testRunID = ? ORDER BY `time` ASC;";
+			query = "SELECT traffic, [time] FROM ResultWifi WHERE testRunID = ? ORDER BY [time] ASC;";
 			statement = connection.prepareStatement(query);
 			statement.setInt(1, testRunID);
 
@@ -419,7 +419,7 @@ public class DbManager {
 			FileInputStream fis;
 
 			/* Check whether the app project already exists. */
-			String query = "SELECT MAX(appID) FROM app WHERE packageID = ?;";
+			String query = "SELECT appID FROM app WHERE packageID = ?;";
 			statement = connection.prepareStatement(query);
 			statement.setString(1, autPackageID);
 			ResultSet rs = statement.executeQuery();
@@ -964,7 +964,7 @@ public class DbManager {
 			createConnection();
 
 			/* Save version entry. */
-			String query = "UPDATE TestCase SET `result` = ? WHERE testCaseID = ?";
+			String query = "UPDATE TestCase SET [result] = ? WHERE testCaseID = ?";
 			statement = connection.prepareStatement(query);
 
 			statement.setInt(1, testCaseProfile.isFailed() ? 0 : 1);
