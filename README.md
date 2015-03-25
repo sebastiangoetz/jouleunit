@@ -2,8 +2,8 @@
 JouleUnit is an energy profiling and testing framework for profiling ICT applications. It reuses the workload definition and execution capabilities of JUnit to define workloads to be profiled on a respective ICT device under test (e.g., and Android-operated mobile device, a Linux-operated PC or a humanoid NAO robot).
 
 ### JouleUnit Workbench ###
-Together with JouleUnit comes the JouleUnitWorkbench, integrating the framework into a the Eclipse IDE. A tutorial how to start and use the JouleUnit workbench can be found [via this wiki page](http://code.google.com/p/jouleunit/wiki/JouleUnitWorkbench).
-A screencast demonstrating the usage of JouleUnit for Android using a remote profiling server can be found [via this wiki page](http://code.google.com/p/jouleunit/wiki/AndroidExampleScreencast).
+Together with JouleUnit comes the JouleUnitWorkbench, integrating the framework into a the Eclipse IDE. A tutorial how to start and use the JouleUnit workbench can be found in the wiki branch of this repo.
+A screencast demonstrating the usage of JouleUnit for Android using a remote profiling server can be found there, too.
 
 ### Relevant Publications ###
   1. _Claas Wilke, Sebastian Götz, Jan Reimann, and Uwe Aßmann._ **Vision Paper: Towards Model-Based Energy Testing.** In: Proceedings of the ACM/IEEE 14th International Conference on Model Driven Engineering Languages and Systems (MODELS2011), Vol. 6981 of LNCS, Springer (2011), pp. 480-489.
