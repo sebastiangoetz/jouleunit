@@ -1,0 +1,1 @@
+JouleUnit is an energy profiling and testing framework for profiling ICT applications. It reuses the workload definition and execution capabilities of JUnit to define workloads to be profiled on a respective ICT device under test (e.g., and Android-operated mobile device, a Linux-operated PC or a humanoid NAO robot).
