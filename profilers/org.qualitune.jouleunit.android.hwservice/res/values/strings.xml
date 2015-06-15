@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, HWServiceActivity!</string>
+    <string name="app_name">JouleUnit HW Service</string>
+    <string name="time">Time</string>
+    <string name="lcdBrightness">LCD Brightness</string>
+    <string name="cpuFrequency">CPU Frequency</string>
+    <string name="transmittedPackages">Transmitted Packages</string>
+    <string name="receivedPackages">Received Packages</string>
+    <string name="transmittedBytes">Transmitted Bytes</string>
+    <string name="receivedBytes">Received Bytes</string>
+    <string name="hwServiceNumber">04081162342</string>
+    <string name="startService">Start HW Service</string>
+    <string name="stopService">Stop HW Service</string>
+    <string name="picture_attachment">Add Picture Attachment</string>
+    <string name="note_attachment">Add Note Attachment</string>
+    <string name="speech_attachment">Add Speech Memo Attachment</string>
+    <string name="view_file">View File</string>
+    
+</resources>
